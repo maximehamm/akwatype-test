@@ -1,1 +1,0 @@
-# akwatype-test
