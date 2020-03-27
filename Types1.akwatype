@@ -1,3 +1,0 @@
-type ExampleType {
-    c1: String
-}
