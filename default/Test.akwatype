@@ -1,6 +1,6 @@
 type Test {
     toto: String
     properties {
-       glossary: "Private-P12B"
+       glossary: "Private-P15"
     }
 }
