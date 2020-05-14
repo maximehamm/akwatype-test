@@ -1,6 +1,0 @@
-type Test {
-    toto: String
-    properties {
-       glossary: "Private-P15"
-    }
-}
