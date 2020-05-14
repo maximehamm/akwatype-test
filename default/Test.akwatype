@@ -1,6 +1,48 @@
 type Test {
     toto: String
     properties {
-       glossary: ""
+       glossary: "Private-P06-COPY18"
     }
+}
+
+type IndustryCodeDistribution{ 
+    @THIRDPARTY  @ACTIVITY
+    technicalBase: TechnicalBase
+    industryCode: IndustryCode {@RADAR,@RMPM}
+    percentage:Decimal 
+    properties {
+       glossary: "Private-P06-COPY20"
+    }
+}
+
+type SectorOfActivityKYCDistribution{
+    @THIRDPARTY  @ACTIVITY
+    technicalBase: TechnicalBase
+    industryCodes: SectorOfActivityKYCNiv2 
+    properties {
+       glossary: "Private-P12B"
+    }
+    percentage:Decimal
+}
+
+type LPActivityDistribution{
+    @THIRDPARTY   @ACTIVITY 
+    technicalBase: TechnicalBase 
+}
+
+type Nace{
+    properties {
+       RMPMTableNomenclature: "S293"
+    }
+    @THIRDPARTY   @ACTIVITY
+    technicalBase: TechnicalBase
+    code:String {@RMPM}
+    label:String {@RMPM}
+}
+
+type NAF93{
+    @THIRDPARTY   @ACTIVITY
+    technicalBase: TechnicalBase
+    code: String {@RMPM}
+    label: String {@RMPM}
 }
