@@ -1,0 +1,63 @@
+
+
+abstract Person{
+    name:String { 
+        @GDPR
+        example:["Riviere","Berger","Dumas"]
+        glossary: "01-ATR001"
+    }
+    firstName:String{
+        example:["Roxane","Etienne","Flora","Tom"]
+    }
+    address:Address 
+}
+
+type EmployeeSkill{
+    skyll:Skill{
+        glossary: "01-ATR0100"
+        @GDPR
+    }
+    expertiseLevel:Integer
+}
+
+type Skill{
+    properties {
+       glossary: "01-ATR002"
+    }
+    code:String
+    label:String
+}
+
+type Employee extends Person{
+    id:UUID
+    function:String{
+        example:["Comptable","Commercial","Chargé de production"]
+    }
+    trainnings:[TrainingSession]{
+        @HR
+        glossary: "01-ATR005"
+    }
+    department:Department
+    manage:[Department]
+    skills:[EmployeeSkill]
+}
+
+type Trainning{
+
+    title:String{glossary: "01-ATR004", @TRAINNING}   
+    description:String
+    targetSkills:[Skill]{
+        @GDPR, @HR}
+    sessions:[TrainingSession]{@TRAINNING}
+}
+
+type TrainingSession{
+    trainning:Trainning{glossary: ""}
+    participants:[Employee]{glossary: "01-ATR003"}
+}
+
+
+
+
+
+

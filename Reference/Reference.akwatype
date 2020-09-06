@@ -1,0 +1,62 @@
+type  Address{
+    id:ID
+    street:String{
+        maxLength: 30
+        example:["Rue des oiseaux","Avenue Daumesnil"]
+        
+    }
+    city:String{
+        @GDPR
+        maxLength: 30
+        example: ["Paris","Bordeau","Lyon"]
+    }
+    zipcode:String{
+        maxLength: 10
+        example : "75011"
+    }
+    country:Country
+    addressType:AddressType
+}
+
+type AddressType{
+    code:String{
+        example:"001"
+    }
+    label:String{
+        example:"professionnel"
+    }
+}
+
+type Country{
+    codeISO2:String{
+        @COUNTRY
+        maxLength: 2
+        example:"FR"
+    }
+    codeISO3:String{
+        maxLength: 3
+        example:"FRA"
+    }
+    label:String{
+        example:"France"
+    }
+}
+
+type ProductType{
+    code:String
+    label:String
+}
+
+type ProductCategory{
+    code:String
+    label:String
+}
+
+type Activity{
+    code:String
+    label:String
+}
+
+
+
+

@@ -1,0 +1,32 @@
+
+type Product{
+    reference:String 
+    label:String
+    description:String
+    type:ProductType
+    category:ProductCategory
+    salesPrice:Decimal
+    suppliers:[Supplier]
+    stock:ProductStocked
+}              
+
+type ProductStocked{
+    quantity : Integer {@APPRO}
+    minQuantity : Integer
+    product : Product
+}
+
+type Stock{
+    products:Product
+}
+
+type SupplierProduct{
+    product:Product
+    unitPrice:Decimal
+    deliveryDays:Integer
+    supplyDays:Integer
+    minimumOrderQuantity:Integer
+}
+
+
+

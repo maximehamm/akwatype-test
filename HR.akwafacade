@@ -1,0 +1,14 @@
+facade SimpleEmployeeDTO on Employee{
+    name
+    function
+    competence:skills
+    
+}
+
+facade TrainingDTO on Trainning {
+    title
+    sessions
+    criticalSkills:targetSkills
+}
+
+

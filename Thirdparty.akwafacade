@@ -1,0 +1,45 @@
+facade CustomerDTO on Customer{
+    sigle
+    with(mainDeliveryAddress){
+            street
+            city
+            zipcode
+            with(country){
+                country:label
+            }
+    }
+    orders{
+        date
+        expectedDeliveryDate
+        totalAmount
+        vatTotalAmount
+    }
+}
+
+facade DepartmentDTO on Department
+
+facade customerComputeDTO on Customer{
+    additionalFields {
+        address1:Address::WithAddress{basedOn: address}
+        address2:Address{basedOn: address}
+        address3:Address{basedOn: address}
+        address4:Address{basedOn: address}
+    }
+    sigle
+
+}
+
+facade WithAddress with Address{
+    street
+    country:country.label
+}
+
+
+facade AddressDTO on Address{
+    additionalFields {
+        countries:[Country]{
+            basedOn: country
+        }
+    }
+}
+

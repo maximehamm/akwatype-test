@@ -1,0 +1,32 @@
+type Order{
+    customer:Customer
+    date:Date
+    expectedDeliveryDate:Date
+    reference:String
+    vatTotalAmount:Decimal
+    totalAmount:Decimal
+    lines:[OrderLine]
+    invoices:[Invoice]
+
+}
+
+type OrderLine{
+    product:Product
+    salesPrice:Decimal
+    quantity:Integer
+    discount:Decimal
+    vatRate:Decimal
+    vatAmount:Decimal
+    amount:Decimal
+} 
+
+type Invoice{
+    num:String
+    order:Order
+    shippingDate:Date     
+    deliveryDate:Date
+    dueDate:Date
+    paymentDate:Date
+    meanOfPayment:MeanOfPayment
+}
+

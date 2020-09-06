@@ -1,0 +1,11 @@
+service Bank{
+    expose payements{
+        route payment
+    }
+    expose meanOfPayment{
+        parent: payements
+        route control
+    }
+}
+
+

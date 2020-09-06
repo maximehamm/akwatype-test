@@ -1,0 +1,59 @@
+service CustomerWeb{
+
+    consume Order3.orders{
+        route cancel
+        route create
+        route payement
+        route get
+    }
+
+    consume Product.products {
+        route list
+        route get
+    }
+    
+    consume Invoice.invoices {
+        route get
+    }
+
+    consume Shipment.infos{
+        route get
+    }
+}
+
+service TestUrlParams{
+    expose test{
+        url:"test"
+        route get {
+            url:"test/"
+            method:GET
+            urlParams: UrlParamsTest1DTO
+            response:BudgetProgramDTO
+        }
+    }
+}
+
+service TestUrlParams2{
+    consume TestUrlParams.test{
+        route get
+    }
+}
+
+
+service ProjectWeb{
+    consume Program.programs{
+        route budget
+        route get
+        route getList
+        route update
+    }
+
+    consume Project.project{
+        route budget
+        route get
+        route getList
+        route update
+    }
+}
+
+

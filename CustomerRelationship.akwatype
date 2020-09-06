@@ -1,0 +1,27 @@
+abstract Advice{
+    score:Integer {@SCORE}
+    comment:String
+    contact:Contact
+}
+
+type SupplierAdvice extends Advice{
+    id:ID
+    supplier:Supplier{
+        glossary: ""
+    }
+}
+
+type ProductAdvice extends Advice{
+    id:ID
+    product:Product
+}
+
+type Claim{
+    id:UUID
+    order:Order
+    date:Date
+    description:String
+    answer:String
+    status:String
+}
+

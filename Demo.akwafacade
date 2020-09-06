@@ -1,0 +1,44 @@
+
+facade Test on Order {
+    client:customer::CustomerDTO -> FieldDTO(value)
+    date -> FieldDTO(value)
+    expectedDeliveryDate -> FieldDTO(value)
+}
+
+facade EmployeeDTO on Employee{
+    name
+    
+}
+
+facade FieldDTO {
+    additionalFields {
+        address: Address::CompactAddress -> FieldDTO(value)
+    }  
+}
+
+facade CustomerDTO2 on Customer{
+    claims
+    
+}
+
+facade UrlParamsTest1DTO{
+    additionalFields {
+        name:String
+        dateDebut:[Date]
+    }
+    requiredRead: [name]
+}
+
+facade MyAppFacade1 {
+    additionalFields {
+        name: String
+    }
+}
+
+facade MyAppFacade2 {
+    additionalFields {
+        f1:: MyAppFacade1
+    }
+    
+}
+

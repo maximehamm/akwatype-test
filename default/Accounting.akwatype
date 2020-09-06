@@ -1,0 +1,27 @@
+type ProjectCosts extends AccountingOperation{
+    id:ID
+    project:Project
+    amount:String
+    properties {
+       glossary: "G001-000001"
+    }
+}
+
+abstract AccountingOperation{
+    type : AccountingOperationType
+    projet:Project
+    description:String
+    debit:Decimal
+    credit:Decimal
+}
+
+type AccountingOperationType{
+    id:String{
+        
+    }
+    code:String
+    label:String
+}
+
+customTypeProperty test { type: String}
+

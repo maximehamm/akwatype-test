@@ -1,0 +1,72 @@
+abstract Company{
+    sigle:String
+    address:[Address]
+}
+
+type MyCompany extends Company{
+    id:ID
+    departments:[Department]
+    customer:[Customer]
+    suppliers:[Supplier]
+    products:[Product]
+    employees:[Employee]
+    program:[Program]
+}
+
+abstract ExternalCompany extends Company{
+    contacts:[Contact]
+}
+
+type Supplier extends ExternalCompany{
+    id:ID
+    products:[SupplierProduct]
+}
+
+type Prospect extends ExternalCompany{
+    id:ID
+}
+
+type Customer extends ExternalCompany{
+    id:ID
+    orders:[Order]
+    Invoices:[Invoice]
+    supplierAdvices:[SupplierAdvice]
+    productAdvices:[ProductAdvice]
+    claims:[Claim]
+    deliveryAddress:[Address]
+    mainDeliveryAddress:Address
+    commercialSegments:[CommercialSegment]
+    meanOfPayments:[MeanOfPayment]
+}
+
+type Contact extends Person{
+    id:ID
+    function:String
+    phone:String
+    company:ExternalCompany
+}
+
+type Department{
+    id:ID
+    name:String{
+        
+    }
+    departments:[Department]
+    employees:[Person]
+    manager:Employee
+    address:Address
+
+}
+
+
+
+type CommercialSegment{
+    code:String
+    label:String
+    description:String
+}
+
+
+
+
+

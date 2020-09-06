@@ -1,0 +1,16 @@
+facade CompactAddress on Address{
+    additionalFields {
+        test:String{
+            basedOn: street
+        }
+    }
+    
+    street
+    with(country){
+        country:label
+    }
+    town:city
+    zipcode
+    
+}
+
