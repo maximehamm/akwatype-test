@@ -4,7 +4,7 @@ type Test2 {
     otherTest:String
 }
 
-type Test1{
+type Test1 {
     name1:String
     test2:Test2 
 }

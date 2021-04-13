@@ -1,11 +1,11 @@
-service Accounting{ 
+service Accounting { 
     
     isDraft: "en cours de modification"
     expose balance{
         route customer {
             isGuess: "A ne pas creuser plus loin"
-        }
-    }
+        } 
+    }  
     
     receive infoCreateCustomer{
         topic:ThirdParty
