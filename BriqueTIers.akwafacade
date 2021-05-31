@@ -1,0 +1,223 @@
+#target BTiers
+#
+#facade NafNiv2Code2008.BTiers with NAF2008{
+#    with(nafNiv2){
+#        nafNiv2:code
+#    }
+#}
+#
+#facade BNPPFcollaborateur on BNPPCollaborator{
+#    mail
+#    name
+#    firstName
+#    refogCode
+#    telephone
+#} 
+#
+#facade BTLegalPersonDTO on LegalPerson{
+#    activities:legalPersonActivity{
+#        customerActivityDescription:description
+#        nafCodeLevel2:naf2008
+#        # activitySectorType: $ref: #/definitions/ActivitySectorTypeDTO (KYC ?)
+#        # id : string,uuid
+#        # otherCodification : string
+#        # percentTurnoverRevenue : number
+#        activityCountries{
+#            country::BTCountryDTO
+#            turnoverPercent
+#        }
+#    } 
+#    with (legalPersonKYCInfos){
+#        AEoIandFATCA
+#        bankingLicence
+#        #bddfInformation
+#        bearerShares
+#        listedCompany
+#        energyAndCommoditiesDealer   
+#    }
+#
+#    bnppBusinessRelationInRegistrationCountryOnly
+#    with(computed){
+#        mainBusinessCountry::BTCountryDTO
+#        identifierRMPM
+#        intracommunityVAT
+#        registrationNumber: incorporationNumber
+#        registrationType:  incorporationType
+#    }
+#    #   businessRoles:  type: array, items:  $ref: #/definitions/BusinessRoleDTO
+#    #   communications:  type: array, items:  $ref: #/definitions/CommunicationDTO
+#    #   contacts:  type: array, items:  $ref: #/definitions/ContactDTO
+#    # contact:roles::(ContactRoleDTO) à corriger plus compatible avec les roles MDM
+#    contractualBenefitScope
+#    corporateName
+#    documents{
+#        consistency
+#        consistencyControlUser::BNPPFcollaborateur
+#    }
+#    #
+#    #existingContract
+#    #finalisedStatus
+#    financialInformation::BTfinancialInformationDTO
+#    
+#    groupCommonCustomer
+#    groupEntityRelations{
+#        with(groupEntity){
+#            collaborators
+#        }
+#        primarySite
+#        #sharingResult
+#    }
+#    #id
+#    #idsLegal:  type: array, items:  $ref: #/definitions/IdLegalPersonDTO
+#    
+#    #legalCategory #:  $ref: #/definitions/LegalCategoryDTO
+#    legalForm
+##   ownedBy:  type: array, items:  $ref: #/definitions/ShareholderDTO
+##   postalAddresses:  type: array, items:  $ref: #/definitions/PostalAddressDTO
+##   products:  type: array, items:  $ref: #/definitions/ProductDTO
+##   qualifiedIntermediary:  type: boolean
+#    registrationCountry:incorporationCountry 
+#    
+#    
+#    regulatedFinancialInstitution
+#
+##   relatedLegalPersons:  type: array, items:  $ref: #/definitions/RelatedLegalPersonDTO
+##   relatedNaturalPersons:  type: array, items:  $ref: #/definitions/RelatedNaturalPersonDTO
+#    riskInformation::BTRiskDTO
+##   sanctioned:  type: boolean // résultat du screening 
+##   screening:  type: boolean // action du screening
+#    segmentation::BTSegmentationDTO
+##   sensitiveProducts:  type: array, items:  $ref: #/definitions/SensitiveProductDTO
+##   thirdPartyCode:  type: string
+#    thirdPartyType
+#    tradeName
+##   tradeRegisterNumber:  type: string
+##   trustedBearerShares:  type: boolean
+##   unfavorableInformation:  $ref: #/definitions/UnfavorableInformationDTO
+#}
+#
+#facade BTUnfavorableInformationDTO on UnfavorableInformation{
+#    #adverseInformations : [AdverseInformationDTO]
+#    #hasUnfavorableInformation : boolean
+#    riskLevelModificationNeeded
+#}
+##----------------------------------------------------------------- ???
+##
+##        AdverseInformationDTO: {
+##            type: object,
+##            properties: {
+##                associatedPerson : string,uuid
+##                techBase: $ref: #/definitions/TechBaseDTO
+##                id : string,uuid
+##                informationNature: $ref: #/definitions/InformationNatureDTO
+##                materiality : boolean
+##                materialityComment : string
+##                mitigatingFactors : array,   $ref: #/definitions/MitigatingFactorCheckDTO
+##                subject: $ref: #/definitions/SubjectDTO
+##                summary : string
+##                }
+##            },
+##            title: AdverseInformationDTO
+##        },
+##
+##-----------------------------------------------------------------
+#
+#facade BTfinancialInformationDTO on FinancialInformation{
+#    # Comment
+#    consolidatedInfos{
+#        with(turnover){
+#            consolidateSalesRevenu:amount
+#            currency{
+#                code
+#                fullLabel:label
+#                #id : string,uuid
+#                shortLabel
+#            }    
+#        }
+#    }
+#    #detail
+#    euroZoneExportSalesRevenue
+#    exportSalesRevenue
+#    financialInformationDocumentType::BTDocumentTypeDTO
+#
+#    financialSecurityIncidents
+#    fiscalYearEndDate
+#    incomeAfterTaxes
+#    socialInfos.turnover
+#    #with (socialInfos) {
+#    #    socialSalesRevenue:turnover
+#    #}
+#    totalExportSalesRevenue
+#    totalPreTaxSalesRevenue
+#    stockMarkets::StockMarketDTO # ATENTION DEVRAIT ETRE AU NIVEAU SUPERIEUR !!!
+#}
+#
+#facade StockMarketDTO on StockMarket{
+#    bnppRecognize
+#    code
+#    country::BTCountryDTO
+#    label
+#}
+#
+#facade BTDocumentTypeDTO on DocumentType{
+#    code
+#    label
+#    documentCategory
+#}
+#
+#facade BTSegmentationDTO on CommercialSegmentation{
+#    customerType
+#    #level1Segment
+#    #level2Segment
+#    #organizationalStructure
+#    segmentationBDDF
+#}
+#
+#facade BTRiskDTO on RiskInformation{
+#    bankingProhibition
+#    #counterPartyRating
+#    defaultRisk
+#    defaultRiskUpdatedDate
+#    #igr
+#    #igrUpdate
+#    #legalForm
+#    legalStatus
+#    privileges
+#    #quotationBdF
+#    #quotationBdFDate
+#    #screening
+#    shareCapital
+#    unpaid
+#}
+#
+#facade BTactivityCountryDTO on ActivityCountryDistribution{
+#    turnoverPercent
+#    country::BTCountryDTO
+#}
+#
+#facade BTCountryDTO on Country{
+#
+#    #techBase   : $ref: #/definitions/TechBaseDTO
+#    #id : string,uuid   
+#    with(countryISO){
+#        code
+#        label
+#    } 
+#    pnClassification::BTPnClassificationDTO
+#    retailBankingActivityBNP
+#    sanctioned:sanctionned
+#    # sensitivity: $ref: #/definitions/SensitivityDTO
+#}
+#
+#facade LegalPersonActivityDTO on LegalPersonActivity{
+#    customerActivityDescription:description
+#    #activitySectorType
+#}
+#
+#facade BTPnClassificationDTO on PnClassification{
+#    code
+#    label
+#}
+
+
+

@@ -1,0 +1,36 @@
+service Tiers {
+    war: "thirdparty-backoffice.war"
+
+    expose BufferTiers{
+        route setFunctionalBuffer{
+            method: POST
+            request: LegalPersonBufferDTO
+        }
+        route getFunctionalBuffer{
+            method: GET
+            response: LegalPersonBufferDTO
+        }
+        route getBufferDocapost
+    
+    }
+
+    expose Tiers{       
+        route  setTiers
+        route getTiers {         
+            consume NiuViu.Tiers.getTiers
+        }
+    }
+
+    consume NiuViu.Tiers {
+        route getWithExternalSourcing
+    }
+
+    consume IntermediationAllViu.AllViu{
+        route createContact
+        route updateContact
+        route createPropect
+        route updatePropect
+    }
+}
+
+ 

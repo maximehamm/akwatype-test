@@ -1,0 +1,113 @@
+service Mail{
+    expose mail{
+        route send
+    }
+}
+
+service GED{
+    expose Document{
+        route insertDocument,
+        route updateDocument,
+        route getDocument
+    }
+}
+
+service UploadDocument{
+
+    expose Document{
+        
+        route upload{
+            if(DocumentIdentity,kbis,Rib){
+                consume Docapost.Services.shootId
+            }
+        }
+
+        route documents{
+            consume Tiers.BufferTiers.getFunctionalBuffer
+            consume Tiers.BufferTiers.getBufferDocapost
+            consume ContractImpulsion.Contract.expectedDocuments
+        }
+
+        route file
+    }
+
+    expose Dossier{
+        route signatureClient
+        route finalize{
+            consume Tiers.BufferTiers.getFunctionalBuffer
+            consume Tiers.BufferTiers.getBufferDocapost
+            consume CallBack.Notification.setAvenantCompleteDossier
+            if(signatureEligibility){
+                consume Docapost.DossierDocapost.Initialyze               
+            }
+        }
+        route ClotureDossier{
+            if(abandon){
+                consume backEndWebImpulsion.Notification.setDossierAbandon
+                consume NiuViu.Contract.abandon
+            }
+            if(conform){
+                consume backEndWebImpulsion.Notification.clotureOK
+                consume NiuViu.Contract.clotureOK
+            }
+        }
+
+        route setCompleteDossierAfterNonConformity{
+            consume CallBack.Notification.setCompleteDossierAfterNonConformity
+        }
+        
+        route setSignatureAbandon
+        route setDossierAbandon
+    } 
+
+    expose NotificationUpload{
+        route SetRelanceClient{
+            comment:"lancement en tache de fond"
+            #consume 
+            consume CallBack.Notification.setDunningClientDocumentsImpulsion
+            #setDunningClientDocuments
+            consume Mail.mail.send 
+            
+        }
+        route setConformity{
+            if(nonConformity){
+                consume Mail.mail.send
+            }
+            if(conformity){
+                consume Docapost.DossierDocapost.setConformity
+            }
+        }
+        
+    }
+
+    
+    consume Docapost.DossierDocapost{
+        route Initialyze
+        route setDocument
+        route setConformity
+    }
+    
+    consume Tiers.BufferTiers{
+        route getFunctionalBuffer
+    }
+
+    consume Mail.mail{
+        route send
+    }
+   
+    #consume CallBack.Notification{
+    #    routes:{setDocument,
+    #        setToBeCompleteByClient,
+    #        setCompleteDossier,
+    #        setDunningClientDocuments,
+    #        setAwaitingClientSignature,
+    #         setCompleteDossierAfterNonConformity
+    #    }
+    #}
+
+    consume CallBack.Notification{
+        route setAvenantCompleteDossier
+    }
+}
+ 
+

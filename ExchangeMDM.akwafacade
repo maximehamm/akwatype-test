@@ -1,0 +1,290 @@
+target exchangeMDM
+
+#----------------------------------
+
+facade rolesDTO.exchangeMDM{
+    additionalFields {
+        #LegalPersonRolesDTO:[ThirdPartyRole]::(Administrator)
+        legalPersonRoleDTO::LegalPersonRoleDTO
+        naturalPersonRoleDTO::NaturalPersonRoleDTO
+    }
+}
+
+facade LegalPersonRoleDTO on LegalPerson{
+    roles::(
+        Guarantor,
+        Shareholder,
+        Agent,
+        Participant,
+        Buyer,
+        CoFactor,
+        CreditInsurer,
+        Customer,
+        ReverseBuyer,
+        BusinessProvider,
+        #Prescriber,
+        Generic
+    )
+}
+
+facade NaturalPersonRoleDTO on NaturalPerson{
+    roles::(
+        Guarantor,
+        Shareholder,
+        Contact,
+        LegalRepresentative,
+        BeneficialOwner,
+        EffectiveSignatory,
+        ExecutiveOfficer,
+        AgentOfInsolvencyProceeding,
+        AuthorizedSignatory,
+        Administrator,
+        Generic
+    )
+}
+
+#facade ThirdPartyRole.exchangeMDM{
+#
+#    originRole
+#    typeRole
+#    contracts
+#    targetRole
+#    roleCategory 
+#    startDate
+#    endDate
+#}
+
+facade Contact.exchangeMDM on Contact{
+    with(technicalBase::TechnicalBaseDTO)
+    businessFunction
+    mainContact
+    typeRole
+    startDate
+    endDate
+
+    legalPersonId:targetRole.technicalBase.id
+}
+
+facade LegalRepresentative.exchangeMDM on LegalRepresentative{
+    with(technicalBase::TechnicalBaseDTO)
+    typeRole
+    startDate
+    endDate
+
+    legalPersonId:targetRole.technicalBase.id
+}
+
+facade ContractRoleDTO on Contract{
+    with(technicalBase::TechnicalBaseDTO)
+    number
+    signingDate
+    expiryDate
+    metier:metier.code
+    market:market.code
+    bnppSite:bnppfSite.code  
+
+}
+
+facade ContractRole.exchangeMDM on Contract{
+    with(technicalBase::TechnicalBaseDTO)
+    number
+    signingDate
+    expiryDate
+    metier
+    market
+    bnppfSite
+}
+
+facade BeneficialOwner.exchangeMDM on BeneficialOwner{
+    percentageHolding
+    with(technicalBase::TechnicalBaseDTO)
+    typeRole
+    startDate
+    endDate
+
+    legalPersonId:targetRole.technicalBase.id
+}
+
+facade ExecutiveOfficer.exchangeMDM on ExecutiveOfficer{
+    with(technicalBase::TechnicalBaseDTO)
+    typeRole
+    startDate
+    endDate
+
+    legalPersonId:targetRole.technicalBase.id
+}
+
+facade AgentOfInsolvencyProceeding.exchangeMDM on AgentOfInsolvencyProceeding{
+    with(technicalBase::TechnicalBaseDTO)
+    typeRole
+    startDate
+    endDate
+
+    legalPersonId:targetRole.technicalBase.id
+}
+
+facade AuthorizedSignatory.exchangeMDM on AuthorizedSignatory{
+    with(technicalBase::TechnicalBaseDTO)
+    typeRole
+    startDate
+    endDate
+
+    legalPersonId:targetRole.technicalBase.id
+}
+
+facade EffectiveSignatory.exchangeMDM on EffectiveSignatory{
+    with(technicalBase::TechnicalBaseDTO)
+    typeRole
+    contracts::ContractRoleDTO
+    startDate
+    endDate
+
+    legalPersonId:targetRole.technicalBase.id
+}
+
+facade Administrator.exchangeMDM on Administrator{
+    with(technicalBase::TechnicalBaseDTO)
+    typeRole
+    startDate
+    endDate 
+
+   legalPersonId:targetRole.technicalBase.id
+}
+
+#----
+
+facade Guarantor.exchangeMDM on Guarantor{
+    with(technicalBase::TechnicalBaseDTO)
+    contracts::ContractRoleDTO
+    typeRole
+    startDate
+    endDate
+
+    legalPersonId:targetRole.technicalBase.id
+
+}
+
+facade Shareholder.exchangeMDM on Shareholder{
+    percentageHolding
+    with(technicalBase::TechnicalBaseDTO)
+    typeRole
+    startDate
+    endDate
+
+    legalPersonId:targetRole.technicalBase.id
+}
+
+#----
+
+facade Agent.exchangeMDM on Agent{
+    with(technicalBase::TechnicalBaseDTO)
+    contracts::ContractRoleDTO
+    typeRole
+    startDate
+    endDate
+
+    legalPersonId:targetRole.technicalBase.id
+}
+
+facade Participant.exchangeMDM on Participant{
+    with(technicalBase::TechnicalBaseDTO)
+    contracts::ContractRoleDTO
+    typeRole
+    startDate
+    endDate
+
+    legalPersonId:targetRole.technicalBase.id
+}
+
+facade CoFactor.exchangeMDM on CoFactor{
+    contracts::ContractRoleDTO
+    with(technicalBase::TechnicalBaseDTO)
+    typeRole
+    startDate
+    endDate
+
+    legalPersonId:targetRole.technicalBase.id
+}
+
+facade CreditInsurer.exchangeMDM on CreditInsurer{
+    with(technicalBase::TechnicalBaseDTO)
+    contracts::ContractRoleDTO
+    typeRole
+    startDate
+    endDate
+
+    legalPersonId:targetRole.technicalBase.id
+}
+
+facade Buyer.exchangeMDM on Buyer{
+    with(technicalBase::TechnicalBaseDTO)
+    contracts::ContractRoleDTO
+    typeRole
+    startDate
+    endDate
+    legalPersonId:targetRole.technicalBase.id
+}
+
+facade ReverseBuyer.exchangeMDM on ReverseBuyer{
+    with(technicalBase::TechnicalBaseDTO)
+    contracts::ContractRoleDTO
+    typeRole
+    startDate
+    endDate
+    legalPersonId:targetRole.technicalBase.id
+}
+
+# facade Prescriber.exchangeMDM on Prescriber{
+#     with(technicalBase::TechnicalBaseDTO)
+#     contracts::ContractRoleDTO
+#     typeRole
+# 
+#     legalPersonId:targetRole.technicalBase.id
+# }
+
+facade BusinessProvider.exchangeMDM on BusinessProvider{
+    with(technicalBase::TechnicalBaseDTO)
+    type
+    #contracts::ContractRoleDTO
+    typeRole
+    startDate
+    endDate
+    #originRole
+    legalPersonId:targetRole.technicalBase.id
+}
+
+facade Customer.exchangeMDM on Customer{
+    with(technicalBase::TechnicalBaseDTO)
+    commercialstatus:commercialStatus.code
+    contracts::ContractRoleDTO
+    typeRole
+    startDate
+    endDate
+    legalPersonId:targetRole.technicalBase.id
+}
+
+#------------------
+facade Generic.exchangeMDM on Generic{
+    with(technicalBase::TechnicalBaseDTO)
+    OriginRoleName
+    contracts::ContractRoleDTO
+    typeRole
+    startDate
+    endDate
+    legalPersonId:targetRole.technicalBase.id
+    
+}
+
+
+#===============================
+
+facade establishementDTO on Establishment{
+  idents{
+      
+  }
+  
+  parentCompanyID:parentCompany.technicalBase.id
+  establishmentType
+  activityInformations.activity.naf2008.nafNiv2.code
+
+}

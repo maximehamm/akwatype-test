@@ -1,0 +1,308 @@
+customResourceProperty ressource_ppt_cs { type: String }
+customRouteProperty doc_cs_conforme { type: Boolean }
+customRouteProperty doc_cs_service { type: String }
+
+service NewGolden {
+    isDraft: "Les routes sont déduites des dicussions avec CS, les datas sont simplement les types existant les plus proches"
+
+
+    expose todo {
+        route todo {
+            isDraft: "virtual route to gather orphan backend route"
+            request: TODO
+            response: TODO
+        }
+    }
+
+    expose contracts { 
+        ressource_ppt_cs: "contrats"
+        url: "/contracts" 
+        route list { method: GET, response: [ContractLightDTO], consume Sybase14.Dicobase.read, doc_cs_conforme: true, doc_cs_service: "Info_contrat" }
+#        route create { method: POST, request: Contract, consume NiuViu.Contract.createContract }
+    }
+    expose contract {
+        ressource_ppt_cs: "contrats"
+        parent: contracts
+        url: "/contractId:ID" 
+        route get { method: GET, response: Contract, consume Sybase14.Dicobase.read }
+        route modify { method: PUT, request: Contract, consume NiuViu.NiuViu.niuviu }
+        route delete { method: DELETE, url: "/id:ID", consume NiuViu.NiuViu.niuviu }
+
+        route outstandings {
+            method: GET, url: "/outstandings?currencyCode:String"
+            response: ContractWithOutstandingDTO
+            consume Sybase14.Dicobase.read
+            doc_cs_conforme: true, doc_cs_service: "Encours contrat"
+        }
+        route outstandingDueNotPaids {
+            method: GET, url: "DueNotPaids/outstandings?currencyCode:String"
+            response: OutstandingDueNotPaidDTO
+            consume Sybase14.Dicobase.read
+            doc_cs_conforme: true, doc_cs_service: "FENR"
+        }
+        route fundings {
+            method: GET, url: "/fundings?currencyCode:String"
+            response: FundingStatusDTO
+            consume Sybase14.Dicobase.read
+            doc_cs_conforme: true, doc_cs_service: "Infos_financement"
+        }
+        route remittanceOutstandings proxy NewGolden.remittances.outstandings { url: "/remittances/outstandings" } ## url ?
+        route invoices proxy NewGolden.invoices.list { url: "/invoices" }
+        route litigations proxy NewGolden.litigations.list { url: "/litigations" }
+        route contacts proxy NewGolden.contacts.list { url: "/contacts" }
+        route bankAccounts proxy NewGolden.factoringAccounts.list { url: "/bank-accounts" }
+    }
+    expose invoices {
+        ressource_ppt_cs: "créances"
+        url: "/invoices" 
+        route list { method: GET, response: [Invoice], consume Sybase14.Dicobase.read }
+        route create { method: POST, request: Invoice }
+    }
+    expose invoice {
+        ressource_ppt_cs: "créances"
+        parent: invoices
+        url: "/invoiceId:ID"
+        route get { method: GET, response: Invoice, consume Sybase14.Dicobase.read }
+        route modify { method: PUT, request: Invoice}
+        route delete { method: DELETE }
+
+
+        route attachments proxy NewGolden.documents.list { url: "/attachments", comment: "with invoiceId" }
+        route litigations proxy NewGolden.litigations.list { url: "/litigations", comment: "with invoiceId" }
+        route events proxy NewGolden.events.list { url: "/events", comment: "with invoiceId" }
+        route payments proxy NewGolden.payments.list { url: "/payments", comment: "with invoiceId" }
+        route dunnings proxy NewGolden.dunnings.list { url: "/dunnings", comment: "with invoiceId" }
+        route allocations proxy NewGolden.allocations.list { url: "/allocations", comment: "with invoiceId" }
+        route indicators { url: "/indicators" }
+    }
+    expose remittances {
+        ressource_ppt_cs: "créances"
+        url: "/remittances" 
+        route list { method: GET, response: [RemittanceLightDTO], consume Sybase14.Dicobase.read }
+        route create { method: POST, request: RemittanceDTO }
+        route get { method: GET, url: "/remittanceId:ID", response: RemittanceDTO, consume Sybase14.Dicobase.read }
+        route modify { method: PUT, url: "/remittanceId:ID", request: RemittanceDTO}
+        route delete { method: DELETE, url: "/remittanceId:ID" }
+
+        route outstandings { 
+            method: GET, url: "/outstandings?contractId:ID"
+            response: RemittanceStatusDTO
+            consume Sybase14.Dicobase.read
+            doc_cs_conforme: true, doc_cs_service: "Remise_en_cours"
+        }
+        
+    }
+    expose litigations {
+        ressource_ppt_cs: "litiges"
+        url: "/litigations" 
+        route list { method: GET, response: [Litigation] }
+        route create { method: POST, request: Litigation }
+        route get { method: GET, response: Litigation, url: "/id:ID" }
+        route modify { method: PUT, request: Litigation, url: "/id:ID" }
+        route delete { method: DELETE, url: "/id:ID" }
+    }
+    expose fundings {
+        ressource_ppt_cs: "financement disponible"
+        url: "/fundings"
+         
+        route list { method: GET, response: [Funding], url: "?query:String&status:String" }
+        route get { method: GET, response: Funding, url: "/id:ID" }
+        route modify { method: PUT, request: Funding, url: "/id:ID" }
+        route delete { method: DELETE, url: "/id:ID" }
+        route indicators  { method: GET, url: "/indicators" }
+    }
+    expose fundingRequests {
+        ressource_ppt_cs: "demande de fonds"
+        url: "/funding-requests" 
+
+        route list { method: GET, response: [FundingRequest] }
+        route create { method: POST, request: FundingRequest }
+        route get { method: GET, response: FundingRequest, url: "/id:ID" }
+        route modify { method: PUT, request: FundingRequest, url: "/id:ID" }
+        route delete { method: DELETE, url: "/id:ID" }
+    }
+    expose payments {
+        ressource_ppt_cs: "encaissements"
+        url: "/payments" 
+        route list { method: GET, response: [Payment] }
+        route get { method: GET, response: Payment, url: "/id:ID" }
+    }
+    expose events {
+        ressource_ppt_cs: "?"
+        url: "/events" 
+        route list { method: GET, response: [Event] }
+        route create { method: POST, request: Event }
+        route get { method: GET, response: Event, url: "/id:ID" }
+        route modify { method: PUT, request: Event, url: "/id:ID" }
+    }
+    expose dunnings { # recoveries ?
+        ressource_ppt_cs: "?"
+        url: "/dunnings" 
+        route list { method: GET, response: [Dunning] }
+        route create { method: POST, request: Dunning }
+        route get { method: GET, response: Dunning, url: "/id:ID" }
+        route modify { method: PUT, request: Dunning, url: "/id:ID" }
+        route delete { method: DELETE, url: "/id:ID" }
+    }
+    expose allocations {
+        ressource_ppt_cs: "lettrages"
+        url: "/allocations" 
+        route list { method: GET, response: [Allocation] }
+        route create { method: POST, request: Allocation }
+        route get { method: GET, response: Allocation, url: "/id:ID" }
+        route modify { method: PUT, request: Allocation, url: "/id:ID" }
+        route delete { method: DELETE, url: "/id:ID" }
+    }
+    expose customers {
+        ressource_ppt_cs: "tiers"
+        url: "/customers" 
+        route list { method: GET, response: [Customer], url: "?siren:SIREN&siret:SIRET" }
+        route create { method: POST, request: Customer }
+    }
+    expose customer {
+        ressource_ppt_cs: "tiers"
+        parent: customers
+        url: "/customerId:ID"
+        route get { method: GET, response: Customer }
+        route modify { method: PUT, request: Customer }
+        route delete { method: DELETE }
+
+        route indicators  { method: GET, url: "/indicators" }
+        route agreements proxy NewGolden.agreements.list { url: "/agreements" }
+        route establishments proxy NewGolden.establishments.list { url: "/establishments" }
+    }
+    expose agreements {
+        ressource_ppt_cs: "agrément"
+        url: "/agreements" 
+        route list { method: GET, response: [Agreement] }
+        route get { method: GET, response: Agreement, url: "/id:ID" }
+        route modify { method: PUT, request: Agreement, url: "/id:ID" }
+        route delete { method: DELETE, url: "/id:ID" }
+
+        route outstandings {
+            method: GET, url: "id:ID/outstandings?currencyCode:String"
+            response: AgreementWithOutstandingDTO
+            consume Sybase14.Dicobase.read
+            doc_cs_conforme: true, doc_cs_service: "Encours agrement"
+        }
+        route outstandingDueNotPaids {
+            method: GET, url: "/outstandings?currencyCode:String"
+            response: OutstandingDueNotPaidDTO
+            consume Sybase14.Dicobase.read
+            doc_cs_conforme: true, doc_cs_service: "FENR"
+        }
+    }
+    expose establishments {
+        ressource_ppt_cs: "?"
+        url: "/establishments" 
+        route list { method: GET, response: [Establishment] }
+        route create { method: POST, request: Establishment }
+        route get { method: GET, response: Establishment, url: "/id:ID" }
+        route modify { method: PUT, request: Establishment, url: "/id:ID" }
+        route delete { method: DELETE, url: "/id:ID" }
+    }
+
+    expose factoringAccounts {
+        ressource_ppt_cs: "comptes"
+        url: "/bank-accounts" 
+        route list { method: GET, response: [FactoringAccount] }
+        route get { method: GET, response: FactoringAccount, url: "/id:ID" }
+        route modify { method: PUT, request: FactoringAccount, url: "/id:ID" }
+    }
+    expose factoringAccount {
+        ressource_ppt_cs: "comptes"
+        parent: factoringAccounts
+        url: "/accountId:ID" 
+    }
+    expose factoringAccountEntries {
+        ressource_ppt_cs: "comptes"
+        parent: factoringAccount
+        url: "/operations" 
+        route list { method: GET, response: [AccountingEntry], url: "?month:Integer&until:Date&query:String" }
+        route get { method: GET, response: AccountingEntry, url: "/id:ID" }
+    }
+    expose contractMessages {
+        ressource_ppt_cs: "?"
+        parent: contract
+        url: "/messages" 
+        route list { method: GET, response: [Message], url: "?startDate:Date&endDate:Date&type:String" }
+        route get { method: GET, response: Message, url: "/id:ID" }
+    }
+    expose documents {
+        ressource_ppt_cs: "documents"
+        url: "/documents" 
+        route list { method: GET, response: [Document], url: "?invoiceId:ID" }
+        route get { method: GET, response: Document, url: "/id:ID" }
+    }
+    expose contacts {
+        ressource_ppt_cs: "contacts"
+        url: "/contacts" 
+        route list { method: GET, response: [Contact] }
+        route create { method: POST, request: Contact }
+        route get { method: GET, response: Contact, url: "/id:ID" }
+        route modify { method: PUT, request: Contact, url: "/id:ID" }
+        route delete { method: DELETE, url: "/id:ID" }
+    }
+    expose contractNotifications {
+        ressource_ppt_cs: "?"
+        parent: contract
+        url: "/notifications" 
+        route list { method: GET, response: [NotificationGOP] }
+        route get { method: GET, response: NotificationGOP, url: "/id:ID" }
+        route delete { method: DELETE, url: "/id:ID" }
+    }
+    expose buyers {
+        ressource_ppt_cs: "acheteurs"
+    }
+    expose balances {
+        ressource_ppt_cs: "balances"
+        ressource_ppt_cs: "balances âgées"
+    }
+    expose elligibility {
+        ressource_ppt_cs: "éligibilité"
+    }
+    expose outstanding {
+        ressource_ppt_cs: "encours"
+    }
+    expose imports {
+        ressource_ppt_cs: "imports"
+    }
+    expose settings {
+        ressource_ppt_cs: "paramètres"
+    }
+    expose attachments {
+        ressource_ppt_cs: "pièces jointes"
+    }
+    expose simulation {
+        ressource_ppt_cs: "simulation"
+    }
+    expose subscription {
+        ressource_ppt_cs: "souscription"
+    }
+    expose prices {
+        ressource_ppt_cs: "tarifications"
+    }
+    expose thirdParties {
+        ressource_ppt_cs: "tiers"
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

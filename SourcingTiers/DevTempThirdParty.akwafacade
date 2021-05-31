@@ -1,0 +1,75 @@
+facade BNPPF_TempLegalPerson on LegalPerson{
+    id:technicalBase.id
+    lifeCycleStatus{
+        date
+        lifeCycleStatus.code
+    }
+    with identificationInformation{
+         identification{
+             corporateName
+             legalFormCode:legalForm.code
+         }
+         identifiers{
+             identifier
+             base.code
+         }
+         immatriculation{
+             incorporationDate
+         }
+    }
+}
+
+facade EBX_TempLegalPerson on LegalPerson{
+    id:technicalBase.id
+    lifeCycleStatus{
+        lifeCycleStatus.code
+        date
+    }
+    with (identificationInformation){
+        with (identification){        
+            corporateName
+            legalFormCode:legalForm.code
+        }
+        with immatriculation{
+             incorporationDate
+        }
+        idents:identifiers{
+             identifier 
+             base.code
+         }
+    }
+}
+
+facade EBX_ExistLegalPerson on LegalPerson{
+    additionalFields {
+        success:Boolean
+        label:String
+    }
+    success
+    idMdm:technicalBase.id
+    lifeCycleStatusCode:lifeCycleStatus.lifeCycleStatus.code
+}
+
+facade Sourcing_TempLegalPerson on LegalPerson{
+    with (identificationInformation){
+        with (identification){        
+            legalPersonName:corporateName
+            legalFormCode:legalForm.code
+        }
+        with immatriculation{
+             firstRegistrationDate:incorporationDate
+        }
+        idents:identifiers{
+             identifier
+             base.code
+         }
+    }
+}
+
+facade StandardMessageHeader {
+    additionalFields {
+       producer:String
+       destination:String
+       timeStamp:DateTime
+    }
+}

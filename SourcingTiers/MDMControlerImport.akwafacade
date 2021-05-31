@@ -1,0 +1,41 @@
+facade MdmIecLegalPerson on LegalPerson{
+    with identificationInformation::MdmIecIdentification
+    with(activityInformations){
+        with(commercialSegmentation){
+           segmentationBDDFCode:segmentationBDDF.code
+        }
+    }
+    with riskInformation::MdmIecRiskInformation
+    
+} 
+
+facade MdmIecIdentification on LPIdentificationInformations{
+    additionalFields {
+        siren:String
+    }
+    dispatch (identifiers.base.code("72":siren).identifier) 
+} 
+
+facade MdmIecRiskInformation on RiskInformation{
+    additionalFields {
+        externalRating:ExternalRating{basedOn:lpExternalRatings}
+    }
+    with lpCounterPartyRating{
+		with specificConterpartyRating{
+			with specificConterpartyRating{
+				counterpartyRatingDate:startDate
+				with rating{
+					counterpartyRatingCode:code
+				}
+			}
+		}
+		with(igr){
+			igrDate:startDate
+			igrRatingCode:rating.code
+		}        
+	}
+	with externalRating{
+        externalRatingCode:rating.code
+        externalRatingDate:date
+    }
+}

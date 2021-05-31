@@ -1,0 +1,105 @@
+
+customContainerProperty port { type:Integer }
+
+customServiceProperty dexUrl { type: Url }
+customServiceProperty indus_normalisation_postgresql { type: String, values: ["non", "encours", "oui"] }
+customServiceProperty indus_normalisation_weblogic { type: String, values: ["non", "encours", "oui"] }
+customServiceProperty indus_monitoring_apm { type: String, values: ["non", "encours", "oui"] }
+customServiceProperty indus_monitoring_foglight { type: String, values: ["non", "encours", "oui"] }
+customServiceProperty indus_supervision_weblogic { type: String, values: ["non", "encours", "oui"] }
+customServiceProperty indus_supervision_postgresql { type: String, values: ["non", "encours", "oui"] }
+customServiceProperty zoneReseau { type: String, values: ["front", "back", "data"] }
+
+customServiceProperty postgresql_version { type: String, values: ["9.4", "9.6"] }
+#
+#containerType SI_Infra          { containers:[technology] }
+#containerType technology        { containers:[instance] }
+#containerType instance          { containers:[container, domainWebLogic, service] } 
+#containerType domainWebLogic    { containers:[jvmDomainWebLogic] } 
+#containerType jvmDomainWebLogic { containers:[container, service] } 
+#
+#
+#container InfraPerspective { type:SI_Infra, containers:[WebLogic, Data], isRoot: true }
+#
+#
+## WebLogic
+#
+#container WebLogic { type:technology, containers:[WebLogicRueil] }
+#container Data { type:technology, containers:[PostgreSQL, Redis, Sybase] }
+#
+#
+#
+#container WebLogicRueil { type:instance, containers:[
+#    WebAppDWL, WebAppInterneDWL, B2BInterneDWL, One2FinDWL,
+#    EcosystemDWL, BatchDWL, InterneDWL, ExterneDWL
+#] }
+#
+#
+## Domaines WebLogic
+#
+#container WebAppDWL { type:domainWebLogic, containers:[WebAppAdminJVMDWL, WebAppJVMDWL] }
+#container WebAppInterneDWL { type:domainWebLogic, containers:[WebAppAdminJVMInterneDWL, WebAppJVMInterneDWL] }
+#container B2BInterneDWL { type:domainWebLogic, containers:[] }
+#container One2FinDWL { type:domainWebLogic, containers:[
+#    AdminServerO2FJVMDWL, BankO2FJVMDWL, ContractO2FJVMDWL, ContractAppO2FJVMDWL, CoreO2FJVMDWL, CoreAppO2FJVMDWL, DesignO2FJVMDWL, EmailO2FJVMDWL,
+#    NiuviuO2FJVMDWL, OrderO2FJVMDWL, OrganizationAppO2FJVMDWL, OrganizationsO2FJVMDWL, ParametersO2FJVMDWL, ProfileO2FJVMDWL, ProfileAppO2FJVMDWL,
+#    ReportO2FJVMDWL] }
+#container EcosystemDWL { type:domainWebLogic, containers:[] }
+#container BatchDWL { type:domainWebLogic, containers:[] }
+#container InterneDWL { type:domainWebLogic, containers:[FrontJVMInterneDWL, BackJVMInterneDWL] }
+#container ExterneDWL { type:domainWebLogic, containers:[] }
+#
+#
+## JVM de domaines WebLogic
+#
+#container WebAppAdminJVMDWL { type:jvmDomainWebLogic, containers:[] }
+#container WebAppJVMDWL { type:jvmDomainWebLogic, containers:[] }
+#
+#container WebAppAdminJVMInterneDWL { type:jvmDomainWebLogic, containers:[] }
+#container WebAppJVMInterneDWL { type:jvmDomainWebLogic, containers:[] }
+#
+#container AdminServerO2FJVMDWL { type:jvmDomainWebLogic, port:7061, containers:[] }
+#container BankO2FJVMDWL { type:jvmDomainWebLogic, port:7050, containers:[O2FFBank, O2FBBank] }
+#container ContractO2FJVMDWL { type:jvmDomainWebLogic, port:7053, containers:[O2FSContract] }
+#container ContractAppO2FJVMDWL { type:jvmDomainWebLogic, port:7054, containers:[O2FFContract, O2FBContract] }
+#container CoreO2FJVMDWL { type:jvmDomainWebLogic, port:7059, containers:[O2FSCore] }
+#container CoreAppO2FJVMDWL { type:jvmDomainWebLogic, port:7060, containers:[O2FFCore] }
+#container DesignO2FJVMDWL { type:jvmDomainWebLogic, port:7048, containers:[O2FSDesign] }
+#container EmailO2FJVMDWL { type:jvmDomainWebLogic, port:7047, containers:[O2FSMail] }
+#container NiuviuO2FJVMDWL { type:jvmDomainWebLogic, port:7046, containers:[O2FSNiuViu] }
+#container OrderO2FJVMDWL { type:jvmDomainWebLogic, port:7052, containers:[O2FFOrder, O2FBOrder] }
+#container OrganizationAppO2FJVMDWL { type:jvmDomainWebLogic, port:7056, containers:[O2FFOrganization, O2FBOrganization] }
+#container OrganizationsO2FJVMDWL { type:jvmDomainWebLogic, port:7055, containers:[O2FSOrganization] }
+#container ParametersO2FJVMDWL { type:jvmDomainWebLogic, port:7045, containers:[O2FSParameters] }
+#container ProfileO2FJVMDWL { type:jvmDomainWebLogic, port:7057, containers:[O2FSProfile] }
+#container ProfileAppO2FJVMDWL { type:jvmDomainWebLogic, port:7058, containers:[O2FFProfile, O2FBProfile] }
+#container ReportO2FJVMDWL { type:jvmDomainWebLogic, port:7051, containers:[O2FFReport, O2FBReport] }
+#
+#container FrontJVMInterneDWL { type:jvmDomainWebLogic, port:7125, containers:[FactureFournisseurFront, ICPCFront, KYCFront] }
+#container BackJVMInterneDWL { type:jvmDomainWebLogic, port:7125, containers:[ICPCBack, KYCBack, JuridBack] }
+#
+#
+## Container de services
+#
+#
+#
+#
+#
+#container Sybase { type:instance, containers:[Sybase14] }
+#
+#container Redis { type:instance, containers:[O2FDRedis] }
+#
+##container PostgreSQL96 { type:instance, containers:[O2FDContract, O2FDCore, O2FDCoreDesign, O2FDCoreParams, O2FDEmail, O2FDFSCP1, O2FDOrganization, O2FDProfile] }
+##container PostgreSQL94 { type:instance, containers:[RefogDatabase, KYCDatabase] }
+#
+#container PostgreSQL { type: instance, containers: [PostgreSQL94, PostgreSQL96] }
+#
+#
+#
+#container ImpulsionDWL { type:domainWebLogic, containers:[] }
+
+ 
+
+
+
+

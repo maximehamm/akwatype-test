@@ -1,0 +1,400 @@
+
+type testContact{
+    contact:[MeansOfContact]
+}
+
+#--------------------------------------- Contacts
+abstract MeansOfContact{
+     properties {
+       stopx: true
+       label:"Moyen de contact"
+    }
+    used:Boolean{example: true}
+    meanOfContactType:MeanOfContactType{label: "Type de moyen de contact"}
+    meanOfContactRelationtype:MeanOfContactRelationtype{label: "Type de relation"}
+    #legalPerson:[LegalPerson] {
+    #    comment: """Est ce que ça ne devrait pas être un thirdparty
+    #    pour pouvoir remonter aussi à une Natural Person"""
+    #}
+}
+
+type EMail extends MeansOfContact{
+    technicalBase: TechnicalBase
+    emailAddress:String{@GDPR?, label: "Adresse mail"}
+
+    typeMarker{
+		meanOfContactType.code:"2"
+	}
+
+}
+
+type Phone extends MeansOfContact{
+    technicalBase: TechnicalBase
+    phoneNumber:String {
+        label: "Numéro de téléphone",@GDPR?
+        example:"0102030405"
+        }
+    extention:String
+    typeMarker{
+		meanOfContactType.code:"3"
+	}
+}
+
+type webSite extends MeansOfContact{
+    technicalBase: TechnicalBase
+    url: Url{
+        example:"www.acme.com"
+    }
+    typeMarker{
+		meanOfContactType.code:"4"
+	}
+}
+
+type Location{
+    technicalBase: TechnicalBase
+    longitude:Decimal{example:4.835659}
+    latitude:Decimal{example: 45.764043}
+}
+
+type BNPPFactor{
+    technicalBase: TechnicalBase
+    legalePerson:LegalPerson
+    roles: [ThirdPartyRole]
+}
+
+#--------------------------------------- Roles
+
+abstract ThirdPartyRole{
+    properties {
+       stopx: true
+    }
+    originRole: ThirdParty
+    typeRole:Integer #Integer #ThirdPartyTypeRole
+    contracts:[Contract]
+    leads:[Lead]
+    targetRole: LegalPerson
+    roleCategory : ThirdPartyRoleCategory
+    startDate:Date {example:"2016-03-26"}
+    endDate:Date {example:"2020-05-03"}
+    arbitration:ThirdPartyArbitration
+    terminationReason:ThirdPartyRoleTerminationReason
+}
+
+type Contract{
+    properties {
+       stopx: true
+    }
+    technicalBase: TechnicalBase
+    number:String{ example:["123456"]}
+    signingDate: Date
+    expiryDate: Date
+    metier:BNPPFMetier
+    market:BNPPFMarket
+    bnppfSite:BNPPFSite
+    contractors:[ThirdPartyRole]
+
+
+    # GOP work in progress
+    currency: Currency
+    accounts:[FactoringAccount]
+    agreements:[Agreement]
+    # acheteurs:[Buyer] # c'est un contractor
+    oustandings:[Outstanding] # Contract Outstanding ?
+    remittances:[Remittance]
+    fundings:[Funding]
+    conditions:[ContractualCondition]
+    onlineReports:[OnlineReport]
+    notifications:[NotificationGOP]
+    message:[MessageGOP]
+    computed: ContractComputed
+
+    properties {
+       label: "Contrat"
+    }
+}
+
+type ContractComputed {
+    @COMPUTED
+    properties {
+       basedOn: Contract
+    }
+
+    customer: Customer {
+        basedOn: contractors
+    }
+    
+    remittanceStatus: RemittanceOutstanding {
+        basedOn: remittances
+    }
+}
+
+type ThirdPartyRoles{
+    roles: ThirdPartyRole
+}
+
+#------------------------------------
+
+type Contact extends ThirdPartyRole{
+    @ROLE_NP
+
+    technicalBase: TechnicalBase
+    #naturalPerson: NaturalPerson
+    businessFunction: String{
+        comment: "dans le futur voir passer en ref ?"
+        example:"Responsable achats"
+    }
+    status:ContactStatus
+    mainContact: Boolean
+    targetEstablishements:[Establishment]
+    #mail:String
+    #telephone:String
+    typeRole { example:[4]  }
+    typeMarker{
+		typeRole:4
+	}
+}
+
+type LegalRepresentative extends ThirdPartyRole{
+    @ROLE_NP
+    technicalBase: TechnicalBase
+    typeRole { example:[8] }
+    typeMarker{
+		typeRole:8
+	}
+}
+
+type BeneficialOwner extends ThirdPartyRole{
+    @ROLE_NP 
+    technicalBase: TechnicalBase
+    percentageHolding: Decimal
+    typeRole { example:[16] }
+    typeMarker{
+		typeRole:16
+	}
+}
+
+
+type EffectiveSignatory extends ThirdPartyRole{
+    @ROLE_NP 
+    technicalBase: TechnicalBase
+    typeRole { example:[19] }
+    typeMarker{
+		typeRole:19
+	}
+}
+
+type ExecutiveOfficer extends ThirdPartyRole{
+    @ROLE_NP
+    properties {
+       comment: """
+            Cadre dirigeant inclus( Mandataire social, représentant légal) ce sont
+            les principaux dirigeants"""
+    }
+    typeRole { example:[17] }
+    typeMarker{
+		typeRole:17
+	}
+
+    technicalBase: TechnicalBase
+}
+
+type AgentOfInsolvencyProceeding extends ThirdPartyRole{
+    @ROLE_NP
+    properties {
+       comment: "Mandataire social"
+    }
+    technicalBase: TechnicalBase
+    typeRole { example:[11] }
+    typeMarker{
+		typeRole:11
+	}
+}
+
+type AuthorizedSignatory extends ThirdPartyRole{
+    @ROLE_NP
+    technicalBase: TechnicalBase
+    typeRole { example:[10] }
+    typeMarker{
+		typeRole:10
+	}
+}
+
+type Administrator extends ThirdPartyRole{
+     @ROLE_NP
+    technicalBase: TechnicalBase
+    typeRole { example:[12] }
+    typeMarker{
+		typeRole:12
+	}
+}
+
+#---------------------------------------
+
+type Guarantor extends ThirdPartyRole{
+    @ROLE_NP_PM
+    technicalBase: TechnicalBase
+    typeRole { example:[7] }
+    guarantorType:GuarantorType
+    typeMarker{
+		typeRole:7
+	}
+}
+
+type GuarantorType{
+    properties {
+       comment: "Partage en risque, maison mère"
+    }
+    code:String
+    label:String
+}
+
+type Shareholder extends ThirdPartyRole{
+     @ROLE_NP_PM
+    technicalBase: TechnicalBase
+    percentageHolding: Decimal
+    typeRole { example:[9] }
+    typeMarker{
+		typeRole:9
+	}
+}
+
+#--------------------------------------
+
+type Agent extends ThirdPartyRole{
+    @ROLE_PM
+    technicalBase: TechnicalBase
+    typeRole { example:[1] }
+    typeMarker{
+		typeRole:1
+	}
+}
+
+type Participant extends ThirdPartyRole{
+    @ROLE_PM
+    technicalBase: TechnicalBase
+    typeRole { example:[18] }
+    typeMarker{
+		typeRole:18
+	}
+}
+
+
+type Buyer extends ThirdPartyRole{
+    properties {
+       label: "Ceci est un acheteur"
+    }
+   @ROLE_PM
+    technicalBase: TechnicalBase
+    payments:[Payment]
+    remisesFacture:Remittance
+    encours:[Outstanding]
+    typeRole { example:[2] }
+    typeMarker{
+		typeRole:2
+	}
+}
+
+type CoFactor extends ThirdPartyRole{
+    @ROLE_PM
+    technicalBase: TechnicalBase
+    typeRole { example:[3] }
+    typeMarker{
+		typeRole:3
+	}
+}
+
+type CreditInsurer extends ThirdPartyRole{
+    @ROLE_PM
+    technicalBase: TechnicalBase
+    typeRole { example:[5] }
+    typeMarker{
+		typeRole:5
+	}
+}
+
+type Customer extends ThirdPartyRole{
+    @ROLE_PM 
+    technicalBase: TechnicalBase
+    commercialStatus:SalesStatus
+    statusDate:Date
+    #compliance:Compliance
+    typeRole { example:[6] }
+    typeMarker{
+        typeRole:6
+    }  
+}
+
+type ReverseBuyer extends ThirdPartyRole{
+    @ROLE_PM
+    technicalBase: TechnicalBase
+    commercialStatus:SalesStatus
+    statusDate:Date
+    #compliance:Compliance
+    typeRole { example:[13] }
+    typeMarker{
+        typeRole:13
+    }
+}
+
+type ReverseProvider extends ThirdPartyRole{
+    @ROLE_PM
+    technicalBase: TechnicalBase
+    commercialStatus:SalesStatus
+    statusDate:Date
+    #compliance:Compliance
+    typeRole { example:[20] }
+    typeMarker{
+        typeRole:20
+    }  
+}
+
+type BusinessProvider  extends ThirdPartyRole{
+    @ROLE_PM
+    technicalBase: TechnicalBase 
+    type:BusinessProviderType
+    groupBNPPOriginRole:GroupEntity
+    canal:BusinessProviderCanal
+    typeRole { example:[14] }
+    typeMarker{
+		typeRole:14
+	}
+}
+
+type Lead{
+    site:BNPPFSite
+}
+
+#type Prescriber  extends ThirdPartyRole{
+#    @ROLE_PM
+#    Suppressed, role 14, field BusinessProviderCanal
+#    typeRole { example:[15] }
+#    
+#}
+
+#----------------------------------------
+
+type Generic extends ThirdPartyRole{
+    @ROLE_NP @ROLE_PM
+    technicalBase:TechnicalBase
+    OriginRoleName:String  
+    typeRole{ example:[1000] }
+    typeMarker{
+		typeRole:1000
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

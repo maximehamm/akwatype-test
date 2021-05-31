@@ -1,0 +1,269 @@
+#------------------------------------------------------------- Front
+
+service O2FFCore{
+    war: "one2fin-back-core-front.war"
+    expose Core{
+        route core{
+            consume O2FBCore.Core.core
+            # consume O2FFProfile.Profile.profile
+            # consume O2FBProfile.Profile.profile
+        }
+    }
+}
+
+service O2FFProfile{
+    war: "one2fin-back-profile-front.war"
+    expose Profile{
+        route profile{
+            consume O2FBProfile.Profile.profile
+        }
+    }
+}
+
+service O2FFBank{
+    war: "one2fin-back-bankoperation-front.war"
+    expose Bank{
+        route bank{
+            consume O2FBBank.Bank.bank
+        }
+    }
+}
+
+service O2FFOrganization{
+    war: "one2fin-back-organization-front.war"
+    expose Organization{
+        route organization{
+            consume O2FBOrganization.Organization.organization
+        }
+    }
+}
+
+service O2FFContract{
+    war: "one2fin-back-contract-front.war"
+    expose Contract{
+        route contract{
+            consume O2FBContract.Contract.contract
+        }
+    }
+}
+
+service O2FFReport{
+    war: "one2fin-back-report-app.war"
+    expose Report{
+        route report{
+            consume O2FBReport.Report.report
+        }
+    }
+}
+
+service O2FFOrder{
+    war: "one2fin-back-orderandfund-front.war"
+    expose Order{
+        route order{
+            consume O2FBOrder.Order.order
+        }
+    }
+}
+
+#------------------------------------------------------------- Back
+
+service O2FBCore{
+    war: "one2fin-back-core-app.war"
+    expose Core{
+        route core{
+            consume O2FSCore.Core.core
+            consume O2FSParameters.Parameters.parameters
+            consume O2FBContract.Contract.contract
+            consume O2FSDesign.Design.design
+            consume O2FBProfile.Profile.profile
+            consume O2FBOrganization.Organization.organization
+            consume O2FSMail.Mail.mail
+            consume O2FDRedis.O2FDRedis.read_write
+        }
+    }
+}
+
+service O2FBProfile{
+    war:"one2fin-back-profile-app.war"
+    expose Profile{
+        route profile {
+            consume O2FSProfile.Profile.profile
+            consume O2FBCore.Core.core
+            consume O2FSParameters.Parameters.parameters
+        }
+    }
+}
+
+service O2FBBank{
+    war: "one2fin-back-bankoperation-app.war"
+    expose Bank{
+        route bank {
+            consume O2FBCore.Core.core
+            consume O2FDRedis.O2FDRedis.read_write
+            consume O2FSPDF.PDF.pdf
+        }
+    }
+}
+
+service O2FBOrganization{
+    war: "one2fin-back-organization-app.war"
+    expose Organization{
+        route organization {
+            consume O2FSOrganization.Organization.organization
+            consume O2FSParameters.Parameters.parameters
+            consume O2FSMail.Mail.mail
+            consume O2FSNiuViu.NiuViu.niuviu
+            consume O2FDRedis.O2FDRedis.read_write
+        }
+    }
+}
+
+service O2FBContract{
+    war: "one2fin-back-contract-app.war"
+    expose Contract{
+        route contract {
+            consume O2FSContract.Contract.contract
+            consume O2FSParameters.Parameters.parameters
+            consume O2FBProfile.Profile.profile
+            consume O2FSMail.Mail.mail
+            consume O2FDRedis.O2FDRedis.read_write
+            consume O2FSPDF.PDF.pdf
+            consume GiBanking.GiBanking.gibanking
+        }
+    }
+}
+
+service O2FBReport{
+    war: "one2fin-back-report-app.war"
+    expose Report{
+        route report {
+            consume GiBanking.GiBanking.gibanking
+            consume O2FBContract.Contract.contract
+            consume O2FBCore.Core.core
+            consume O2FBOrganization.Organization.organization
+            consume O2FSNiuViu.NiuViu.niuviu
+            consume O2FDRedis.O2FDRedis.read_write
+        }
+    }
+}
+
+service O2FBOrder{
+    war: "one2fin-back-orderandfund-app.war"
+    expose Order{
+        route order {
+            consume O2FBContract.Contract.contract
+            consume O2FBCore.Core.core
+            consume O2FSNiuViu.NiuViu.niuviu
+            consume O2FDRedis.O2FDRedis.read_write
+        }
+    }
+}
+
+#------------------------------------------------------------- Service
+
+service O2FSContract{
+    war: "one2fin-back-contract-service.war"
+    expose Contract{
+        route contract {
+            consume PostgreSQL96.O2FDContract.read_write
+            consume O2FSParameters.Parameters.parameters
+        }
+    }
+}
+
+service O2FSParameters{
+    war: "one2fin-back-parameters-service.war"
+    expose Parameters {
+        route parameters {
+            consume PostgreSQL96.O2FDCoreParams.read_write
+        }
+    }
+}
+
+service O2FSCore{
+    war: "one2fin-back-core-service.war"
+    expose Core{
+        route core {
+            consume O2FBCore.Core.core
+            consume PostgreSQL96.O2FDCore.read_write
+        }
+    }
+}
+
+service O2FSOrganization{
+    war: "one2fin-back-organizations-service.war"
+    expose Organization{
+        route organization {
+            consume PostgreSQL96.O2FDOrganization.read_write
+            consume O2FSParameters.Parameters.parameters
+        }
+    }
+}
+
+service O2FSProfile{
+    war: "one2fin-back-profile-service.war"
+    expose Profile{
+        route profile {
+            consume PostgreSQL96.O2FDProfile.read_write
+            consume O2FSParameters.Parameters.parameters
+        }
+    }
+}
+
+service O2FSPDF{
+    war: "generatepdf.war"
+    expose PDF{
+        route pdf
+    }
+}
+
+service O2FSNiuViu{
+    war: "one2fin-back-niuviu-service.war"
+    expose NiuViu{
+        route niuviu {
+            consume NiuViu.NiuViu.niuviu
+            consume O2FSParameters.Parameters.parameters
+        }
+    }
+}
+
+service O2FSMail{
+    war: "one2fin-back-email-service.war"
+    expose Mail{
+        route mail {
+            consume O2FSNiuViu.NiuViu.niuviu
+        }
+    }
+}
+
+service O2FSDesign{
+    war: "one2fin-back-design-service.war"
+    expose Design{
+        route design {
+            consume PostgreSQL96.O2FDCoreDesign.read_write
+        }
+    }
+}
+
+
+
+
+#------------------------------------------------------------- Database
+
+service O2FDRedis {
+    expose O2FDRedis {
+        route read_write
+    }
+}
+
+
+
+#------------------------------------------------------------- Partners
+
+
+service GiBanking {
+    expose GiBanking {
+        route gibanking
+    }
+}
+ 

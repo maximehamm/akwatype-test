@@ -1,0 +1,249 @@
+
+type KYC{
+    properties { 
+       stopx: true
+       
+    }
+    initialRelationshipDate: Date{
+        glossary: ""
+    }
+    technicalBase: TechnicalBase 
+    RiskValidationDate: Date
+    lastRevisionDate: Date
+    nextRecertificationDate: Date
+    consistency: Boolean
+    consistencyControlUser: BNPPCollaborator
+    kycFinalDecision: KYCFinalDecision
+    validatedFinalRiskLevel: KYCfinalRiskLevel
+    kycFileStatus: KYCFileStatus
+    triggerProcessType: TriggerProcessType
+    triggerEvent: TriggerEvent
+    bnppOperationalEntity: BnppOperationalEntity
+    operationalEntityCountry: Country
+    assignment: [KYCAssignment]
+    kycRisk: KYCRisk
+    relationshipManagerAssessment: RelationshipManagerAssessment
+    n1Control: N1Control
+    distributionChannel: DistributionChannel
+    pic: PIC
+    mscq: MSCQ
+    transactionalProfile: TransactionalProfile
+    kycDecisionCommitee: KYCDecisionCommitee
+    workflowStatus: WorkFlowStatus
+    mail: Mail
+    site: BNPPFSite       
+    sharingResult:Boolean
+}  
+
+scalar Mail as String
+
+type KYCDocument{
+    technicalBase: TechnicalBase
+    name: String
+    dmsId: String
+    uploadDate: Date
+    uploadUser: BNPPCollaborator
+}
+
+type Compliance{
+    technicalBase: TechnicalBase
+    kyc: [KYC]
+    pep: PEPStatus
+    conformityAlerte:Boolean
+    unfavorableInformations: UnfavorableInformations
+    ##----------------------- à valider
+    KMV:Taux {@RMPM,RMPMSourcing:"DEXTER"}
+    complianceRating:ComplianceRating 
+}
+
+type KYCAssignment{
+    technicalBase: TechnicalBase
+    role: BNPPCollaboratorRole
+    collaborator: BNPPCollaborator
+    date: Date
+    proposedConditions: String
+    comments: String
+    opinion: OpinionDecisionType
+    riskLevel: RiskLevel
+    cacRequested: Boolean
+    complianceIntervention: Boolean
+}
+
+type KYCDecisionCommitee{
+    technicalBase: TechnicalBase
+    date: Date 
+    conditions: String
+    cacMinutes: String
+    decision: OpinionDecisionType
+    riskLevel: RiskLevel
+    committeeMembers: [KYCCommitteeMember]
+}
+
+type KYCCommitteeMember{
+    technicalBase: TechnicalBase
+    collaborator: BNPPCollaborator
+    position: String
+    role: KYCCommitteeMemberRoleType
+}
+
+
+
+type KYCRisk{
+    technicalBase: TechnicalBase
+    riskScoring: Integer
+    riskLevel: RiskLevel
+    riskFactorScoring: [KYCRiskFactorScoring]
+}
+
+type KYCRiskFactorScoring{
+    technicalBase: TechnicalBase
+    riskFactor: RiskFactor
+    scoring: Integer
+}
+
+
+
+type PIC{
+    technicalBase: TechnicalBase
+    picDate: Date
+    picAnswers: [PICAnswer]
+}
+
+type PICAnswer{
+    technicalBase: TechnicalBase
+    question: PICQuestion
+    answer: Boolean
+}
+
+type PICQuestion{
+    technicalBase: TechnicalBase
+    Code: String
+    label: String
+}
+
+type MSCQ{
+    technicalBase: TechnicalBase
+    mscqPercentageExposure: BigDecimal
+    expositionAnalisys: String
+    mscqNeeded: Boolean
+    officesOrInvestmentInMSC: [MSCQEvaluation]
+    activitiesInvolvingMSC: [MSCQEvaluation]
+    mscqPreliminaryEvaluation: MSCQPreliminaryEvaluation
+}
+
+type MSCQEvaluation{
+    technicalBase: TechnicalBase
+    country: Country
+    mscqDocument: KYCDocument
+    signatureDate: Date
+    answers: [MSCQAnswer]
+}
+
+type MSCQPreliminaryEvaluation{
+        technicalBase: TechnicalBase
+    answers: [MSCQAnswer]
+}
+
+type MSCQAnswer{
+        technicalBase: TechnicalBase
+    question: MSCQQuestion
+    answer: Boolean
+    details: String
+}
+
+type MSCQQuestion{
+    technicalBase: TechnicalBase
+    typeMSCQQuestion: TypeMSCQQuestion
+    code: String
+    label: String
+}
+
+
+type UnfavorableInformation{
+     properties {
+       stopx: true
+    }
+    technicalBase: TechnicalBase
+    informationNatures: InformationNature
+    subjects: Subject
+    summary: String
+    materiality: Boolean
+    materialityComment: String
+    mitigatingFactors: [MitigatingFactorCheck]
+    riskLevelModificationNeeded: Boolean
+    associatedPersonn: ThirdParty
+}
+
+
+type MitigatingFactorCheck{
+    technicalBase: TechnicalBase
+    mitigatingFactorType: MitigatingFactorType
+    status: Boolean
+    comments: String
+}
+
+type MitigatingFactorType{
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+}
+
+type TransactionalProfile{
+        technicalBase: TechnicalBase
+    natureAndPurposeRelationship: String
+    transactionalProfileAnswers: [TransactionalProfileAnswer]
+    consistencyAnalysis: String
+    synthesis: String
+    riskLevelShouldBeModified: Boolean
+}
+
+type TransactionalProfileAnswer{
+    technicalBase: TechnicalBase
+    transactionalProfileQuestionType: TransactionalProfileQuestionType
+    previouslyExpected: String
+    actual: String
+    expected: String
+}
+
+
+
+type N1Control{
+    technicalBase: TechnicalBase
+    n1Validation: Boolean
+    n1Controls: [N1ControlCheck]
+    dateControl: Date
+    controller: BNPPCollaborator
+}
+
+type N1ControlCheck{
+    technicalBase: TechnicalBase
+    control: N1ControlType
+    controlStatus: N1ControlStatus
+    comment: String
+}
+
+
+
+type RelationshipManagerAssessment{
+        technicalBase: TechnicalBase
+    proposedRiskLevel: RiskLevel
+    assessments: [RMAssessmentCheck]
+}
+
+type RMAssessmentCheck{
+    technicalBase: TechnicalBase
+    assessment: RMAssessmentCheckType
+    status: Boolean
+    details: String
+}
+
+
+
+
+
+
+
+
+
+
+

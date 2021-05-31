@@ -1,0 +1,46 @@
+service IAM {
+    label: "CA IAM"
+
+    expose Users {
+        route getUsers {
+            method:GET
+            url: "/users"
+        }
+    } 
+    consume ActiveDirectory.users {
+        route getInternalUsers
+    }
+}
+
+service SSO {
+    label: "CA SSO"
+
+    expose authentification {
+        route authenticate
+        route checkToken
+    }
+    consume IAM.Users {
+        route getUsers
+    }
+}
+
+service SpringSSO {
+    war: "spring-oauth-sso-server.war"
+
+    expose authentification {
+        route authenticate
+        route checkToken
+    }
+    consume IAM.Users {
+        route getUsers
+    }
+    consume ActiveDirectory.users {
+        route getInternalUsers
+    }
+}
+
+service ActiveDirectory {
+    expose users {
+        route getInternalUsers
+    }
+}

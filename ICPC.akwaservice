@@ -1,0 +1,99 @@
+#container ICPC_Root             { containers:[ICPCFrontOffice, ICPCBackOffice, PostgreSQL], isRoot: true }
+
+service ICPCFront {
+    dexUrl: "Dossier_d'Exploitation_ICPC"
+    indus_normalisation_weblogic: "non"
+    indus_monitoring_apm: "oui"
+    indus_supervision_weblogic: "oui"
+
+    expose ICPC {
+        isDraft: ""
+        route ICPC {
+            consume ICPCBack.ICPC.icpc
+        }
+    }
+}
+
+service ICPCBack {
+    dexUrl: "Dossier_d'Exploitation_ICPC"
+    indus_normalisation_weblogic: "oui"
+    indus_normalisation_postgresql: "oui"
+    indus_monitoring_apm: "oui"
+    indus_monitoring_foglight: "oui"
+    indus_supervision_weblogic: "oui"
+    indus_supervision_postgresql: "non"
+    
+
+    expose ICPC {
+        isDraft: ""
+        route icpc {
+            consume RefogBack.Refog.refog
+            consume JuridBack.Jurid.jurid
+        }
+    }
+
+    consume PostgreSQL94.ICPC {
+        route read_write
+    }
+}
+
+service RefogBack {
+    dexUrl: "Dossier_d'Exploitation_ICPC"
+    indus_normalisation_weblogic: "oui"
+    indus_normalisation_postgresql: "oui"
+    indus_monitoring_apm: "oui"
+    indus_monitoring_foglight: "oui"
+    indus_supervision_weblogic: "oui"
+    indus_supervision_postgresql: "non"
+
+    expose Refog {
+        route refog {
+            consume PostgreSQL94.Refog.refog_read
+        }
+    }
+}
+
+service RefogBatch {
+    dexUrl: "Dossier_d'Exploitation_ICPC"
+    indus_normalisation_weblogic: "oui"
+    indus_normalisation_postgresql: "oui"
+    indus_monitoring_apm: "oui"
+    indus_monitoring_foglight: "oui"
+    indus_supervision_weblogic: "oui"
+    indus_supervision_postgresql: "non"
+
+    expose Refog {
+        route refog {
+            consume PostgreSQL94.Refog.batch_read_write
+            consume PostgreSQL94.Refog.refog_read_write
+            consume GoogleMap.Map.map
+            consume PostgreSQL94.Refog.refog_read_write
+        }
+    }
+}
+
+
+service GoogleMap {
+    expose Map {
+        isGuess: "Inutile de trop détailler, le lien au service suffit"
+        route map
+    }
+}
+
+service JuridBack {
+    dexUrl: "non"
+    indus_normalisation_weblogic: "oui"
+    indus_normalisation_postgresql: "oui"
+    indus_monitoring_apm: "oui"
+    indus_monitoring_foglight: "oui"
+    indus_supervision_weblogic: "oui"
+    indus_supervision_postgresql: "non"
+    
+    expose Jurid {
+        route jurid {
+            consume Sybase14.Dicobase.read
+        }
+    }
+}
+ 
+

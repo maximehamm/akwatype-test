@@ -1,0 +1,890 @@
+customFieldProperty RMPMSourcing { type:String values:["RMPM","REGENT","DEXTER","COMPUTED"] }
+
+abstract ThirdParty{
+    properties {
+       stopx: true
+    }
+    thirdPartyType: ThirdPartyType
+    documents: [Document]
+    #unfavorableInformationsearchDate: Date
+    #unfavorableInformation: [UnfavorableInformation]
+    unfavorableInformations: UnfavorableInformations{label: "Informations défavorables"}
+    thirdPartyBuffer: [ThirdPartyBuffer]
+    roles:[ThirdPartyRole]
+    compliance:Compliance{label: "Informations de conformité"}
+    meansOfContacts:[MeansOfContact]{@GDPR? label:"Moyens de contact"}
+    arbitrations:[ThirdPartyArbitration]{label:"Arbitrages"}
+    rolesArbitration:[ThirdPartyRoleArbitration]
+    lifeCycleStatus:ThirdPartyLifeStatus{label: "Statut du cycle de vie du Tiers"}
+    managementInformations:ManagementInformations{label: "Informations de gestion "}
+}
+
+type ManagementInformations{
+    roles:ThirdPartyRole
+    arbitrations: [ThirdPartyArbitration]
+}
+
+type UnfavorableInformations{
+    unfavorableInformationsearchDate:Date
+    unfavorableInformations:[UnfavorableInformation]
+}
+
+type ThirdPartyBuffer{
+    technicalBase:TechnicalBase
+    type: String
+    buffer:String
+}
+ 
+type Document {
+    properties {
+       stopx:true
+    }
+    technicalBase:TechnicalBase   
+    name: String {example: "carte d Identite"}
+    dmsId: String {example :"To be define"}
+    uploadDate: Date {example: "2021-05-02"}
+    uploadUser: BNPPCollaborator
+    consistency: Boolean {example:true}
+    consistencyControlUser: BNPPCollaborator
+    type: DocumentType 
+    issueDate:Date {example:"2018-12-06"}
+    validityDate:Date {example:"2018-12-06"}
+    originDocumentCountry: Country
+    number: String {example:"X2RTCPFW4"}
+    reference: String {example :"To be define"}
+    #
+    #
+}
+
+type Address extends MeansOfContact{
+    technicalBase:TechnicalBase
+    #---------------------------------------
+    addressComplement: String {@RMPM?, @GDPR? label: "Complément Lieu-dit "
+        example: "Batiment C4"}
+    street:String {@RMPM?, @GDPR? label:"rue", example:"2 Avenue Louis Pasteur"}
+    zipCode:String {@RMPM?, @GDPR? label: "Code postal ",example:"69000"}
+    city:String {@RMPM?, @GDPR? label: "Ville",description:"Ville de l'address", example:"Lyon"}
+    region:String{example: "???"} #equivalent state ? {@RMPM?}
+    INSEECode:String{label: "Code INSEE", example:"69300"}
+    country: Country  {@RMPM?, @RADAR?, @GDPR?}
+    #----------------------------------------
+    timeZone:DateTime
+    location:Location
+
+    typeMarker{
+		meanOfContactType.code:"1"
+	}
+}
+
+type LegalPersonActivity{
+    properties {
+       stopx: true
+    }
+    technicalBase:TechnicalBase
+    description:String
+    naf93:NAF93 
+    naf2003:NAF2003
+    naf2008:NAF2008 
+    nace:Nace 
+    
+    #industryCodes: [IndustryCodeDistribution]{
+    #    @RMPM @RADAR
+    #    maxItems: 4
+    #}
+    
+    economicCode:EconomicCode 
+    SectorOfActivitiesKYC: [SectorOfActivityKYCDistribution]
+    activityCountries: [ActivityCountryDistribution]
+    countryOfBusiness:Country{label: "Pays de business"}
+    countryOfBusinessSubdivision: CountrySubdivision{label: "Subdivision Pays de business"}
+    #computed:LegalPersonActivityComputed
+}
+
+type LPBNPPAccountingConsolidation{
+    topAccountingIntragroup : Boolean {@RMPM,RMPMSourcing:"REGENT"}
+    topAccountingConsolidation : Boolean {@RMPM,RMPMSourcing:"REGENT"}
+    accountingMethod : AccountingMethod {RMPMSourcing:"REGENT"}
+    accountingPercentage : Decimal {@RMPM,RMPMSourcing:"REGENT"}
+}
+
+type LPBNPPAccountingPrudential{
+    topPrudentialIntragroup : Boolean  {@RMPM,@RADAR,RMPMSourcing:"REGENT"}
+    topPrudentialConsolidation : Boolean   {@RMPM,RMPMSourcing:"REGENT"}
+    prudentialMethod : PrudentialMethod {RMPMSourcing:"REGENT"}
+    prudentialPercentage : Decimal {@RMPM,RMPMSourcing:"REGENT"}
+}
+
+type LegalPersonBNPPConsolidationScope{
+    properties {
+       stopx: true
+    }
+    technicalBase:TechnicalBase
+    consolidatingLegalEntity : LegalPerson {RMPMSourcing:"REGENT"
+        comment:"""Vérifier qu'il s'agit bien d'un identifiant RMPM
+        et pas juste d'une String en saisie libre
+        """
+    }
+    consolidationMode : ConsolidationMode {RMPMSourcing:"REGENT"}
+    acountingConsolidation:LPBNPPAccountingConsolidation
+    accountingPrudential:LPBNPPAccountingPrudential
+    topBNPPLegalEntity : Boolean {@RMPM,RMPMSourcing:"REGENT"}
+
+}
+
+type ThirdPartyArbitration{
+    technicalBase: TechnicalBase
+    type: ThirdPartyArbitrationType
+    reason:String{example: "To be define"}
+    startDate:Date{example: "2020-05-02"}
+    endDate:Date{example: "2021-02-11"}
+    arbitrator:BNPPCollaborator
+}
+
+type ThirdPartyRoleArbitration{
+    technicalBase: TechnicalBase
+    typeRole:ThirdpartyTypeRole
+    arbitration:ThirdPartyArbitration
+}
+
+type ThirdPartyRoleTerminationReason{
+    technicalBase: TechnicalBase
+    reason:String
+    date:Date
+    decisionMaker:BNPPCollaborator
+    #origineThirdPartyRoleTermination:OrigineThirdPartyRoleTermination
+}
+
+type OrigineThirdPartyRoleTermination {
+    technicalBase: TechnicalBase
+    code:String
+    label:String
+}
+
+type EstablishmentComputed {
+    properties {
+       basedOn: Establishment
+    }
+	idRMPM:Identifier{
+        basedOn: idents
+    }
+}
+
+type Establishment extends ThirdParty{
+    
+    properties {
+       stopx: true
+    }
+    technicalBase:TechnicalBase
+    #compute:EstablishmentComputed
+    establishmentType:EstablishmentType{label: "Nature de l'établissement ?"}
+    parentCompany: LegalPerson
+    idents:[Identifier] {label: "Identifiants"}
+    activityInformations: LegalPersonActivityInformations
+    incorporationDate: Date {label: "Date d'immatriculation"}
+    incorporationCountry: Country {label: "Pays d'immatriculation"}
+    terminationDate: Date {label: "Fin d'immatriculation"}
+    establishementStatus:EstablishmentStatus{label: "Statut"}
+    tradeName:String {label: "Dénomination commerciale"}
+    fancyName:String {label: "Enseigne  commerciale"}
+    #----------------------------------
+    # RaisonSocial
+    # Reverse ? à l'établissement
+}
+
+#=============================================
+
+type LPIdentificationInformations{
+    properties {
+       label: "Informations d'identification"
+    }
+    properties {label:"Informations d'identification" }
+    technicalBase:TechnicalBase
+    identification: LPIdentification
+    identifiers:[Identifier]
+    immatriculation:LPImmatriculation
+}
+
+type LPImmatriculation{
+    technicalBase:TechnicalBase
+    creationDate: Date {example:"1992-02-15",
+        label:"Date de création de l'entreprise"} 
+    creationYear: Integer {example:1992,
+        @RMPM label:"Année de création"}
+    incorporationDate:Date {example:"1992-02-15",
+        label:"Date d'immatriculation"}
+    terminationDate:Date {
+        example:"1992-02-15",
+        label:"Date de fin"}
+    
+    incorporationCity : String {
+        example:"69000 Lyon",
+        @RMPM label:"Ville et code postal d'immatriculation"}
+    incorporationCountry: Country {@RADAR @RMPM label:"Pays d'immatriculation",
+        #glossary: "DDG-AAA095"
+        glossary: "w"
+         
+    }
+    incorporationCountrySubdivision:CountrySubdivision {@RADAR,@RMPM 
+    label:"Pays d'immatriculation subdivision"}
+}
+
+type LPIdentification {
+    properties {label:"Identification"}
+    technicalBase:TechnicalBase
+    corporateName: String { @RADAR,@RMPM,label:"Raison sociale",glossary:"DDG-AAA450"
+        RMPMSourcing: "RMPM",     
+        example: "Another Company Making Everything"
+        }
+    localCorporateName: String {@RMPM label:"Raison sociale locale",example:"L'Entreprise qui Fait Tout"}
+    shortName : String  { @RADAR,@RMPM,label:"Nom abrégé" glossary: "DDG-AAA253",example:"ACME"}
+    tradeName: [String]{ label:"Dénomination commerciale",example:"A-C-M-E" }
+    legalForm: LegalForm {label : "Forme juridique"}
+    typology:Typology {RMPMSourcing: "RMPM", label:"Typologe client"}
+}
+
+
+#=============================================
+
+type LegalPersonActivityInformations{
+    technicalBase:TechnicalBase
+    commercialSegmentation:CommercialSegmentation
+    industryCodes:[IndustryCodeDistribution]
+    activity:LegalPersonActivity
+}
+
+type LPGroupRelation{
+    technicalBase:TechnicalBase
+    groupCommonCustomer: Boolean
+    BNPPFOwner:BNPPCollaborator
+    BNPPOwner:BNPPCollaborator
+    groupEntityRelations: [GroupEntityRelation]
+    clientCoverage : Coverage {RMPMSourcing: "RMPM"}
+    openingDateBDDF:Date {@RMPM}
+    openingDateBNPPF:Date {@RMPM}
+    businessClosureDate:Date {@RMPM}
+    rmpmManagingEntity : GroupEntity {RMPMSourcing:"RMPM"}
+    miscellaneous:LPGroupRelationMiscellaneous
+    consolidationScope: LegalPersonBNPPConsolidationScope
+    mutualizedThirdPartyClass: LPMutualizedThirdPartyClass
+}
+
+type LPGroupRelationMiscellaneous{
+    technicalBase:TechnicalBase
+    typology: Typology
+    typeOfClient: TypeOfClient
+    shareHoldersType: ShareOlderType
+    bankingSecrecy: Boolean
+    groupBankingSecrecy: Boolean
+    levelOfPowerOfManagingEntity:LevelOfPower
+    topBNPPLegalEntity : Boolean {@RMPM,RMPMSourcing:"REGENT"}
+    monitoring:Monitoring
+}
+
+type LPMutualizedThirdPartyClass{
+    technicalBase:TechnicalBase
+    ctm:Ctm {RMPMSourcing:"COMPUTED"}
+    ctmClosingDate:Date
+    celCounterParty:CelCounterparty {RMPMSourcing:"COMPUTED"}
+    finRepExposureClass:FinRepExposureClass {RMPMSourcing:"COMPUTED"}   
+    iceClass:InternationnalCommitmentExposureClass {RMPMSourcing:"COMPUTED"}
+}
+
+type LegalPerson extends ThirdParty {
+    technicalBase:TechnicalBase
+    #=================
+    identificationInformation:LPIdentificationInformations{label:"Informations d'identification"}
+    activityInformations:LegalPersonActivityInformations{label: "Informations d'activité"}
+    groupRelation:LPGroupRelation{label: "Liens avec le groupe BNP Paribas"}
+    businessgroupInformations:BusinessGroupInformations{label: ""}
+    #=================  
+    riskInformation:RiskInformation{label: "Informations sur les risques"} 
+    #-----------------
+    
+    computed:LegalPersonComputed
+    
+    legalPersonActivity:LegalPersonActivity{deprecated: true}
+    establishments:[Establishment]{label: "Etablissement"}
+
+    #otherCodification: String
+    #percentTurnoverRevenue: BigDecimal à supprimer
+
+    headOfficeAddress:MeansOfContact{
+        label: ""
+        comment: " adresse du siège qui n'est pas un etablissement"
+    } 
+    
+    #------------------------------------
+    agreement:Agreement{label: ""}
+    
+    #consolidationScope:LegalPersonBNPPConsolidationScope
+    #parentCompany:LegalPerson {RMPMSourcing: "RMPM"}
+    #attachedLegalPersons:[LegalPerson]
+    
+    #mifidClassification:MifidClassification {@RMPM deprecated: true}
+    #------------------------------
+    #segmentation: CommercialSegmentation
+    #------------------------------ hierarchy
+    
+    #economicDependency: [EconomicDependency]
+    superiorLegalEntity:LegalPerson {RMPMSourcing: "RMPM",deprecated: true}
+    #------------------------------ Address
+
+    lastAddressUpdateDate:Date {@RMPM}
+
+    #------------------------------
+
+    bnppBusinessRelationInRegistrationCountryOnly: Boolean #KYC ?
+    
+    regulatedFinancialInstitution: Boolean
+ 
+    
+    groupCommonCustomer: Boolean {deprecated: true}
+    
+    #groupEntityRelations: [GroupEntityRelation]{deprecated: true}
+
+    
+    
+    #-------------------------------------------
+    
+    #-------------------------------------------
+    #monitoring:Monitoring
+    
+    financialInformation: [FinancialInformation]{label:"Informations financières"}
+    contractualBenefitScope: [BenefitType] # A VERIFIER !!!
+    #riskImpulsion: RiskInformation
+    sensitiveProducts: [SensitiveProduct] 
+    #typeOfClient:TypeOfClient {deprecated: true} 
+    #typology:Typology {RMPMSourcing: "RMPM", label:"Typologe client",deprecated: true}
+    #counterPartyStatus:String {@RMPM} # RMPM équivalent ShareholdersType à vérifier
+    
+    #roleLegalPerson:[RoleLegalPerson] les roles sont gérés par thirdPartyRole
+    reverseTargetRoles:[ThirdPartyRole]
+    legalPersonKYCInfos:LegalPersonKYCInfos
+
+    # Adresses (rue et ville) / Adresse du siège social (ligne 39 chez Illan)
+    # @RMPM postalAddresses ?
+    #--------------------- Transverse
+    #mutualizedThirdPartyClass:LPMutualizedThirdPartyClass
+    
+    
+    ForeignTaxCompliances:[Country]
+    associatedThirdParties:[ThirdParty]
+    #associatedLegalPersons:[LegalPerson]
+    #associatedNaturalPersons:[NaturalPerson]
+
+    typeMarker {
+       thirdPartyType.code:"1"
+    }
+}
+
+type BusinessGroupInformations{
+    technicalBase:TechnicalBase
+    businessGroup: BusinessGroup
+    economicDependencyType:economicDependencyType {RMPMSourcing: "RMPM"}
+    economicDependencies: [EconomicDependency]
+    superiorLegalEntity:LegalPerson {RMPMSourcing: "RMPM"}
+}
+
+type LegalPersonComputed{
+    properties {
+       stopx: true
+    }
+    @COMPUTED
+    properties {
+       basedOn: LegalPerson
+    }
+    clientLocalID : String {@RMPM, glossary: "DDG-AAA067"}
+    
+    incorporationType: RegistrationType # doublon clientNationalType ?
+    incorporationNumber: String # Doublon clientNationalID ?
+    SIREN :String {@RMPM}
+    intracommunityVAT: String
+    financialInformation: FinancialInformation{
+        basedOn: financialInformation
+        comment:"Sigle element of the list"
+    }
+    mailingAddress:Address {@RMPM basedOn: meansOfContacts}
+    incorporationAddress:Address {@RMPM basedOn: meansOfContacts}
+    
+    mainBusinessCountry: Country {@RADAR,@RMPM, glossary: "DDG-AAA026"}
+    mainBusinessCountrySubdivision:CountrySubdivision {@RADAR,@RMPM}    
+    phoneNumber: String { basedOn: meansOfContacts}
+    legalRepresentative:NaturalPerson ## a faire pointer vers le role
+}
+
+type Monitoring{
+    technicalBase:TechnicalBase
+    monitoringType:MonitoringType {RMPMSourcing: "RMPM"}
+    monitoringBy:BNPPCollaborator  {@RMPM,RMPMSourcing: "RMPM"}
+}
+
+type LegalPersonKYCInfos{
+    technicalBase:TechnicalBase
+    listedCompany: Boolean{example:true}
+    energyAndCommoditiesDealer: Boolean{example:true}
+    bearerShares: Boolean{example:true}
+    QualifieldIntermediary: Boolean{example:true}
+    AEoIandFATCA: Boolean{example:true}
+    bankingLicence: String{example:"to be define"}
+}
+
+type EconomicDependency{
+    technicalBase:TechnicalBase
+    #legalPerson:LegalPerson
+    businessGroup: BusinessGroup
+    economicLinkType:EconomicLinkType
+}
+
+type BusinessGroup{
+    properties {
+       stopx: true
+    }
+    technicalBase:TechnicalBase
+    localCreationDate:Date{deprecated: true}
+    revisionDate:Date{deprecated: true}
+    nextRevisionDate:Date{deprecated: true}
+    code:String {@RADAR,@RMPM,RMPMSourcing: "RMPM"}
+    name:String {@RMPM,RMPMSourcing: "RMPM"}
+    shortName:String {@RMPM,RMPMSourcing: "RMPM"}
+    # rmpmId : from parentCompany
+    parentCompany: LegalPerson {RMPMSourcing: "RMPM"}
+    #attachedLegalPersons:[LegalPerson]
+
+
+    # businessGroupeRating :  from parentCompany rating, RMPMSourcing: "RMPM"
+    # lastReviewdate:Date :  from parentCompany rating, RMPMSourcing: "RMPM"
+    country:Country {@RMPM}
+    countrySubdivision:CountrySubdivision {@RMPM}
+    clientCoverage:Coverage {RMPMSourcing: "RMPM"}
+    responsibleEntity:GroupEntity{RMPMSourcing: "RMPM"}
+    secondaryResponsibleEntity:GroupEntity{RMPMSourcing: "RMPM"}
+    negociatedtermsResponsibleEntity:GroupEntity {RMPMSourcing: "RMPM", deprecated: true}
+    
+    seniorCreditOfficer:BNPPCollaborator {RMPMSourcing: "RMPM", deprecated: true}
+    monitoring:[Monitoring]
+    #activity:BGActivities
+    mainActivity:NAF93
+    industryCodes:[IndustryCodeDistribution]{
+        RMPMSourcing: "RMPM"
+        maxItems: 6
+    }
+    sensitiveBusinessGroup:String {@RMPM,RMPMSourcing: "RMPM", deprecated: true}
+    bankingIndicator:String{RMPMSourcing: "RMPM", deprecated: true}
+    subGroup:[BusinessGroup] {RMPMSourcing: "RMPM", deprecated: true}
+    attachmentNature:String {@RMPM,RMPMSourcing: "RMPM", deprecated: true
+        comment: "Vérifier à quoi se rapporte l'attachment"
+    }
+
+    RMPMCreationDate:Date
+}
+
+type SensitiveProduct{
+    technicalBase:TechnicalBase
+    sensitiveProductCategory: SensitiveProductCategory
+    riskLevel: RiskLevel
+}
+
+#=============================== Rating
+#
+type ComplianceRating{
+    technicalBase:TechnicalBase
+    code:String
+    label:String 
+    startDate:Date 
+    endDate:Date
+}
+#
+#type InternalRating{
+#    properties {
+#       RMPMTableNomenclature: ""
+#    }
+#    technicalBase:TechnicalBase
+#    ratingType:RatingScale
+#    rating:String  {@RMPM}
+#    startDate:Date {@RMPM}
+#    endDate:Date
+#}
+#
+#type RatingScale{
+#    @NOMENCLATURE
+#    properties {
+#       RMPMTableNomenclature:"N193"
+#    }
+#    technicalBase:TechnicalBase
+#    code:String {@RADAR,@RMPM}
+#    label:String {@RADAR,@RMPM}
+#    ratingValue:[String]
+#}
+#
+#
+#type ExternalRating{ 
+#    technicalBase:TechnicalBase
+#    ratingAgency:RatingAgency {@RADAR?,@RMPM}
+#    rating:String {@RADAR?,@RMPM}
+#    date:Date {@RADAR?,@RMPM}
+#}
+#
+#type RatingAgency{
+#    @NOMENCLATURE
+#    technicalBase:TechnicalBase
+#    code:String {@RADAR?,@RMPM}
+#    label:String {@RADAR?,@RMPM}
+#    ratingValue:[String] {@RADAR?,@RMPM}
+#}
+#
+
+#===============================================
+
+type InternalRating{
+    technicalBase:TechnicalBase
+    rating:InternalRatingCode
+    startDate:Date {@RMPM}
+    endDate:Date
+}
+
+
+
+type SpecifiqueConterpartyRating{
+    technicalBase:TechnicalBase
+    rating:SpecifiqueConterpartyRatingCode
+    startDate:Date {@RMPM}
+    endDate:Date
+}
+
+
+
+type ExternalRating{  
+    technicalBase:TechnicalBase
+    rating:ExternalRatingCode {@RADAR?,@RMPM}
+    date:Date {@RADAR?,@RMPM}
+}
+
+#=====================================================
+
+
+
+#=============================== Notation
+
+scalar Taux as Decimal
+
+type LPInternalRating{
+    counterpartyRating: InternalRating
+    intrinsicRating:InternalRating 
+    specificConterpartyRating:LPSpecificConterpartyRatingInfos
+    ratingModel: RatingModel
+    defaultPropability: Decimal 
+    grrSenoirUnsecured:Taux {@RMPM,@RADAR}
+    igr:InternalRating
+    defaultRating:InternalRating
+    supportStrength:LPSupportStrength
+} 
+
+type LPSupportStrength{
+    supportEntityCorporateRMPMID: String
+    supportEntityCorporateName: String
+    supportStrength: SupportStrength
+    supportConterpartyRating: InternalRating
+}
+
+type LPSpecificConterpartyRatingInfos{
+    specificConterpartyRating:InternalRating
+    specificConterpartyRatingScale: SpecifiqueConterpartyRatingScale
+}
+
+type LPAnnualRiskRevue{
+    lastAnnualRevueDateBNPP: Date
+    nextAnnualRevueDateBNPP: Date
+    lastAnnualRevueDateBNPPF: Date
+    nextAnnualRevueDateBNPPF: Date
+}
+
+type LPWatchList{
+    watchListBNPPF:WatchList {@RADAR,@RMPM}
+    watchListBDDF:WatchList
+    externalWatchListIndicator:Boolean {@RADAR,@RMPM,RMPMSourcing:"DEXTER"}
+}
+
+type RiskInformation{
+
+    lpCounterPartyRating:LPInternalRating 
+    lpAnnualRevue:LPAnnualRiskRevue
+    lpWatchList:LPWatchList
+    lpExternalRatings:[ExternalRating]
+
+    properties {
+       stopx: true
+    }
+    technicalBase:TechnicalBase
+    legalStatus: String
+    defaultRisk: String
+    defaultRiskUpdatedDate: Date
+    #------------------------- Notation
+    # notation:Notation{deprecated: true}
+    #------------------------- Surveillance
+
+    #externalWatchListIndicator:Boolean {@RADAR,@RMPM,RMPMSourcing:"DEXTER",deprecated: true}
+    lastFBEDate:Date {@RMPM}
+    npe:NonePerformanceEvent {@RMPM}
+    #-------------------------
+    riskDataUpdatedBy:String {@RMPM}
+    
+    ##==========================
+    #Group Entity remplacedBy BNPPCollaborator
+    ##==========================
+    ratingInitiatedBy:BNPPCollaborator {@RMPM,RMPMSourcing: "RMPM"}
+    ##==========================
+    #---------------------- KYC
+    executiveRating: String
+    unpaid: Integer
+    bankingProhibition: Date
+    executiveBankingSuspensions: Boolean
+    privileges: Boolean
+    shareCapital: Integer
+}
+
+type NonePerformanceEvent{
+    properties {nomenclature: N007 }
+    technicalBase:TechnicalBase
+    Indicator:Boolean
+    
+    code:String {@RADAR, example: "4"}
+    label:String{example: "Procedure contentieuse"}
+    eventCodeDate:Date {@RADAR}
+    entryDate: Date
+    exitDate:Date
+}
+
+type WatchList{
+    technicalBase:TechnicalBase
+    indicator:Boolean {@RADAR,@RMPM}
+    entryDate:Date {@RADAR,@RMPM}
+}
+type StockMarket{
+    technicalBase:TechnicalBase
+    code: String
+    label: String
+    country: Country
+    bnppRecognize: Boolean
+}
+
+type FinancialInformation {
+    properties {
+       stopx: true
+    }
+    technicalBase:TechnicalBase
+    fiscalYearEndDate:Date
+    consolidatedInfos:FinancialInfos {@RADAR,@RMPM}
+    socialInfos:FinancialInfos {@RADAR,@RMPM}
+    incomeAfterTaxes: BigDecimal
+    financialInformationDocumentType: DocumentType
+    totalExportSalesRevenue: BigDecimal
+    euroZoneExportSalesRevenue: BigDecimal
+    exportSalesRevenue: BigDecimal
+    totalPreTaxSalesRevenue: BigDecimal
+    financialSecurityIncidents: Boolean
+    details: String
+    employeeNbr:Integer {@RMPM}
+    stockMarkets: [StockMarket]
+    mifidClassification: MifidClassification
+    listedCompany:Boolean
+}
+
+type FinancialInfos{
+    technicalBase:TechnicalBase
+    turnover:FinancialInfosDetail {@RADAR,@RMPM}
+    assetSize:FinancialInfosDetail {@RADAR,@RMPM}
+}
+
+type FinancialInfosDetail{
+    technicalBase:TechnicalBase
+    amount:Decimal {@RADAR,@RMPM example: 1250350.00}
+    date:Date {@RADAR,@RMPM example:"2020-12-31"}
+    currency:Currency {@RADAR,@RMPM}
+    #unit:String {@RADAR,@RMPM}
+    unit:AmountUnit
+}
+
+type CommercialSegmentation{
+    properties {
+       stopx: true
+    }
+    technicalBase:TechnicalBase
+    customerType: CustomerType
+    segmentationCountry:Country {@RMPM} 
+    segmentationBDDF: SegmentationBDDF {@RMPM}
+    segmentationNAC:SegmentationNAC 
+    segmentationBNPPF: SegmentationBNPPF
+    segmentationRMPM:String
+    #organizationalStructure: OrganizationalStructure
+    #level1Segment: SegmentLevel1
+    #level2Segment: SegmentLevel2
+}
+
+type GroupEntityRelation{
+    technicalBase:TechnicalBase
+    groupEntity: GroupEntity
+    #levelOfPower : LevelOfPower {@RMPM}
+    primarySite: Boolean {
+        deprecated: true
+        label:"Entité gestionnaire"
+        @RADAR, @RMPM
+        }
+    sharingResult: Boolean{deprecated: true}
+    
+    #groupEntityInRelation : String Doublon ?
+}
+
+type GroupEntityCollaborator{
+    technicalBase:TechnicalBase
+    role: BNPPCollaboratorRole
+    collaborator: BNPPCollaborator {@RMPM}
+}
+
+type GroupEntity{
+    properties {
+       nomenclature: N001
+       stopx: true
+    }
+    technicalBase:TechnicalBase
+    code: String {@RMPM
+        example: "CE997"
+    }
+    name: String {@RMPM
+        example: "BDDF"
+    }
+    collaborators: [GroupEntityCollaborator]
+}
+
+type BnppOperationalEntity{
+    technicalBase:TechnicalBase
+    code: String
+    label: String
+}
+
+type DistributionChannel{
+    technicalBase:TechnicalBase
+    channel: DistributionChannelType
+    intermediaryName: String
+    intermediaryRole: IntermediaryRole
+    intermediaryRiskLevel: RiskLevel
+}
+
+type IntermediaryRole{
+    technicalBase:TechnicalBase
+    code: String
+    label: String
+}
+
+type NaturalPerson  extends ThirdParty, ApplicationUser{
+     
+    technicalBase:TechnicalBase
+    identificationInformations:NPIdentificationInformations
+    
+    taxResidenceCountry: Country {@GDPR}
+    ForeignTaxCompliances:[Country] {@GDPR}
+    sanction:Boolean {@GDPR}
+
+
+    riskInformations:NPRiskInformations
+    #pep: PEPStatus {@GDPR, deprecated: true}
+
+    typeMarker {
+       thirdPartyType.code:"2"
+    }
+
+}
+
+type NPRiskInformations{
+    quotationBdF: ExternalRating
+}
+
+type NPIdentificationInformations{
+    identification:NPIdentification
+    businessFunctions: [BusinessFunction]
+}
+
+type NPIdentification{
+
+    identifiers:[Identifier]
+    civility: Civility
+    firstNames: [String] {
+        @GDPR
+        example: ["Michel"]
+    }
+    lastName: String {
+        @GDPR
+        example: "DURANT"
+    }
+    birthName:String {
+        @GDPR
+        example: "DUPOND"
+    }
+    usageName:String   {
+        @GDPR
+        example: "DURANT"
+    } 
+    birthDate: Date {@GDPR, label: "Date de naissance"}
+    birthCountry: Country {@GDPR}
+    birthCity:String {@GDPR}
+    residenceCountry: Country {@GDPR}
+    
+    nationalities: [Country] {@GDPR}
+    
+
+
+}
+
+
+
+type ActivityCountryDistribution{
+    technicalBase:TechnicalBase
+    country: Country
+    turnoverPercent: BigDecimal
+}
+
+type BusinessFunction{
+    technicalBase:TechnicalBase
+    name:String
+    naturalPerson:NaturalPerson
+    legalPerson:LegalPerson
+}
+
+type BNPPCollaborator extends ApplicationUser  {
+    properties {
+       nomenclature: REFOG
+    }
+    technicalBase:TechnicalBase
+    refogCode: String {@RMPM
+        nomenclatureCode: true
+        example: "b87962"
+    }
+    name: String {
+        example: "DURANT"
+    }
+    firstName: String {
+        example: "Michel"
+    }
+    telephone: String {
+        example: "01 02 03 04 05"
+    }
+    mail: String {
+        example: "firstname.lastname@company.com"
+    }
+    position: String
+}
+
+type SegmentLevel1{
+    technicalBase:TechnicalBase
+    code: String
+    label: String
+    segmentNiv2: [SegmentLevel2]
+}
+
+type SegmentLevel2{
+    technicalBase:TechnicalBase
+    code: String
+    label: String
+    segmentNiv1: SegmentLevel1
+}
+
+

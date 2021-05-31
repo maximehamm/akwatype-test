@@ -1,0 +1,124 @@
+
+
+#type BGActivities{
+#    naf93:NAF93
+#    industryCodes: [IndustryCodePurcentage]{
+#        maxItems: 4  
+#    } 
+#}
+
+type IndustryCodeDistribution{ 
+     technicalBase: TechnicalBase
+     industryCode: IndustryCode {@RADAR,@RMPM
+        glossary: ""
+     }
+     percentage:Percent {@RADAR,@RMPM}
+     rank:Integer
+     
+}
+
+type SectorOfActivityKYCDistribution{
+    technicalBase: TechnicalBase
+    industryCodes: SectorOfActivityKYCNiv2 
+    percentage:Decimal
+}
+
+type LPActivityDistribution{
+    technicalBase: TechnicalBase 
+}
+
+type Nace{
+    @NOMENCLATURE
+    properties {nomenclature: F011}
+    technicalBase: TechnicalBase
+    code:String {@RMPM
+        example: "4622"
+    }
+    label:String {@RMPM
+        example: "Commerce de gros de fleurs et plantes"
+    }
+}
+
+type NAF93{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    code: String {@RMPM}
+    label: String {@RMPM}
+}
+
+type NAF2003{
+    @NOMENCLATURE
+    properties {
+        nomenclature: T001
+       RMPMTableNomenclature:"????"
+       comment:"Obsolete"
+    }
+    technicalBase: TechnicalBase
+    code: String {@RMPM}
+    label: String {@RMPM}
+}
+
+type NAF2008Niv1{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    code: String {@RMPM}
+    label: String {@RMPM}
+    nafNiv2s: [NAF2008Niv2]
+}
+
+type NAF2008Niv2{
+    properties{ label:"Code APE"}
+    properties {nomenclature: N002}
+    technicalBase: TechnicalBase
+    code: String {@RMPM, example: "4622Z"}
+    label: String {@RMPM
+        example: "Commerce de gros de fleurs et plantes"
+    }
+    nafNiv1: NAF2008Niv1
+}
+
+type NAF2008{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    nafNiv2: NAF2008Niv2 
+    #riskLevel: RiskLevel
+}
+
+type SectorOfActivityKYCNiv2{
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+    riskLevel: RiskLevel
+    sectorOfActivityKYCNiv1: SectorOfActivityKYCNiv1
+}
+
+type SectorOfActivityKYCNiv1{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+    sectorOfActivityKYCNiv2: [SectorOfActivityKYCNiv2]
+}
+
+type IndustryCode{
+    properties {nomenclature: N005}
+    technicalBase: TechnicalBase
+    code: String {@RADAR,@RMPM
+        example: "120070"}
+    label: String {@RADAR,@RMPM
+        example: "Materiaux de construction"}
+} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

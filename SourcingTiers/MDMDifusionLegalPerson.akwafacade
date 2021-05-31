@@ -1,0 +1,692 @@
+
+facade MdmLegalPersonDTO on LegalPerson{
+    additionalFields {
+        complianceInformations::MdmLPComplianceInformationsDTO{
+            label: "Informations de conformité"
+        }
+        associatedNaturalPersons::[MdmLPAssociatedNaturalPersonDTO]{
+            label: "Personnes physiques associées"}
+        associatedLegalPersons::[MdmLPAssociatedLegalPersonDTO]{
+            label: " Personnes morale  associées"
+        }
+    }
+    technicalBase.id
+    lifeCycleStatus::MdmTPLifeCycleStatusDTO
+    identificationInformations:identificationInformation::MdmLPIdentificationInformationDTO
+    meansOfContacts::(MdmAddressDTO,
+        MdmPhoneDTO,
+        MdmEMailDTO,
+        MdmWebSiteDTO)
+    establishments::MdmEstablishementDTO    
+    activityInformations::MdmLPActivityInformationsDTO
+    financialInformations:financialInformation::MdmFinancialInformationDTO
+    groupRelation::MdmGroupRelationDTO
+   
+    associatedLegalPersons
+    associatedNaturalPersons
+
+    dispatch (associatedThirdParties.thirdPartyType.code(
+        "1":associatedLegalPersons,"2":associatedNaturalPersons))
+
+    riskInformations:riskInformation::MdmRiskInformationDTO
+    complianceInformations
+    businessgroupInformations::MdmBusinessGroupInformationsDTO
+    managementInformations::MdmLPManagementInformationsDTO
+}
+
+facade MdmLPAssociatedLegalPersonDTO on LegalPerson{
+    with identificationInformation{
+        identification::MdmLPIdentificationDTO
+        identifiers::MdmIdentifierDTO
+        immatriculation::MdmLPImmatriculationDTO
+    }
+
+    roles::(MdmRoleLegalRepresentativDTO,
+            MdmRoleAdministratorDTO,
+            MdmRoleGuarantorDTO,
+            MdmRoleShareholderDTO,
+            MdmRoleAgentDTO,
+            MdmRoleParticipantDTO,
+            MdmRoleBuyerDTO,
+            MdmRoleCoFactorDTO,
+            MdmRoleCredtInsurerDTO,
+            MdmRoleCustomerDTO,
+            MdmRoleReverseBuyerDTO,
+            MdmRoleReverseProviderDTO,
+            MdmRoleBusinessProviderDTO,
+            MdmRoleGenericDTO)
+}
+
+facade MdmTPLifeCycleStatusDTO on ThirdPartyLifeStatus{
+    code:lifeCycleStatus.code
+    date
+}
+
+facade MdmNPDocumentDTO on Document{
+    name
+    number
+    reference
+    dmsId
+    originDocumentCountryCode:originDocumentCountry.countryISO.code
+    issueDate
+    validityDate
+    typeCode:type.code
+}
+
+facade MdmLPComplianceInformationsDTO on Compliance{
+        kyc::MdmKYCDTO
+        conformityAlerte
+        unfavorableInformations::MdmUnfavorableInformationsDTO
+    
+}
+
+facade MdmMeansOfContactDTO on LegalPerson{
+    meansOfContacts::(MdmAddressDTO,MdmEMailDTO,MdmPhoneDTO,MdmWebSiteDTO)
+}
+
+facade MdmLPManagementInformationsDTO on ManagementInformations{
+    roles::(
+            MdmRoleLegalRepresentativDTO,
+            MdmRoleAdministratorDTO,
+            MdmRoleGuarantorDTO,
+            MdmRoleShareholderDTO,
+            MdmRoleAgentDTO,
+            MdmRoleParticipantDTO,
+            MdmRoleBuyerDTO,
+            MdmRoleCoFactorDTO,
+            MdmRoleCredtInsurerDTO,
+            MdmRoleCustomerDTO,
+            MdmRoleReverseBuyerDTO,
+            MdmRoleReverseProviderDTO,
+            MdmRoleBusinessProviderDTO,
+            MdmRoleGenericDTO)
+    arbitrations::MdmArbitrationDTO
+}
+
+facade MdmNPManagementInformationsDTO on ManagementInformations{
+    roles::(MdmRoleContactDTO,
+        MdmRoleLegalRepresentativDTO,
+        MdmRoleBeneficialOwnerDTO,
+        MdmRoleEffectiveSignatoryDTO,
+        MdmRoleExecutiveOfficerDTO,
+        MdmRoleAgentOfInsolvencyProceedingDTO,
+        MdmRoleAuthorizedSignatoryDTO,
+        MdmRoleAdministratorDTO,
+        MdmRoleGuarantorDTO,
+        MdmRoleShareholderDTO)
+    arbitrations::MdmArbitrationDTO
+}
+
+facade MdmArbitrationDTO on ThirdPartyArbitration{
+    arbitrationCode:type.code
+    motif:reason
+    startDate
+    endDate
+}
+
+facade MdmKYCDTO on KYC{
+    nextRecertificationDate
+    validatedFinalRiskLevelCode:validatedFinalRiskLevel.code
+    sharingResult
+    #primarySite
+    primarySiteCode:site.code
+}
+
+facade MdmBusinessGroupInformationsDTO on BusinessGroupInformations{
+    businessGroup::MdmBusinessGroupDTO
+    superiorLegalEntityId:superiorLegalEntity.technicalBase.id
+    economicDependencies::MdmEconomicDependencyDTO
+}
+
+facade MdmEconomicDependencyDTO on EconomicDependency{
+    businessGroupCode:businessGroup.code
+    economicLinkTypeCode:economicLinkType.code      
+}
+
+facade MdmUnfavorableInformationsDTO on UnfavorableInformations{
+    unfavorableInformationsearchDate
+    unfavorableInformations::MdmUnfavorableInformationDTO
+}
+
+facade MdmUnfavorableInformationDTO on UnfavorableInformation{     
+    informationNatureCode:informationNatures.code
+    informationSubjectCode:subjects.code
+}
+
+facade MdmRiskInformationDTO on RiskInformation{
+    counterPartyRating:lpCounterPartyRating::MdmInternalRatingDTO
+    externalRatings:lpExternalRatings::MdmExternalRatingInfosDTO   #MdmExternalRatingDTO
+    annualRevue:lpAnnualRevue::MdmAnnualRiskRevueDTO
+    watchList:lpWatchList::MdmWatchListDTO
+    #-------------------
+    npe::MdmLPNpeDTO
+    lastFBEDate
+    riskDataUpdatedBy
+    ratingInitiatedByCode:ratingInitiatedBy.refogCode   
+}
+
+facade MdmLPNpeDTO on NonePerformanceEvent{
+    code
+    Indicator
+    entryDate
+    eventDate:eventCodeDate
+    exitDate
+}
+
+facade MdmInternalRatingDTO on LPInternalRating{
+    intrinsicRating::MdmInternalRatingInfosDTO
+    supportStrength::MdmSupportStrengthDTO
+    specificConterpartyRating::MdmSpecificConterpartyRatingInfosDTO
+    counterpartyRating::MdmInternalRatingInfosDTO   
+    ratingModelCode:ratingModel.code
+    defaultPropability
+    grrSenoirUnsecured
+    igr::MdmInternalRatingInfosDTO
+    defaultRating::MdmInternalRatingInfosDTO
+    
+}
+
+facade MdmAnnualRiskRevueDTO on LPAnnualRiskRevue{
+    lastAnnualRevueDateBNPP
+    nextAnnualRevueDateBNPP
+    lastAnnualRevueDateBNPPF
+    nextAnnualRevueDateBNPPF
+}
+
+facade MdmWatchListDTO on LPWatchList{
+    watchListBNPPIndicator:watchListBDDF::MdmWatchListDTO2
+    watchListBNPPFIndicator:watchListBNPPF::MdmWatchListDTO2
+    externalWatchListIndicator
+}
+
+facade MdmWatchListDTO2 on WatchList{
+    indicator
+    entryDate
+}
+
+facade MdmExternalRatingInfosDTO on ExternalRating{
+    date
+    with (rating){
+        ratingCode:code
+    }
+}
+
+facade MdmInternalRatingInfosDTO on InternalRating{
+    date:startDate
+    with (rating){
+        ratingCode:code
+    }
+}
+
+facade MdmSpecificConterpartyRatingInfosDTO on LPSpecificConterpartyRatingInfos{
+    
+    with (specificConterpartyRating){
+        date:startDate
+        ratingCode:rating.code
+        
+    }
+    specificConterpartyRatingScaleCode:specificConterpartyRatingScale.code
+}
+
+facade MdmSupportStrengthDTO on LPSupportStrength{   
+    
+    supportEntityCorporateRMPMID
+    supportEntityCorporateName
+    supportStrengthCode:supportStrength.code
+    supportConterpartyRatingCode:supportConterpartyRating.rating.code
+    
+}
+
+facade MdmBusinessGroupDTO on BusinessGroup{
+    code
+    name
+}
+
+facade MdmCtmDTO on LPMutualizedThirdPartyClass{
+    with(ctm){
+        ctmCode:code
+        
+    }
+    ctmClosingDate
+    celCounterPartyCode:celCounterParty.code
+    finRepExposureClassCode:finRepExposureClass.code
+    iceClassCode:iceClass.code
+    ## ctm closing Date
+}
+
+facade MdmGroupRelationDTO on LPGroupRelation{
+    additionalFields {
+        #miscellaneous::MdmGroupRelationMiscellaneousDTO
+        #mutualizedThirdPartyClass2::MdmCtmDTO
+    }
+    groupCommonCustomer
+    BNPPFOwner::MdmGroupCollaboratorDTO
+    BNPPOwner::MdmGroupCollaboratorDTO
+    groupEntityRelations::MdmGroupEntityRelationDTO
+    clientCoverageCode:clientCoverage.code
+    openingDateBNPP:openingDateBDDF
+    openingDateBNPPF
+    businessClosureDate
+    rmpmManagingEntityCode:rmpmManagingEntity.code
+    miscellaneous::MdmGroupRelationMiscellaneousDTO
+    consolidationScope::MdmBNPPConsolidationScopeDTO
+    mutualizedThirdPartyClass::MdmLPMutualizedThirdPartyClassDTO
+}
+
+facade MdmLPMutualizedThirdPartyClassDTO on LPMutualizedThirdPartyClass{
+    ctmCode:ctm.code
+    ctmClosingDate
+    celCounterPartyCode:celCounterParty.code
+    finRepExposureClassCode:finRepExposureClass.code
+    iceClassCode:iceClass.code
+}
+
+facade MdmGroupRelationMiscellaneousDTO on LPGroupRelationMiscellaneous{
+    typologyCode:typology.code
+    typeOfClientCode:typeOfClient.code
+    shareHoldersTypeCode:shareHoldersType.code
+    bankingSecrecy
+    groupBankingSecrecy
+    levelOfPowerCode:levelOfPowerOfManagingEntity.code
+    topBNPPLegalEntity
+    monitoringtypeCode:monitoring.monitoringType.code 
+}
+
+facade MdmBNPPConsolidationScopeDTO on LegalPersonBNPPConsolidationScope{
+    additionalFields {
+        #accountingConsolidation2::MdmBNPPAccountingConsolidationDTO
+        #accountingPrudential2::MdmLegalPersonBNPPPrudentialConsolidationDTO
+    }
+    consolidationModeCode:consolidationMode.code
+    consolidatingLegalEntityID:consolidatingLegalEntity.technicalBase.id
+    acountingConsolidation::MdmBNPPAccountingConsolidationDTO
+    accountingPrudential::MdmLegalPersonBNPPPrudentialConsolidationDTO
+}
+
+facade MdmBNPPAccountingConsolidationDTO on LPBNPPAccountingConsolidation{
+    topAccountingIntragroup
+    topAccountingConsolidation
+    accountingMethodCode:accountingMethod.code
+    accountingPercentage 
+}
+
+facade MdmLegalPersonBNPPPrudentialConsolidationDTO on LPBNPPAccountingPrudential{
+    topPrudentialIntragroup
+    topPrudentialConsolidation
+    prudentialMethodCode:prudentialMethod.code
+    prudentialPercentage
+    }
+
+facade MdmGroupEntityRelationDTO on GroupEntityRelation{
+    groupEntity::MdmGroupEntityDTO
+}
+
+facade MdmGroupEntityDTO with GroupEntity{
+    groupEntityCode:code
+    #collaborators::MdmGroupEntityRoleCollaboratorDTO
+}
+
+facade MdmGroupEntityRoleCollaboratorDTO on GroupEntityCollaborator{
+    role:role.Code
+    collaborator::MdmGroupCollaboratorDTO
+}
+
+facade MdmGroupCollaboratorDTO on BNPPCollaborator{
+    refogCode
+    name
+    firstName
+    telephone
+    mail
+    position    
+}
+
+
+facade MdmFinancialInformationDTO on FinancialInformation{
+    fiscalYearEndDate
+    consolidatedInfos::MdmFinancialInfoDTO
+    socialInfos::MdmFinancialInfoDTO
+    employeeNbr
+    listedCompany
+    mifidClassificationCode:mifidClassification.code   
+    ## sociétéCoteEnBourse
+}
+
+facade MdmFinancialInfoDTO on FinancialInfos{
+    turnover::MdmFinancialInfosDetaiDTO
+    assetSize::MdmFinancialInfosDetaiDTO
+}
+
+facade MdmFinancialInfosDetaiDTO on FinancialInfosDetail{
+    amount
+    date
+    currencyCode:currency.code
+    unitCode:unit.code
+}
+
+facade MdmLPActivityInformationsDTO on LegalPersonActivityInformations{
+    commercialSegmentation::MdmLPCommercialSegmentationDTO
+    industryCodes::MdmIndustryCodeDistributionDTO
+    activity::MdmLPActivityDTO
+}
+
+facade MdmIndustryCodeDistributionDTO on IndustryCodeDistribution{
+    industryCode:industryCode.code
+    percentage
+}
+
+facade MdmEstablishementDTO on Establishment{
+    id:technicalBase.id
+    tradeName
+    fancyName
+    establishmentType:establishmentType.code # ?? à vérifier
+    APECode:activityInformations.activity.naf2008.nafNiv2.code
+    incorporationDate
+    terminationDate
+    statusCode:establishementStatus.code
+    identifiers:idents::MdmIdentifierDTO
+    meansOfContacts::(MdmAddressDTO,
+        MdmPhoneDTO,
+        MdmEMailDTO,
+        MdmWebSiteDTO)
+}
+
+facade MdmLPActivityDTO on LegalPersonActivity{
+    #activityCode:naf93.code
+    APECode:naf2008.nafNiv2.code
+    naceCode:nace.code
+    economicCode:economicCode.code
+    countryOfBusinessCode:countryOfBusiness.countryISO.code
+    subdivisionCountryOfBusinessCode:countryOfBusinessSubdivision.code    
+}
+
+facade MdmLPIdentificationInformationDTO on LPIdentificationInformations{
+        identification::MdmLPIdentificationDTO
+        identifiers::MdmIdentifierDTO
+        immatriculation::MdmLPImmatriculationDTO
+}
+
+facade MdmLPIdentificationDTO on LPIdentification{
+    corporateName
+    localCorporateName
+    shortName
+    tradeName
+    legalFormCode:legalForm.code
+    typologyCode:typology.code
+}
+
+
+facade MdmLPCommercialSegmentationDTO on CommercialSegmentation{
+    segmentationBDDFCode:segmentationBDDF.code
+    with(segmentationBNPPF){
+        segmentationBNPPFCode:code
+        segmentationBNPPFTypeCode:type.code
+    }
+    segmentationNACCode:segmentationNAC.code
+    segmentationRMPM
+    countryCode:segmentationCountry.countryISO.code
+}
+
+facade MdmLPImmatriculationDTO on LPImmatriculation{
+    creationDate
+    creationYear
+    incorporationCity
+    with(incorporationCountry){
+        incorporationCountryCode:countryISO.code
+        pnClassificationCode:pnClassification.code
+        sensitivityCode:sensitivity.code
+    }
+    incorporationCountrySubdivisionCode:incorporationCountrySubdivision.code
+}
+
+facade MdmAddressDTO on Address{
+    technicalBase.id
+    meanOfContactTypeCode:meanOfContactType.code
+    meanOfContactRelationtypeCode:meanOfContactRelationtype.code   
+    street
+    addressComplement
+    zipCode
+    city
+    countryCode:country.countryISO.code
+    with(location){
+        latitude
+        longitude
+    }
+}
+
+facade MdmPhoneDTO on Phone{
+    technicalBase.id
+    meanOfContactTypeCode:meanOfContactType.code
+    meanOfContactRelationtypeCode:meanOfContactRelationtype.code   
+    extention
+    phoneNumber
+}
+
+facade MdmEMailDTO on EMail{
+    technicalBase.id
+    meanOfContactTypeCode:meanOfContactType.code
+    meanOfContactRelationtypeCode:meanOfContactRelationtype.code   
+    emailAddress
+}
+
+facade MdmWebSiteDTO on webSite{
+    technicalBase.id
+    meanOfContactTypeCode:meanOfContactType.code
+    meanOfContactRelationtypeCode:meanOfContactRelationtype.code   
+    url
+}
+
+facade MdmLegalPersonNamesDTO on LPIdentification{
+    localCorporateName
+    corporateName
+    shortName
+    tradeName
+    legalFormCode:legalForm.code    
+    typologyCode:typology.code
+    #identifiers::MdmIdentifierDTO
+}
+
+facade MdmIdentifierDTO on Identifier{
+    identifier
+    identifierCode:base.code
+}
+
+#====================== Diffusion des Ids tiers
+
+facade MdmThirdPartyIDDiffusionDTO{
+    additionalFields {
+        applicationOrigin:String{example:"NiuViu"}
+        legalPerson::[MdmLegalPersonIDDiffusionDTO]
+        naturalPerson::[MdmNaturalPersonIDDiffusionDTO]
+    }
+} 
+
+facade MdmLegalPersonIDDiffusionDTO on LegalPerson{
+    additionalFields {
+        idOrigin:LocalID
+        meansOfContacts2::[MdmMeanOfContactIDDiffusionDTO]
+    }
+    idMdm:technicalBase.id
+    establishments::MdmEstablishmentIDDiffusionDTO
+    meansOfContacts:meansOfContacts2
+}
+
+facade MdmNaturalPersonIDDiffusionDTO on NaturalPerson{
+    additionalFields {
+        idOrigin:LocalID
+        meansOfContacts2::[MdmMeanOfContactIDDiffusionDTO]
+    }
+    idMdm:technicalBase.id
+    meansOfContacts:meansOfContacts2
+}
+
+facade MdmMeanOfContactIDDiffusionDTO on NaturalPerson{
+    additionalFields {
+        idOrigin:LocalID
+    }
+    idMdm:technicalBase.id
+}
+
+facade MdmEstablishmentIDDiffusionDTO on Establishment{
+    additionalFields {
+        idOrigin:LocalID
+        meansOfContacts2::[MdmMeanOfContactIDDiffusionDTO]
+
+    }
+    idMdm:technicalBase.id
+    meansOfContacts:meansOfContacts2
+}
+
+#============================== Roles
+
+facade MdmThirdPartyRoles on ThirdPartyRoles
+
+facade MdmContractShortDTO on Contract{
+    number
+    marketCode:market.code
+    metierCode:metier.code
+    bnppfSiteCode:bnppfSite.code
+}
+
+facade MdmLeadShortDTO on Lead{
+    bnppfSiteCode:site.code
+}
+
+#--------------------------------------- Natural & Megal Person 
+
+facade MdmRoleGuarantorDTO on Guarantor{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate   
+}
+
+facade MdmRoleShareholderDTO on Shareholder{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate
+    #----------------- specific
+    percentageHolding
+}
+
+#-------------------------------------- Legal Person
+
+facade MdmRoleAgentDTO on Agent{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate
+    #----------------- specific
+    contracts::MdmContractShortDTO
+}
+
+facade MdmRoleParticipantDTO on Participant{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate
+    #----------------- specific
+    contracts::MdmContractShortDTO
+
+}
+
+facade MdmRoleBuyerDTO on Buyer{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate
+    #----------------- specific
+    contracts::MdmContractShortDTO
+}
+
+facade MdmRoleCoFactorDTO on CoFactor{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate 
+    #----------------- specific
+    contracts::MdmContractShortDTO 
+
+}
+
+facade MdmRoleCredtInsurerDTO on CreditInsurer{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate
+    #----------------- specific
+    contracts::MdmContractShortDTO
+}
+
+facade MdmRoleCustomerDTO on Customer{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate
+    #----------------- specific
+    commercialStatusCode:commercialStatus.code
+    statusDate
+    leads::MdmLeadShortDTO
+    contracts::MdmContractShortDTO
+
+}
+
+facade MdmRoleReverseBuyerDTO on ReverseBuyer{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate
+    #----------------- specific
+    commercialStatusCode:commercialStatus.code
+    statusDate
+    contracts::MdmContractShortDTO
+    leads::MdmLeadShortDTO
+}
+
+facade MdmRoleReverseProviderDTO on ReverseProvider{
+     #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate
+    #----------------- specific
+    commercialStatusCode:commercialStatus.code
+    statusDate
+    contracts::MdmContractShortDTO
+    leads::MdmLeadShortDTO
+
+}
+
+facade MdmRoleBusinessProviderDTO on BusinessProvider{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate
+    #----------------- specific
+    groupBNPPOriginRole::MdmGroupEntityDTO
+    canalCode:canal.code
+    businessProviderTypeCode:type.code
+    contracts::MdmContractShortDTO
+}
+#---------------------------------------- Generic
+
+facade MdmRoleGenericDTO on Generic {
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate
+    #----------------- specific
+    OriginRoleName
+}
+

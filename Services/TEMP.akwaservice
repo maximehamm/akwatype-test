@@ -1,0 +1,212 @@
+
+service EBXOrchestra{
+
+    expose nomenclatures{
+        url:"nomenclatures"
+        #---------------------------------------- Generic
+        route nomenclatureGenericGroupGet{
+            method: GET
+            url:"nomenclature/group/nomenclatureCode:String"
+            response:NomenclatureGeneric
+        }
+        route nomenclatureGenericGroupPut{
+            method: PUT
+            url:"nomenclatu))re/group/nomenclatureCode:String"
+            request:NomenclatureGeneric
+        }
+        route nomenclatureGenericBnppfGet{
+            method: GET
+            url:"nomenclature/bnppf/nomenclatureCode:String"
+            response:NomenclatureGeneric
+        }
+        #---------------------------------------- Specific Group
+        route nomenclatureSpecifigGroupN013Get{
+            method: GET
+            url:"nomenclature/specific/group/N013"
+            response:InternalRatingN013
+        }
+       route nomenclatureSpecifigGroupN013Put{ 
+           method: PUT
+           url:"nomenclature/group/N013"
+           request:InternalRatingN013
+       }
+
+       route nomenclatureSpecifigGroupS087Get{
+           method: GET
+           url:"nomenclature/specific/group/S087"
+           response:externalRatingS087
+       }
+       route nomenclatureSpecifigGroupS087Put{
+           method: PUT
+           url:"nomenclature/group/S087"
+           request:externalRatingS087
+       }
+
+    #   # =================== Specific Group à Finaliser
+    #   # N193, N239 et S274
+
+    #   #---------------------------------------- Specific Bnpp Factor
+    #   route nomenclatureSpecifigBnppfF003Get{
+    #       method: GET
+    #       url:"nomenclature/specific/bnppf/F003"
+    #       response:IdentifierBaseF003
+    #   }
+
+    #   route nomenclatureSpecifigBnppfF015Get{
+    #       method: GET
+    #       url:"nomenclature/specific/bnppf/F015"
+    #       response:DocumentTypeF015
+    #   }
+
+    #   route nomenclatureSpecifigBnppfF032Get{
+    #       method: GET
+    #       url:"nomenclature/specific/bnppf/F032"
+    #       response:CountryF032
+    #    }
+       
+    }
+
+    expose NaturalPerson{
+        url:"naturalpersons"
+
+        route existNaturalperson{
+            url:"legalperson/search/?identifier:String&identifierType:String!"
+            response: ExistNaturalPersonDTO
+            description: "search for the existence of a natural person from his idMdm"                
+        }
+
+        route naturalPersonDetail{ 
+            url:"naturalperson/idMdm:String"
+            response:NaturalPerson.mdm
+            description: "Details of the natural person's data from his idMdm" 
+        }
+    }
+
+    expose LegalPerson{
+        url:"legalpersons"
+        route existLegalperson{
+            url:"legalperson/search/?identifier:String&identifierType:String!"
+            response: ExistLegalPersonDTO
+            description: "search for the existence of a legal person from his idMdm"                
+        }
+
+        route legalPersonDetail{
+            url:"naturalperson/idMdm:String"
+            response:LegalPerson.mdm
+            description: "Details of the legal person's data from his idMdm" 
+        }
+
+        route associateNaturalPersonsWithDetail{
+            url:"legalperson/naturalpersons/idMdm:String"
+            response:LegalPersonAssociateNaturalPersons.mdm
+            description:"""list with the details of the data of the physical persons associated 
+            to the legal person whose idMdm is passed in parameter"""
+        }       
+    }
+
+    #expose DiffusionID{
+    #    route list{
+    #        url:"diffusionID/application:String"
+    #        response: MdmThirdPartyIDDiffusionDTO                   
+    #    }
+    #}
+
+    
+}
+
+topic Q_MDM_LEGAL_PERSON_M1
+topic Q_MDM_LEGAL_PERSON_F1
+topic Q_ALLVIU_LEGAL_PERSON_F1
+topic Q_KYC_LEGAL_PERSON_F1
+topic Q_NIUVIU_LEGAL_PERSON_F1
+
+
+message LegalPerson_M1{
+    header:StandardMessageHeader
+    content: EBX_TempLegalPerson
+    description: "réponse au format M1 specifique pour EBX" 
+}
+
+message LegalPerson_F1{
+    header:StandardMessageHeader
+    content: BNPPF_TempLegalPerson
+    description: "réponse au format F1" 
+}
+
+service MdmControler{
+    url:"mdmOrchestrator"
+
+    #expose nomenclature{
+    #    url:"nomenclature"
+    #}
+
+    expose LegalPersons{
+        url:"thirdparty/legalpersons"
+         
+        route legalperson{
+            url:"legalperson/?identifier:String&identifierType:String"
+            response: MdmLegalPersonDTO
+            description: " réponse au format F1 standard des applications Factor"
+            consume EBXOrchestra.LegalPerson.existLegalperson
+            consume EBXOrchestra.LegalPerson.legalPersonDetail
+            if(unkwnown){
+                consume GlobalSourcing.legalPerson.legalPerson
+                #consume EBXOrchestra.LegalPerson.legalPersonCreate
+            }
+            if(needMoreInformations){
+                consume GlobalSourcing.legalPerson.legalPerson
+                #consume EBXOrchestra.LegalPerson.legalPersonUpdate
+            }       
+        }
+    }
+
+    #expose NaturalPersons{
+    #    url:"thirdparty/naturalperson"
+    #    route naturalPerson{
+    #        url:"identifier:String/identifierType:String"
+    #        response: String                   
+    #    }
+    #}
+
+    receive LegalPerson_F1{
+        topic : Q_MDM_LEGAL_PERSON_F1
+        consume EBXOrchestra.LegalPerson.existLegalperson
+        if(unkwnown){
+            #consume EBXOrchestra.LegalPerson.legalPersonCreate
+        }
+        if(kwnown){
+           #consume EBXOrchestra.LegalPerson.legalPersonUpdate
+        }
+    }
+
+    receive LegalPerson_M1{
+        topic: Q_MDM_LEGAL_PERSON_M1
+        send Q_ALLVIU_LEGAL_PERSON_F1.LegalPerson_F1 
+        send Q_KYC_LEGAL_PERSON_F1.LegalPerson_F1
+        send Q_NIUVIU_LEGAL_PERSON_F1.LegalPerson_F1
+    }   
+}
+
+service GlobalSourcing{
+    url:"globalsourcing"
+    expose legalPerson{
+        url:"thirdparty/legalpersons"
+        route legalPerson{
+            url:"legalperson/identifier:String/?identifierType:String!&detailLevel:String!"
+            response: Sourcing_TempLegalPerson
+            description: " réponse au format LegalPeron S1 spécifique au sourcing"                
+        }
+        
+    }
+}
+
+
+topic RMPMGroupe
+
+message importRMPMGroupe{
+    content:LegalPersonFromRMPM
+}
+message exportRMPMGroup{
+    #content:MdmLegalPersonDTO
+}
+

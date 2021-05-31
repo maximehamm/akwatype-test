@@ -1,0 +1,827 @@
+
+type LoginKeyboard {
+    @GOP
+
+    image: Binary {
+        comment: "base64 de l'image du keyboard"
+    }
+    token: UUID ## qu'est ce que c'est ?
+}
+
+type GacCustomer {
+    @GOP
+    
+    customer: NaturalPerson
+    gacContractGroup: GacContractGroup 
+
+    creator: ApplicationUser # pour permettre d'avoir un collaborator ou un naturalperson
+    login: String
+    password: Password
+    currentContract: Contract
+    keyboard: LoginKeyboard
+}
+
+enum ApplicationUserStatus {
+    INACTIVE, ACTIVE, ARCHIVED
+}
+
+enum ApplicationUserType {
+    NATURAL_PERSON, BNPP_COLLABORATOR
+}
+
+abstract ApplicationUser {
+     properties {
+       stopx: true
+    }
+    @GOP
+    
+    type: ApplicationUserType {
+        example: "BNPP_COLLABORATOR"
+    }
+    consentNotice: ConsentNotice
+    consentCookies: [ConsentCookie]
+
+    application: Application
+
+    status: ApplicationUserStatus {
+        example: "ACTIVE"
+    }
+
+}
+
+type Application {
+    @GOP
+    
+    technicalBase: TechnicalBase
+    name: String {
+        example: "GOP"
+    }
+}
+
+type GacContractGroup {
+    @GOP
+    
+    technicalBase: TechnicalBase
+    contracts: [Contract]
+}
+
+abstract DebtObligation {
+    @GOP
+
+    amount: Decimal
+    date: Date
+    
+    allocations:[Allocation]
+    supportingCustomerDocuments:[SupportingCustomerDocument]
+
+    properties {
+       label: "Créance"
+    }
+}
+
+type CreditNote extends DebtObligation{
+    @GOP
+
+    properties {
+       label: "Avoir"
+    }
+}
+
+enum InvoiceType { ## qu'est ce que c'est ?
+    F ## quelles sont les valeurs ?
+}
+enum PaymentMethod { ## est-ce bien un enum ?
+    ## quelles valeurs
+}
+type Invoice extends DebtObligation {
+    properties {
+       stopx: true
+    }
+    @GOP
+
+    technicalBase: TechnicalBase
+    currency: Currency
+    type: InvoiceType
+
+    dueDate: Date
+    purchaseDate: Date
+
+    customer: Customer ## n'est ce pas une info du contrat ?
+    buyer: Buyer ## est ce bien le debtor ?
+
+    ## debtorIdOfTheClient ?
+    ## invoiceIfOfTheClient ?
+    expectedPaymentMethod: PaymentMethod
+
+    ## balance qu'est ce que c'est ?
+    ## dispute ?
+    ## order ?
+    ## situation ?
+
+    classifications:[Classification] ## TODO un ou plusieurs ?
+
+    fundingStatus: FundingStatus
+    agreement: Agreement
+    remittance: Remittance
+
+    litigations:[Litigation]
+    dunnings:[Dunning]
+    
+    properties {
+       label: "Facture"
+    }
+} 
+
+enum FundingRequestStatus { ## qu'est ce que c'est ?
+	## quelles valeurs
+}
+
+type FundingRequest {
+    @GOP
+
+    technicalBase: TechnicalBase
+    bankDetail: BankDetail
+    amount: Decimal
+    percent: Percent
+    date: Date
+    status: FundingRequestStatus
+    currency: Currency
+    contract: Contract
+
+    properties {
+       label: "Demande de financement"
+    }
+}
+
+type Funding {
+    @GOP
+
+    technicalBase: TechnicalBase # 
+    status: FundingStatus # status ?
+
+    amount: Decimal
+    waitingValidationAmount: Decimal ## fundedAmountWaitingForValidation ?
+    availableAmount: Decimal ## availableForFundingAmount ?
+    unavailableAmount: Decimal ## unavailableOutstanding ?
+    currency: Currency
+
+    fundingRequest:FundingRequest
+    date:Date
+        
+    properties {
+       label: "Financement"
+    }
+}
+    
+
+enum AllocationType {
+	IF ## Quelles sont les valeurs ?
+}
+
+type Allocation {
+    @GOP
+    
+    technicalBase: TechnicalBase
+    type: AllocationType
+    description: String
+    currency: Currency ## est-ce une valeur obtenu d'un autre champs ?
+    date: Date
+
+    paymentAmount: Decimal
+    invoiceAmount: Decimal
+    # maturity ## Qu'est ce que c'est ?
+    # cancelStatus ## Qu'est ce que c'est ?
+    contract: Contract
+    invoice: Invoice ## une ou plusieurs ?
+    classification: Classification ## une ou plusieurs ?
+    fundingStatus: FundingStatus
+
+    payment: Payment
+    debtObligation: DebtObligation
+    oustanding: Outstanding
+
+    properties {
+       label: "Imputation"
+    }
+}
+
+type BuyerApproval {
+    @GOP
+    
+    properties {
+       label: "Etude d'agrément"
+    }
+}
+
+enum PaymentStatus {
+	TO_ALLOCATE, PARTIALLY_ALLOCATED, ALLOCATED ## d'autres ?
+}
+enum PaymentActorType {
+	DEBTOR, BNPPFACTOR ## Quelles sont les valeurs ?
+}
+type PaymentActor {
+    type: PaymentActorType
+    contract: Contract
+    legalPerson: LegalPerson
+}
+type Payment {
+    @GOP
+
+    technicalBase: TechnicalBase
+    status: PaymentStatus
+    currency: Currency
+    amount: Decimal
+    balance: Decimal ## Qu'est ce que c'est ?
+    date: Date
+    dueDate: Date
+    method: PaymentMethod
+    label: String
+
+    recipient: PaymentActor ## Qu'est ce que c'est ? buyer ?
+    issuer: PaymentActor
+
+    allocations:[Allocation]
+    buyer:Buyer
+    documents: [PaymentDocument]
+    
+    properties {
+       label: "Réglement"
+    }
+}
+
+
+type LitigationReason {
+	technicalBase: TechnicalBase
+    code: String
+    label: String
+}
+
+type Litigation {
+    @GOP
+
+    technicalBase: TechnicalBase
+    reason: LitigationReason
+
+    properties {
+       label: "Litige"
+    }
+}
+
+type Dunning {
+    @GOP
+
+    technicalBase: TechnicalBase
+    date: Date
+    code: String ## Qu'est ce que c'est ? enum ? example ?
+    description: String {
+        example: "Passage au contentieux"
+    }
+
+    properties {
+       label: "Relance"
+    }
+}
+
+
+type Outstanding {
+    @GOP
+    
+    technicalBase: TechnicalBase
+    contract: Contract
+
+    invoicesIncludingUBB: CountOutstanding
+    creditNotes: CountOutstanding
+
+    invoiceAndCreditNotes: ClassificationOutstanding
+    UBB: ClassificationOutstanding
+    global: ClassificationOutstanding
+    
+    globalFundingStatus: FundingStatus
+
+    dueNotPaid: DueNotPaidOutstanding
+
+    properties {
+       label: "Encours"
+    }
+}
+enum ProvisionOutstandingType {
+    GUARANTEE, RESERVE
+}
+enum OutstandingType {
+    AUTHORIZED, REFUSED
+}
+type ProvisionOutstanding { ## GuarantyOrReserve ?
+    technicalBase: TechnicalBase
+    oustanding: Outstanding
+    type: ProvisionOutstandingType
+    # shortenedAccountNumber
+
+    maximumAmout: Decimal
+    minimumAmout: Decimal
+    provisionnedAmout:Decimal
+    toBeReturnedAmout: Decimal
+    provisionNeedEstimationAmout: Decimal
+    
+    oustandingType: OutstandingType ## à mettre dans Outstanding ?
+    oustandingAmout: Decimal ## n'est pas déjà dans Outstanding ?
+    retentionPercent: Percent
+
+    properties {
+       label: "Encours sur provision"
+    }
+}
+type DueNotPaidOutstanding {
+	oustanding: Outstanding
+
+    invoices: CountOutstanding
+    paidAmount: Decimal
+    unpaidAmout: Decimal
+
+    pastDue: ClassificationOutstanding 
+
+    properties {
+       label: "Encours dus non payés"
+    }
+}
+type CountOutstanding {
+    @GOP
+
+    amount: Decimal
+    count: Integer
+
+    properties {
+       label: "Encours montant/nombre"
+    }
+}
+type FundingStatus { ## Funding ou Fundable, status ou outstanding ?
+    @GOP
+
+    funded: Decimal
+    unfunded: Decimal
+
+    properties {
+       label: "Status de financement"
+    }
+}
+type ClassificationOutstanding {
+    @GOP
+
+    amount: Decimal
+    guaranteedUnavailable: Decimal ## guaranteedCollectionAmount ?
+    guaranteedFundable: Decimal ## guaranteedFundableAmount ?
+    notGuaranteedUnavailable: Decimal ## notGuaranteedCollectionAmount ?
+    notGuaranteedFundable: Decimal ## notGuaranteedFundableAmount ?
+
+    properties {
+       label: "Encours de classement"
+    }
+}
+
+enum BankRole {
+	## Quelles sont les valeurs ?
+}
+
+type Bank {
+    @GOP
+
+    technicalBase: TechnicalBase
+    role: BankRole
+    details: [BankDetail]
+
+    properties {
+       label: "Banque"
+    }
+}
+
+enum BankDetailType {
+	## Quelles sont les valeurs ?
+}
+abstract BankDetail {
+    @GOP
+
+    type: BankDetailType
+
+}
+type BanckDetailIBAN extends BankDetail {
+    technicalBase: TechnicalBase
+    bankName: String {
+        example: "BNP Paribas"
+    }
+    iban: String {
+        example: "FR1420041010050500013M02606"
+    }
+    bicCode: String {
+        example: "BNPAFRPHXXX"
+    }
+}
+type BanckDetailSwift extends BankDetail {
+    technicalBase: TechnicalBase
+    swift: String {
+        example: "BNPAFRPP039"
+    }
+    bankName: String {
+        example: "BNP Paribas"
+    }
+    bankCity: String {
+        example: "Paris"
+    }
+    bicCode: String {
+        example: "BNPAFRPHXXX"
+    }
+    country: Country
+}
+
+type AccountingEntry {
+    @GOP
+
+	code:String
+    label:String
+    date:Date
+    currency:Currency
+    amount:Decimal
+    
+    properties {
+       label: "Ecriture comptable"
+    }
+}
+
+type AccountType {
+    @GOP
+
+	code:String
+    label:String
+
+    properties {
+       label: "Type de compte"
+    }
+}
+
+type FactoringAccount {
+    @GOP
+    
+    entries:[AccountingEntry]
+    type:AccountType
+    label:String
+    total:Decimal
+    currency:Currency
+
+    properties {
+       label: "CompteAffacturage"
+    }
+}
+
+abstract GopDocument {
+    @GOP
+
+    name:String { example: "Attestation URSSAF" }
+    uploadDate: Date
+    type: DocumentType
+    subType: DocumentSubType
+    data: Binary
+
+    properties {
+       label: "Document"
+       comment: "de BNPPF vers Customer et inversement..."
+    }
+}
+
+type OnlineReport extends GopDocument {
+    @GOP
+    
+    contract: Contract
+    legalDate: DateTime {
+        comment: "Date juridique"
+    }
+    details: String {
+        comment: "les metadonnées calculées par la GED (remise, apercu, devise)"
+    }
+
+    properties {
+       label: "Online Report"
+       comment: "BNPPF -> Customer ou n'importe quel rôle"
+    }
+}
+
+type SupportingCustomerDocument extends GopDocument {
+    @GOP
+
+    uploadUser: Customer
+    contract: Contract
+
+    properties {
+       label: "PieceJustificative"
+       comment: "Customer -> BNPPF"
+    }
+}
+
+type PaymentDocument extends GopDocument {
+    @GOP
+
+    properties {
+       label: "Image réglement"
+    }
+}
+
+enum AgreementStatus {
+	PENDING, ACCEPTED, REFUSED # TODO
+}
+
+type Agreement {
+    properties {
+       stopx: true
+    }
+    @GOP
+
+    technicalBase: TechnicalBase
+    status: AgreementStatus
+    currency: Currency
+    constraints: AgreementConstraint
+
+    debtor: LegalPerson ## ThirdParty ?
+    oustanding: AgreementOutstanding 
+    contract: Contract ## un ou plusieurs ?
+
+    etudesAgrements:[BuyerApproval]
+    
+    properties {
+       label: "Agrément"
+    }
+}
+type AgreementOutstanding {
+    guaranty: Decimal
+    notGuaranteedFundable: Decimal
+    oustandings: [Outstanding] ## un ou plusieurs ?
+}
+type AgreementConstraint {
+    requestLimit: Decimal
+    purchaseLimit: Decimal
+    guarantyLimit: Decimal
+    notGuaranteedFundableLimit: Decimal ## ?
+}
+
+enum RemittanceStatus { ## est-ce bien un enum ?
+    PURCHASED # quelles sont les valeurs ?
+}
+type Remittance {
+    properties {
+       stopx: true
+    }
+    @GOP
+
+    technicalBase: TechnicalBase
+    invoiceList: [Invoice] ## Faut-il dupliquer les infos de l'invoice ?
+
+    customer: Customer
+    invoices: CountOutstanding
+    invoiceType: InvoiceType
+    integrationDate: Date
+    status: RemittanceStatus
+    purchase: CountOutstanding
+    currency: Currency
+    oustanding: RemittanceOutstanding
+    lastPurchaseDate: Date
+    factoringCommissionAmount: Decimal ## Est-ce bien là ?
+    factoringCommissionVAT : Decimal ## Est-ce bien là ?
+
+    debtObligation:[DebtObligation]
+    documents:[SupportingCustomerDocument]
+
+    properties {
+       label: "Remise"
+    }
+}
+
+type RemittanceOutstanding { ## Pourquoi RemittanceStatus et pas RemittanceOutstanding
+    technicalBase: TechnicalBase
+    list: [RemittanceCurrencyOutstanding]
+    purchaseCount: Integer
+    purchaseWaitingCount: Integer
+}
+type RemittanceCurrencyOutstanding {
+    currency: Currency
+    purchaseCount: Integer
+    purchaseWaitingCount: Integer
+    purchaseAmount: Decimal
+    purchaseWaitingAmount: Decimal
+}
+
+type Classification {
+    @GOP
+
+    technicalBase: TechnicalBase
+    date: DateTime
+    type: ClassificationType
+
+    oustanding: ClassificationOutstanding ## y a-t-il un lien ?
+
+    ## les infos ci dessous, sont-elles propres à Classification, ClassificationOutstanding, les deux ?
+    guaranteedAmount: Decimal { example: 12050.00 }
+    notGuaranteedAmount: Decimal { example: 0.00 }
+    fundingAmount: Decimal { example: 12050.00 }
+    notFundingAmount: Decimal { example: 0.00 }
+    collectionAmount: Decimal { example: 0.00 }
+    currency: Currency
+
+    properties {
+       label: "Classement"
+    }
+}
+
+type ClassificationType {
+    @GOP
+
+    code: String { example: "DEC" }
+    label: String { example: "Décaissement" }
+
+    properties {
+       label: "Nature de classement"
+    }
+}
+
+
+
+abstract ContractualCondition {
+    properties {
+       label: "Condition contractuelle"
+    }
+}
+
+type TariffCondition extends ContractualCondition{
+    properties {
+       label: "Condition tarifaire"
+    }
+}
+
+type PurchaseCondition extends ContractualCondition{
+    properties {
+       label: "Condition achat"
+    }
+}
+
+type OtherCondition extends ContractualCondition{
+    properties {
+       label: "Condition autre"
+    }
+}
+
+type TypeNotificationGop {
+	code:String
+    label:String
+
+}
+
+type ExpediteurGOP {
+
+}
+
+type DestinataireGOP {
+
+}
+
+type NotificationGOP{
+    technicalBase: TechnicalBase
+    titre:String
+    content:String
+    type:TypeNotificationGop
+    isViewed: Boolean
+    isRemoved:Boolean
+    viewedDate:DateTime
+    expediteur:ExpediteurGOP
+    destinataires: [DestinataireGOP]
+}
+
+type MessageGOP{
+    technicalBase: TechnicalBase
+    titre:String
+    content:String
+    type:TypeNotificationGop
+    isViewed: Boolean
+    isRemoved:Boolean
+    viewedDate:DateTime
+    expediteur:ExpediteurGOP
+    destinataires:[DestinataireGOP]   
+}
+
+scalar SIREN as String {
+    regex: "[0-9]{8}[12]"
+}
+scalar SIRET as String {
+    regex: "[0-9]{14}"
+}
+
+
+type Widget {
+    technicalBase: TechnicalBase
+}
+
+type Settings {
+    technicalBase: TechnicalBase
+
+    properties {
+       label: "Réglage"
+    }
+}
+
+type Event {
+    technicalBase: TechnicalBase  
+
+    properties {
+       label: "événement"
+    }
+}
+
+type Message {
+    technicalBase: TechnicalBase
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

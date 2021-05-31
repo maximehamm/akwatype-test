@@ -1,0 +1,11 @@
+facade LegalPersonBufferDTO on LegalPerson{
+    # PMB computed.clientNationalID
+    with (identificationInformation) { 
+        with(identification){
+            corporateName
+            legalForm
+        } 
+    } 
+   
+    thirdPartyBuffer
+}

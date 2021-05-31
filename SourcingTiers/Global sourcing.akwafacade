@@ -1,0 +1,211 @@
+facade GSLegalPerson on LegalPerson{
+    additionalFields {
+        #legalInformation:LPIdentificationInformations{ basedOn: identificationInformation}
+        #legalInformation2:LPIdentificationInformations{ basedOn: identificationInformation}
+        establishment::GSEstablishment{basedOn: establishments}
+    }
+
+    #legalInformation{
+    #    identifiers::GSIdentifier
+    #    with identification{
+    #        legalFormCode:legalForm.code
+    #    }
+    #}
+
+    with (activityInformations){
+        with(activity){
+            nafCode:naf2008.nafNiv2.code
+            naceCode:nace.code
+        }
+    }
+    with identificationInformation::GSIdentificationInformation
+    establishment
+    representatives:associatedThirdParties::(GSAssociateLegalPerson,GSAssociateNaturalPerson)
+}
+
+facade GSIdentificationInformation on LPIdentificationInformations{
+    #additionalFields {
+    #    identification:LPIdentification{basedOn: identification}
+    #}
+
+    identifiers::GSIdentifier 
+    
+    with identification{
+            legalPersonName:corporateName
+            mark:shortName
+            legalFormInternalCode:legalForm.code
+            
+    }
+
+    with (immatriculation){
+        registrationDate:creationDate
+    }
+}
+
+facade GSIdentifier on Identifier{
+    identifier
+    identifierType:base{
+        internalCode:code
+    }
+}
+
+facade GSAssociateLegalPerson on LegalPerson{
+    additionalFields {
+        address::GSAddress
+    }
+
+    dispatch (meansOfContacts.meanOfContactType.code|
+            meansOfContacts.meanOfContactRelationtype.code(
+        "1|6":address))
+
+    with identificationInformation{
+        with identification{
+            name:corporateName           
+        }
+        identifiers::GSIdentifier
+    }
+    with(thirdPartyType){
+        internalRepresentantTypeCode:code
+    }
+    roles::( GSRoleLegalRepresentativDTO ,
+            GSRoleAdministratorDTO,
+            GSRoleGuarantorDTO ,
+            GSRoleShareholderDTO ,
+            GSRoleAgentDTO ,
+            GSRoleParticipantDTO ,
+            GSRoleBuyerDTO ,
+            GSRoleCoFactorDTO ,
+            GSRoleCredtInsurerDTO,
+            GSRoleCustomerDTO ,
+            GSRoleReverseBuyerDTO ,
+            GSRoleReverseProviderDTO ,
+            GSRoleBusinessProviderDTO )
+    
+}
+
+facade GSAssociateNaturalPerson on NaturalPerson{
+    additionalFields {
+        address::GSAddress
+    }
+
+    dispatch (meansOfContacts.meanOfContactType.code|
+            meansOfContacts.meanOfContactRelationtype.code(
+        "1|4":address))
+
+
+    with identificationInformations{
+        with identification::GSAssociateNPIdentification
+        qualities:businessFunctions{
+            quality:name
+        }
+    }
+
+    with(thirdPartyType){
+        internalRepresentantTypeCode:code
+    }
+    roles::( GSRoleContactDTO ,
+            GSRoleLegalRepresentativDTO ,
+            GSRoleBeneficialOwnerDTO ,
+            GSRoleEffectiveSignatoryDTO ,
+            GSRoleExecutiveOfficerDTO ,
+            GSRoleAgentOfInsolvencyProceedingDTO ,
+            GSRoleAuthorizedSignatoryDTO ,
+            GSRoleAdministratorDTO,
+            GSRoleGuarantorDTO,
+            GSRoleShareholderDTO )
+    
+}      
+
+#--------------------------------------- Natural & Legal Person 
+
+facade GSAssociateNPIdentification on NPIdentification{
+    additionalFields {
+        firstName:String {basedOn:firstNames}
+        nationality::GSNationality {basedOn:nationalities}
+    }
+    lastName
+	surname:usageName
+    birthDate
+    birthCity
+    birthCountryCode:birthCountry.countryISO.code 
+}
+
+facade GSNationality with Country{
+    nationality:countryISO.code
+}
+
+facade GSEstablishment on Establishment{
+    additionalFields {
+        address::GSAddress
+    }
+
+    dispatch (meansOfContacts.meanOfContactType.code|
+            meansOfContacts.meanOfContactRelationtype.code(
+        "1|6":address))
+
+    registryName:tradeName
+    corporateName:fancyName
+    depositDate:incorporationDate
+    internalEntityType:establishmentType.code
+    with (activityInformations){
+        with(activity){
+            nafCode:naf2008.nafNiv2.code
+            naceCode:nace.code
+        }
+    }
+    identifiers:idents::GSIdentifier
+}
+
+facade GSAddress on Address{
+    label1:street
+    label2:addressComplement
+    cityCode:zipCode
+    city
+    country{
+        code:countryISO.code
+    }
+}
+
+facade GSActivity on LegalPersonActivity{
+
+}
+
+facade GSLPRepresentative on LegalPerson{
+
+}
+
+facade GSLPEstablishment on Establishment{
+
+}
+
+#-------------------------------------- Natural Person
+
+facade GSRoleContactDTO on Contact{typeRoleCode:typeRole}
+facade GSRoleLegalRepresentativDTO on LegalRepresentative{typeRoleCode:typeRole}
+facade GSRoleBeneficialOwnerDTO on BeneficialOwner{typeRoleCode:typeRole} 
+facade GSRoleEffectiveSignatoryDTO on EffectiveSignatory{typeRoleCode:typeRole}
+facade GSRoleExecutiveOfficerDTO on ExecutiveOfficer{typeRoleCode:typeRole}
+facade GSRoleAgentOfInsolvencyProceedingDTO on AgentOfInsolvencyProceeding{typeRoleCode:typeRole}
+facade GSRoleAuthorizedSignatoryDTO on AuthorizedSignatory{typeRoleCode:typeRole}
+facade GSRoleAdministratorDTO on Administrator{typeRoleCode:typeRole}
+
+#--------------------------------------- Natural & Legal Person 
+
+facade GSRoleGuarantorDTO on Guarantor{typeRoleCode:typeRole}
+facade GSRoleShareholderDTO on Shareholder{typeRoleCode:typeRole}
+
+#-------------------------------------- Legal Person
+
+facade GSRoleAgentDTO on Agent{typeRoleCode:typeRole}
+facade GSRoleParticipantDTO on Participant{typeRoleCode:typeRole}
+facade GSRoleBuyerDTO on Buyer{typeRoleCode:typeRole}
+facade GSRoleCoFactorDTO on CoFactor{typeRoleCode:typeRole}
+facade GSRoleCredtInsurerDTO on CreditInsurer{typeRoleCode:typeRole}
+facade GSRoleCustomerDTO on Customer{typeRoleCode:typeRole}
+facade GSRoleReverseBuyerDTO on ReverseBuyer{typeRoleCode:typeRole}
+facade GSRoleReverseProviderDTO on ReverseProvider{typeRoleCode:typeRole}
+facade GSRoleBusinessProviderDTO on BusinessProvider{typeRoleCode:typeRole}
+
+#---------------------------------------- Generic
+
+facade GSRoleGenericDTO on Generic {typeRoleCode:typeRole}

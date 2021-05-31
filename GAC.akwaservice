@@ -1,0 +1,24 @@
+service Gac {
+    url: "/api/gac"
+    isDraft: "à voir avec Adnane"
+
+    expose customers {
+        url: "/customers" 
+        route list { method: GET, response: [GacCustomerLightDTO], url: "?contractId:ID&login:String", label: "Recherche un utilisateur" }
+        route create { method: POST, request: GacCustomerCreateDTO, label: "création d'un compte utilisateur" }
+        route get { method: GET, response: GacCustomerLightDTO, url: "/id:ID" }
+        route update { method: PUT, request: GacCustomerUpdateDTO, url: "/id:ID", label: "mise à jour du compte d'un utilisateur" }
+        route updatePassword { method: PUT, request: GacCustomerUpdatePasswordDTO, url: "/id:ID/password", label: "mise à jour du mot de passe d'un utilisateur" }
+        route updateStatus { method: PUT, request: GacCustomerUpdateStatusDTO, url: "/id:ID/status", label: "mise à jour du status d'un utilisateur" }
+        route deactivate { method: DELETE, url: "/id:ID", label: "désactivation d'un utilisateur" }
+    }
+
+    expose auth {
+        route getKeyboard { method: GET, url: "/keyboard" response: GetLoginKeyboardDTO }
+        route login { method: POST, url: "/login", request: CheckLoginKeyboardDTO }
+        route logout { method: POST, url: "/logout" }
+        route sendPassword { method: POST, url: "/send-password?mail:String"}
+    }
+}
+
+

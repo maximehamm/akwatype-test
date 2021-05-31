@@ -1,0 +1,92 @@
+
+type ConsentNotice extends ConsentGDPR {
+    @GOP
+
+    notice: NoticeGDPR
+    value: ConsentNoticeValue
+     
+
+    properties {
+       label: "Consentement GDPR à la notice"
+    } 
+}
+
+type ConsentCookie extends ConsentGDPR {
+    @GOP @Sensibility1
+    
+    value: ConsentCookieValue
+    cookie: Cookie
+    
+    properties {
+        label: "Consentement GDPR aux cookies"
+        comment: """
+       Pour un utilisateur non connecté, un cookie technique stocke l'info sur le poste de l'utilisateur, ne sort pas du poste.
+       Pour un utilisateur connecté, l'info est reprise de son profil
+       """
+    } 
+}
+
+type ConsentEmailMarketing extends ConsentGDPR {
+    value: ConsentCookieValue
+
+    properties {
+       label: "Consentement GDPR sur les emails marketing"
+       comment: "Draft, non exploré" 
+    }
+}
+
+type Cookie {
+    @GOP
+    
+    name: String
+    description: String
+    validityDuration: Integer # Month
+    category: ConsentCookieCategory
+    provider: String
+    type: ConsentCookieType
+    domain: String
+
+    properties {
+       label: "Cookie & Tracker d'activité"
+    }
+}
+
+enum ConsentCookieType {
+    FIRST_PARTY,    # des domaines BNPP et BNPPF
+    THIRD_PARTY     # autres domaines
+}
+enum ConsentCookieCategory {
+    ANALYTICS, ADVERTISINGS, CUSTOM, SOCIAL_MEDIA
+}
+enum ConsentCookieValue {
+    NOT_SHOW, PENDING, ACCEPTED, REFUSED, ACCEPTED_EXPIRED
+}
+enum ConsentNoticeValue {
+    NOT_SHOW, PENDING, ACCEPTED, REFUSED
+}
+
+abstract ConsentGDPR {
+    @GOP
+    
+    person: ApplicationUser
+    applications: [Application] {
+        comment: "Mais cela pourrait être un consentement global"
+    }
+    date: Date
+
+    properties {
+       label: "Consentement GDPR"
+    }
+}
+
+type NoticeGDPR { 
+    @GOP
+    
+    text: Text
+    date: Date
+    version: Integer
+
+    properties {
+       label: "Notice GDPR"
+    }
+}

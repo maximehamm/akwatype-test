@@ -1,0 +1,281 @@
+# TODO - Reprendre les computed en commentaires (Address, mail...)
+
+facade idESign{
+    additionalFields {
+        is:String
+    }
+}
+
+facade DossierESign{
+    additionalFields {
+        lien:String
+
+        status:String
+        reference: String
+        date_status:Date
+        #------------------------ Id Sales force
+        id_ent_SF_BNPP:String
+        id_oppco_SF_BNPP:String
+    }
+}
+
+facade EntrepriseESignDTO on LegalPerson{
+    computed.clientLocalID
+    identificationInformation.identification.corporateName
+}
+
+facade CloisonnementESignDTO on BNPPFSite{
+    code_Societe:code
+    code_etablissement:establishment.code
+}
+
+facade DocumentEsignDTO on DocumentEsign{
+ 
+}
+
+facade ClientESign on NaturalPerson{
+    additionalFields {
+        #blocked:Boolean
+        #msgWarn:String
+        #file_type:String ## example : Identity
+        #count_Block:Integer
+        #invalid_file:Boolean
+        #file_key_name:String{
+        #    comment: "Nomenclature des document dans la GED et AllViu"
+        #}
+        #file_uploaded:Boolean
+        date_signature:Date ## à raprocher de la signature du contrat
+        environnement:String{
+            comment:"Recette/Prod/Dev"
+        }
+        langue: String
+        document_a_signer::[DocumentTypeESign]
+        cloisennement::CloisonnementESignDTO
+    }
+    with (identificationInformations){
+        with (identification){
+            nom:lastName
+            prenom:firstNames
+            dateNaissance:birthDate
+            civilite:civility.code
+        }
+    }
+     #with (computed){
+     #           mail:emailAddress
+     #           mobile:phoneNumber
+     #       }
+}
+
+facade ContratEsignDTO on Contract{
+    numero:number
+}
+
+facade DocumentSummaryDTO on DocumentEsign{
+    code
+    libelle
+}
+
+facade BNPPFClientEsignDTO on NaturalPerson{
+   with (identificationInformations){
+        with (identification){
+            nom:lastName
+            prenom:firstNames
+            dateNaissance:birthDate
+            civilite:civility.code
+        }
+    }
+     #with (computed){
+     #           mail:emailAddress
+     #           mobile:phoneNumber
+     #       }
+}
+
+#================================================= Reverse
+
+facade BNPPFESignRevers{
+    additionalFields {
+        template::idESign
+        entreprise::EntrepriseESignDTO
+        contrat::ContratEsignDTO
+        documents::[DocumentEsign]
+        nomProgramme:String
+        dossier::DossierESign
+        client::ClientESign        
+    }
+}
+
+facade BNPPFClientReverseEsignDTO on NaturalPerson{
+    additionalFields {
+        document:DocumentEsign
+        dateSignature:Date ## à raprocher de la signature du contrat ?
+        #prenom:String {basedOn:firstNames}
+    }
+    
+    with (identificationInformations){
+        with (identification){
+            nom:lastName
+            prenom:firstNames
+            dateNaissance:birthDate
+            civilite:civility.code
+        }
+    }
+     #with (computed){
+     #           mail:emailAddress
+     #           mobile:phoneNumber
+     #       }
+    with(document){
+         msg
+         code
+         bloked
+         libelle
+         msgWarn
+         file_type
+         count_block
+         file_key_name
+         invalid_file
+         file_uploaded
+    }
+    dateSignature
+}
+
+facade BNPPFReverseEsignDTO with BNPPFESign{ 
+    additionalFields {
+        template:String
+        environnement:String
+        nomProgramme:String
+    }   
+    template
+    entreprise:legalPerson::EntrepriseESignDTO
+    contract::ContratEsignDTO
+    documents{
+         msg
+         code
+         bloked
+         libelle
+         msgWarn
+         file_type
+         count_block
+         invalid_file
+         file_uploaded
+    }
+   
+    nomProgramme
+    dossier{
+        lien
+        statut:statut.code
+        reference
+        date_statut
+        id_ent_SF_BNPP
+        id_oppco_SF_BNPP
+    }
+    client::BNPPFClientReverseEsignDTO
+    environnement
+    langue:langue.countryISO.code
+    documentsASigner::DocumentSummaryDTO
+    cloisonnement::CloisonnementESignDTO
+}
+
+#================================================= Impulsion
+
+facade BNPPFClientImpulsionEsignDTO on NaturalPerson{
+    additionalFields {
+        dateSignature:Date ## à raprocher de la signature du contrat ?
+        #prenom:String {basedOn:firstNames}
+    }
+    
+    with (identificationInformations){
+        with (identification){
+            nom:lastName
+            prenom:firstNames
+            dateNaissance:birthDate
+            civilite:civility.code
+        }
+    }
+    #with (computed){
+    #    mail:emailAddress
+    #    mobile:phoneNumber
+    #}
+    dateSignature
+    
+}
+
+facade BNPPFImpulsionEsignDTO with BNPPFESign{
+     entreprise:legalPerson::EntrepriseESignDTO
+     documents_attaches:documents::DocumentSummaryDTO
+     contract::ContratEsignDTO
+     interlocuteurBNPPF{
+         telephone
+         email:mail
+     }
+     dossier{
+         id_ent_SF_BNPP
+         reference
+         id_oppco_SF_BNPP
+         date_statut
+         lien
+         date_echeance
+         email_contact
+         statut:statut.code
+     }
+     client::BNPPFClientImpulsionEsignDTO
+     document_a_signer:documentsASigner::DocumentSummaryDTO
+     cloisonnement::CloisonnementESignDTO
+     
+
+
+}
+
+#================================================= Avenant
+
+facade BNPPFClientAvenantEsignDTO on NaturalPerson{
+    additionalFields {
+        dateSignature:Date ## à raprocher de la signature du contrat ?
+        legalPerson: LegalPerson
+    }
+    identificationInformations{
+        identification{
+            lastName
+            firstNames
+            civilite:civility.code
+        }
+    }
+    
+    #with (computed){
+    #    email:emailAddress
+    #    mobile:phoneNumber
+    #}
+    dateSignature
+    with(legalPerson){
+        
+        with(computed){
+            representantLegal:legalRepresentative{
+            
+                #nom:lastName
+            }
+        }
+    }
+    
+}
+
+facade BNPPFAvenantEsignDTO with BNPPFESign{
+
+}
+
+#================================================= Content Esign
+
+facade BNPPFESignDTO {
+    additionalFields {
+        content::BNPPFReverseEsignDTO
+    }
+    #content::(BNPPFImpulsionEsignDTO,BNPPFReverseEsignDTO,BNPPFAvenantEsignDTO)
+}
+
+
+
+
+
+
+
+
+
+

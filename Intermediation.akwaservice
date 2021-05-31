@@ -1,0 +1,327 @@
+service IntermediationAllViu{
+    war: "pontapisalesforcecrm.war"
+    dexUrl: "TODO Intermediation"
+    
+    expose AllViu {
+        route createOpportunity{ 
+            consume AllViu.Opportunite.create 
+        }
+        route updateOpportunity{
+            consume AllViu.Opportunite.update
+        }
+        route createPropect{
+            consume AllViu.Entreprise.create
+        }
+        route updatePropect{
+            consume AllViu.Entreprise.update
+        }
+        route createLead{
+            consume AllViu.Piste.create
+        }
+        route updateLead{
+            consume AllViu.Piste.update
+        }
+        route createContact{
+            consume AllViu.Contact.create
+        }
+        route updateContact{
+            consume AllViu.Contact.update
+        }
+    }  
+
+    consume AllViu.Piste{
+        route create
+        route update
+        route get
+    }
+
+    consume AllViu.Opportunite{
+        route create
+        route update
+        route get
+    }
+
+    consume AllViu.Contact{
+        route create
+        route update
+        route get
+    }
+
+     consume AllViu.Entreprise{
+        route create
+        route update
+        route get
+    }
+
+    consume AllViu.Tache{
+        route create
+    }
+}
+
+service GenerationPDFAllViu{
+
+    expose Document {
+        route createContractEdition{
+            consume AllViu.ContractEdition.createEdition
+        }
+    }
+
+}
+
+service Docapost{
+
+    expose DossierDocapost{
+        route Initialyze
+        route setDocument
+        route setConformity
+    }
+
+    expose Services{
+        route redirect
+        route shootId
+    }
+
+    
+
+    consume CallBack.Notification{
+        route setDunningClientDocumentsImpulsion
+        route setDunningClientDocumentsRenewal
+        route setDunningClientDocumentsAmendment
+        route setDunningClientDocumentsReverse
+        
+        route setAbandonDossierImpulsion
+        route setAbandonDossierRenewal
+        route setAbandonDossierAmendment
+        route setAbandonDossierReverse
+
+        route setDunningClientSignatureImpulsion
+        route setDunningClientSignatureRenewal
+        route setDunningClientSignatureAmendment
+        route setDunningClientSignatureReverse
+       
+        route setSignatureClientImpulsion
+        route setSignatureClientRenewal
+        route setSignatureClientAmendment
+        route setSignatureClientReverse
+
+        route setClotureDossierImpulsion  
+        route setClotureDossierRenewal  
+        route setClotureDossierAmendment  
+        route setClotureDossierReverse  
+    }   
+} 
+
+service CallBack{
+    expose Notification{
+        url:"/api/v2/callbacks/notify/"
+        #-------------------------- Avec fichier
+
+        route setAvenantCompleteDossier{
+            url:"multipart/refDossier:String/AVENANT_ATTENTE_COMPLETUDE"
+            consume GED.Document.insertDocument
+            consume AllViu.NotificationAllViu.setCompleteDossier
+        }
+
+        route setReverseCompleteDossier{
+            url:"multipart/refDossier:String/REVERSE_ATTENTE_COMPLETUDE"
+            consume GED.Document.insertDocument
+            consume AllViu.NotificationAllViu.setCompleteDossier
+        }
+        
+
+        ##============================================ setClotureDossier
+
+        route setClotureDossierImpulsion{
+            url:"multipart/refDossier:String/produit:String/CONFORME"
+            consume GED.Document.insertDocument
+            consume AllViu.NotificationAllViu.setClotureDossier
+            consume UploadDocument.Dossier.ClotureDossier          
+        }
+
+        route setClotureDossierRenewal{
+            url:"multipart/refDossier:String/produit:String/CONFORME"
+            consume GED.Document.insertDocument
+            consume AllViu.NotificationAllViu.setClotureDossier
+        }
+
+        route setClotureDossierAmendment{
+            url:"multipart/refDossier:String/produit:String/CONFORME"
+            consume GED.Document.insertDocument
+            consume AllViu.NotificationAllViu.setClotureDossier
+        }
+
+        route setClotureDossierReverse{
+            method: POST
+            request: BNPPFESign
+            url:"multipart/refDossier:String/produit:String/CONFORME"
+            consume GED.Document.insertDocument
+            consume AllViu.NotificationAllViu.setClotureDossier
+            consume BackEndReverseSouscription.NotificationDocapost.setClotureDossier
+           
+        }
+
+        ##------------------------------------------
+
+
+
+
+
+        ##============================================ setSignatureClient
+        route setSignatureClientImpulsion{
+            url:"multipart/refDossier:String/produit:String/setSignature"
+            consume GED.Document.insertDocument
+            consume AllViu.NotificationAllViu.setSignatureClient
+            consume UploadDocument.Dossier.signatureClient
+        }
+
+        route setSignatureClientRenewal{
+            url:"multipart/refDossier:String/produit:String/setSignature"
+            consume GED.Document.insertDocument
+            consume AllViu.NotificationAllViu.setSignatureClient
+        }
+
+        route setSignatureClientAmendment{
+            url:"multipart/refDossier:String/produit:String/setSignature"
+            consume GED.Document.insertDocument
+            consume AllViu.NotificationAllViu.setSignatureClient
+        }
+
+        route setSignatureClientReverse{
+            url:"multipart/refDossier:String/produit:String/setSignature"
+            consume GED.Document.insertDocument
+            consume AllViu.NotificationAllViu.setSignatureClient
+        }
+
+        ##------------------------------------------
+
+       #-------------------------- Sans fichier
+
+        route updateScoring{
+            consume NiuViu.Contract.updateScoring
+            consume backEndWebImpulsion.Notification.updateScoring
+        }
+
+
+        ##============================================ setAbandonDossier
+        route setAbandonDossier{
+           
+
+        }
+
+        route setAbandonDossierReverse{
+            consume AllViu.NotificationAllViu.setAbandonDossier
+            consume BackEndReverseSouscription.NotificationDocapost.setAbandonDossier
+        }
+
+        route setAbandonDossierAmendment{
+            consume AllViu.NotificationAllViu.setAbandonDossier
+        }
+
+        route setAbandonDossierRenewal{
+            consume AllViu.NotificationAllViu.setAbandonDossier
+
+        }
+
+        route setAbandonDossierImpulsion{
+            consume AllViu.NotificationAllViu.setAbandonDossier           
+            consume UploadDocument.Dossier.ClotureDossier
+        }
+        ##------------------------------------------
+        
+        ##============================================= setDunningClientDocuments - OK
+        route setDunningClientDocumentsReverse {
+            consume AllViu.NotificationAllViu.setDunningClientDocuments
+        }
+
+        route setDunningClientDocumentsAmendment {
+            consume AllViu.NotificationAllViu.setDunningClientDocuments
+        }
+
+        route setDunningClientDocumentsRenewal {
+            consume AllViu.NotificationAllViu.setDunningClientDocuments
+        }
+
+        route setDunningClientDocumentsImpulsion {
+            consume AllViu.NotificationAllViu.setDunningClientDocuments
+        }
+
+        # Penser à la relance client à partir de Upload
+        ##----------------------------------------------
+
+
+
+
+        route setToBeCompleteByClient{
+            consume AllViu.NotificationAllViu.setToBeCompleteByClient
+        }
+
+
+        route setAwaitingClientSignature{
+            consume AllViu.NotificationAllViu.setAwaitingClientSignature
+        }
+
+        ##======================================
+
+        route setDunningClientSignature{
+            consume AllViu.NotificationAllViu.setDunningClientSignature
+        }
+
+        route setDunningClientSignatureReverse{
+            consume AllViu.NotificationAllViu.setDunningClientSignature
+        }
+
+        route setDunningClientSignatureAmendment{
+            consume AllViu.NotificationAllViu.setDunningClientSignature
+        }
+
+        route setDunningClientSignatureRenewal{
+            consume AllViu.NotificationAllViu.setDunningClientSignature
+        }
+
+        route setDunningClientSignatureImpulsion{
+            consume AllViu.NotificationAllViu.setDunningClientSignature
+        }
+        ##--------------------------------------
+
+        route setCompleteDossierAfterNonConformity{
+            consume AllViu.NotificationAllViu.setCompleteDossierAfterNonConformity
+        }
+
+    
+    } 
+
+    consume GED.Document{
+        route insertDocument
+    }
+
+    consume AllViu.NotificationAllViu{
+        route setCompleteDossier
+        route setSignatureClient
+        route setConformity
+        route setAbandonDossier
+        route setDunningClientDocuments
+        route setToBeCompleteByClient
+        route setAwaitingClientSignature
+        route setDunningClientSignature
+        route setSignatureAbandon
+        route setCompleteDossierAfterNonConformity    
+    }
+
+    consume UploadDocument.NotificationUpload {
+        route SetRelanceClient        
+        route setConformity
+    }
+    consume UploadDocument.Dossier{
+        route setDossierAbandon
+        route setSignatureAbandon
+    }
+
+    #consume BackEndReverseSouscription.NotificationDocapost{
+    #    routes:[setAbandonDossier,setConformity]
+    #}
+
+}
+
+ 
+
+

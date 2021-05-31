@@ -1,0 +1,180 @@
+service GaiaFront {
+    consume GaiaBack.applications {
+        route getList
+    }
+    consume GaiaBack.feedbacks {
+        route add
+        route get
+    }
+    consume GaiaBack.news {
+        route add
+        route addLike
+        route delete
+        route get
+    }
+    consume GaiaBack.notifications {
+        route deleteById
+        route deleteByReceiver
+        route getListByReceiver
+        route read
+        route readByReceiver
+        route save
+    }
+    consume GaiaBack.reminders {
+        route add
+        route delete
+        route getListByUser
+        route update
+    }
+    consume GaiaBack.users {
+        route createApplicationPreference
+        route get
+        route getList
+        route updateApplicationPreference
+        route updatePreferenceElementPerPage
+        route updatePreferenceFavoriteApplication
+        route updatePreferenceFontSize
+        route updatePreferenceShowTutorial
+    }
+
+    consume SSO.authentification {
+        route authenticate
+    }
+}
+ 
+service GaiaBack {
+    url: "dev.mfactor.bnpparibas.local/apig/portal-backoffice"
+    
+    consume SSO.authentification {
+        route checkToken
+    }
+
+    consume PostgreSQL96.Gaia {
+        route read_write
+    }
+
+    expose applications {
+        url: "/applications"
+        route getList {
+            response: [GaiaApplicationDTO]
+        }
+    }
+    expose feedbacks {
+        url: "/feedback"
+        route get {
+            response: [GaiaFeedbackDTO]
+        }
+        route add {
+            method:POST
+            request: GaiaFeedbackDTO
+        }
+    }
+    expose news {
+        url: "/news"
+        route get {
+            response: [GaiaNewsDTO]
+        }
+        route add {
+            method:POST
+            request: GaiaNewsDTO
+        }
+        route addLike {
+            method: GET, url: "/like/id:ID"
+            response: GaiaNewsDTO
+        }
+        route delete {
+            method: DELETE, url: "/id:ID"
+        }
+    }
+    expose notifications {
+        url: "/notifications"
+        route save {
+            method: POST
+            request: GaiaNotificationDTO
+        }
+        route deleteById {
+            method:DELETE, url: "/id:ID"
+        }
+        route deleteByReceiver {
+            method:DELETE, url: "/receiver_identity:String"
+        }
+        route getListByReceiver {
+            method:GET, url: "/receiver_identity:String"
+            response: [GaiaNotificationDTO]
+        }
+        route read {
+            method:PUT, url: "/id:ID"
+            response: GaiaNotificationDTO
+        }
+        route readByReceiver {
+            method:PUT, url: "/receiver_identity:String"
+            response: [GaiaNotificationDTO]
+        }
+    }
+    expose reminders {
+        url: "/reminder"
+        route getListByUser {
+            method: GET, url: "/user:String"
+            response: [GaiaReminderDTO]
+        }
+        route add {
+            method:POST
+            request: GaiaReminderDTO
+        }
+        route update {
+            method:PUT
+            request: GaiaReminderDTO
+        }
+        route delete {
+            method:DELETE, url: "/id:ID"
+        }
+    }
+    expose users {
+        url: "/users"
+        route get {
+            method: GET, url: "/login:String?applicationId:String"
+            response: GaiaUserInfoDTO
+        }
+        route getList {
+            method: GET, url: "/?login:String"
+            response: [GaiaUserInfoDTO]
+        }
+        route updatePreferenceElementPerPage {
+            method:PUT, url: "/login:String/preference/elementperpage" # elementPerPage
+            request: Integer
+            response: Integer
+        }
+        route updatePreferenceFavoriteApplication {
+            method:PUT, url: "/login:String/preference/favoriteapplication" # favoriteApplication
+            request: [GaiaApplicationDTO]
+            response: [GaiaApplicationDTO]
+        }
+        route updatePreferenceFontSize {
+            method:PUT, url: "/login:String/preference/fontsize" # fontSize
+            request: Integer
+            response: Integer
+        }
+        route updatePreferenceShowTutorial {
+            method:PUT, url: "/login:String/preference/showtutorial?show:Boolean!" # showTutorial
+            response: Boolean
+        }
+        route createApplicationPreference {
+            method:PUT, url: "/login:String/application-preferences/?login:String!"
+            request: GaiaApplicationPreferenceDTO
+            response: GaiaApplicationPreferenceDTO
+        }
+        route updateApplicationPreference {
+            method:PUT, url: "application-preferences/applicationPreferenceId:ID"
+            request: String
+            response: GaiaApplicationPreferenceDTO
+        }
+    }
+}
+
+
+
+
+
+
+
+

@@ -1,0 +1,7 @@
+service POBI {
+    war: "pobiservice.war"
+    
+    expose bddf {
+        route get
+    }
+}

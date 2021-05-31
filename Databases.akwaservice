@@ -1,0 +1,24 @@
+service PostgreSQL96 {
+    expose O2FDContract { route read_write }
+    expose O2FDCore { route read_write }
+    expose O2FDCoreDesign { route read_write }
+    expose O2FDCoreParams { route read_write }
+    expose O2FDEmail { route read_write }
+    expose O2FDFSCP1 { route read_write }
+    expose O2FDOrganization { route read_write }
+    expose O2FDProfile { route read_write }
+    expose Gaia { route read_write }
+}
+ 
+service PostgreSQL94 {
+    expose Refog {
+        route refog_read
+        route batch_read_write
+        route refog_read_write
+    }
+    expose ICPC { route read_write }
+    expose KYC { route read_write }
+}
+
+
+

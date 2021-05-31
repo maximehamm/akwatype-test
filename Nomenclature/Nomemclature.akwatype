@@ -1,0 +1,83 @@
+type Toto{
+    name:String 
+}
+
+
+# Nomenclature BNPP Group			
+
+nomenclature N001 { label:"SiteRisque - GroupEntity"}
+nomenclature N002 { label:"NAF2008"}
+nomenclature N004 { label:"Economic Code"}
+nomenclature N005 { label:"Industry code"}
+nomenclature N006 { label:"Typology"}
+nomenclature N007 { label:"NPE Event Code"}
+nomenclature N008 { label:"Support Strengh"}
+nomenclature N009 { label:"Coverage"}
+nomenclature N011 { label:"Legal Form"}
+nomenclature N012 { label:"Level Of Power"}
+nomenclature N013 { label:"Internal rating"}
+nomenclature N017 { label:"Segmentation NAC"}
+nomenclature N018 { label:"Shareholder Type"}
+nomenclature N019 { label:"Type Of Client"}
+nomenclature N020 { label:"Monitoring Type"}
+nomenclature N021 { label:"Currency	"}
+nomenclature N031 { label:"Country Subdivision"}
+nomenclature N165 { label:"Consolidation Mode"}
+nomenclature N166 { label:"Mifid Classification"}
+nomenclature N193 { label:"Notation scale"}
+nomenclature N194 { label:"Rating Model"}
+nomenclature N206 { label:"Economic Dependency Type"}
+nomenclature N229 { label:"Ctm"}
+nomenclature N231 { label:"Fin Rep Exposure Class"}
+nomenclature N232 { label:"Cel Counterparty"}
+nomenclature N238 { label:"Collection classes EI"}
+nomenclature N239 { label:"Client National Type"}
+nomenclature S087 { label:"External Rating Scales"}
+nomenclature S274 { label:"Specific Counter Rating"}
+
+nomenclature REFOG {label:"REFOG"}
+
+# Nomenclature BNPP Group			
+	
+nomenclature F001 { label:"Segmentation BNPPF"}
+nomenclature F002 { label:"Segmentation BNPPF Type"}
+nomenclature F003 { label:"Identifier base"}
+nomenclature F004 { label:"PN Classification"}
+nomenclature F005 { label:"MeanOfContactType"}
+nomenclature F006 { label:"MeanOfContactRelationType"}
+nomenclature F007 { label:"Establishement status"}
+nomenclature F008 { label:"Segmentation BDDF"}
+nomenclature F009 { label:"NAF93"}
+nomenclature F010 { label:"NAF2003"}
+nomenclature F011 { label:"Nace"}
+nomenclature F012 { label:"Currency Unit"}
+nomenclature F013 { label:"Accounting Method"}
+nomenclature F014 { label:"Prudential Method"}
+nomenclature F015 { label:"Document Type"}
+nomenclature F016 { label:"Document Category"}
+nomenclature F017 { label:"ThirdPartyTypeRole"}
+nomenclature F018 { label:"Contact status"}
+nomenclature F019 { label:"Indice IGR"}
+nomenclature F020 { label:"Issuer"}
+nomenclature F021 { label:"BNPPF Metier"}
+nomenclature F022 { label:"BNPPF Market"}
+nomenclature F023 { label:"BNPPF Site"}
+nomenclature F024 { label:"Sales Status"}
+nomenclature F025 { label:"BusinessProviderCanal"}
+nomenclature F026 { label:"BusinessProviderType"}
+nomenclature F027 { label:"Final Risk KYC"}
+nomenclature F028 { label:"Information Nature"}
+nomenclature F029 { label:"Subject"}
+nomenclature F030 { label:"Establishment Type"}
+nomenclature F031 { label:"Civility"}
+nomenclature F032 { label:"Country"}
+nomenclature F033 { label:"Country Sensitivity"}
+nomenclature F034 { label:"PEP Status"}
+nomenclature F035 { label:"Arbitration code"}
+nomenclature F036 { label:"Third Party Life Status"}
+nomenclature F037 { label:"Type Identifier"}
+
+
+# A définir
+
+nomenclature T001 { label:"TEMP to be define"}

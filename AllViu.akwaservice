@@ -1,0 +1,120 @@
+service Test{
+    expose test{
+        route test{
+            url:"test"
+            response: String
+        }
+    }
+} 
+
+service AllViu{
+    url:"allviu"
+
+    comment: "Comment est déclenché la demande de renouvellement des pièces ?"
+
+    expose renouvellementPiece{
+        route Initialize{
+            consume Docapost.DossierDocapost.Initialyze
+            consume Docapost.Services.redirect
+        }
+    }
+    
+    expose Piste{
+        route create
+        route update
+        route get
+    } 
+    
+    expose Opportunite{
+        route create
+        route update
+        route get
+    }
+
+    expose Entreprise{
+       route create
+       route update
+       route get
+    }
+
+    expose Contact{
+       route create  
+       route update
+       route get
+    }
+
+    expose Tache{
+        route create
+    }
+
+    expose NotificationAllViu{
+        route setClotureDossier{
+            url:"setClotureDossier"
+            method: POST
+            request: BNPPFImpulsionEsignDTO
+            comment:"statut final conform dans le Json"
+        }
+        route setCompleteDossier
+        route setSignatureClient 
+        route setConformity 
+        route setAbandonDossier 
+        route setDunningClientDocuments 
+        route setToBeCompleteByClient 
+        route setAwaitingClientSignature 
+        route setDunningClientSignature 
+        route setSignatureAbandon
+        route setCompleteDossierAfterNonConformity   
+        route relanceCompletude 
+        
+        route updateScoring{
+            comment:"Mise à jour par l'utilisateur AllViu"
+            consume CallBack.Notification.updateScoring
+        }
+    }
+
+    expose ContractEdition{
+        route createEdition{
+            consume Conga.TemplateCongas.generateContrat
+        }
+        route getContractTemplate
+    }
+
+    consume Conga.TemplateCongas {
+        route generateDocuments
+    }
+
+    consume GED.Document{
+        route insertDocument
+        route updateDocument
+        route getDocument
+    }
+
+    consume UploadDocument.NotificationUpload{
+        route setConformity
+    }
+
+    consume UploadDocument.Dossier{
+        route setCompleteDossierAfterNonConformity
+    }
+
+
+    consume MdmControler.LegalPersons{
+        route legalperson
+    }
+
+    send Q_MDM_LEGAL_PERSON_F1.LegalPerson_F1
+    receive Q_ALLVIU_LEGAL_PERSON_F1.LegalPerson_F1
+
+}
+
+service Conga{
+    expose TemplateCongas{
+        route generateDocuments{
+            comment:"mandat CEPA par exemple"
+        }
+        route generateContrat{
+            consume AllViu.ContractEdition.getContractTemplate
+        }   
+        route generateBeneficiairesEddfectif
+    }
+}

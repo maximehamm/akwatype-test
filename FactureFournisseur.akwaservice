@@ -1,0 +1,10 @@
+service FactureFournisseurFront {
+    expose Facture {
+        route getFactures {
+            consume NiuViu.NiuViu.niuviu
+        }
+    }
+}
+
+
+ 

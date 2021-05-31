@@ -1,0 +1,84 @@
+
+containerType SI      { containers:[zone,group] }
+containerType zone    { containers:[group] }
+containerType group   { containers:[service, container] } 
+containerType application   { containers:[service] } 
+
+#------------------------------------ SI
+
+
+container ImpulsionPerpective   { type:SI,  containers:[Intermediation,Legacy,DataHub,Impulsion,External], isRoot: true }
+container SI                    { type:SI,  containers:[Intermediation,Legacy,DataHub,Impulsion,External,One2Fin,FactureFournisseur,ICPC,KYC,Jurid], isRoot: true }
+
+#------------------------------------ zones
+
+container Impulsion     { type:zone, containers:[IFrontOffice,IBackOffice] }
+container Reverse       { type:zone, containers:[RFrontOffice]}
+container External      { type:zone, containers:[Signature] }
+container One2Fin       { type:zone, containers:[OFrontOffice, OBackOffice, OServiceOffice] }
+container FactureFournisseur { type:zone, containers:[FFFrontOffice] }
+container ICPC          { type:zone, containers:[ICPCFrontOffice, ICPCBackOffice] }
+container KYC          { type:zone, containers:[KYCFrontOffice, KYCBackOffice] }
+container Jurid         { type:zone, containers:[JuridBackOffice]} 
+
+#------------------------------------ groups
+
+container DataHub        {   type:group, containers:[Tiers] }
+container Intermediation {   type:group, containers:[CallBack,AllViuIntermediation,Upload] }
+container RFrontOffice   {   type:group, containers:[ReverseBackEnd], label:"FrontOffice" }
+container IFrontOffice   {   type:group, containers:[ImpulsionBackEnd], label:"FrontOffice" }
+container IBackOffice    {   type:group, containers:[Contract,Eligibility], label:"BackOffice" }
+container Signature      {   type:group, containers:[Docapost] }
+container Legacy         {   type:group, containers:[NiuViuOld,NiuViu,AllViu] }
+container OFrontOffice   {   type:group, containers:[One2FinFront] }    
+container OBackOffice    {   type:group, containers:[One2FinBack] }      
+container OServiceOffice {   type:group, containers:[One2FinService] }   
+container FFFrontOffice  {   type:group, containers:[FactureFournisseurFront],label:"Front" }    
+container ICPCFrontOffice{   type:group, containers:[ICPCFront] }    
+container ICPCBackOffice {   type:group, containers:[ICPCBack] }  
+container KYCFrontOffice {   type:group, containers:[KYCFront] }    
+container KYCBackOffice  {   type:group, containers:[KYCBack] }   
+container JuridBackOffice{   type:group, containers:[JuridBack] }  
+
+#container NiuViuRisque  {   type:container, containers: [contrat,tarif,Risquedebiteur,tiers]}
+
+                        
+#------------------------------------ Services containers
+
+container Eligibility   {   type:service, services:[EligibilityImpulsion] }
+container ImpulsionBackEnd {   type:service, services:[backEndWebImpulsion], label:"BackEnd"  }
+container ReverseBackEnd   {   type:service, services:[BackEndReverseSouscription], label:"BackEnd"  }
+container NiuViuOld     {   type:service, services: [NiuViu], label:"NiuViu" }
+container NiuViu        {   type:service, services:[NiuViuCompta, NiuViuRecouvrement]}
+
+container NiuViuRisqueContainer  {   type:service, services: [NiuViuRisque,NiuViuContrat]}
+
+
+container Contract      {   type:service, services:[ContractImpulsion], label:"Contract" }   
+container Upload        {   type:service, services:[UploadDocument] }
+container AllViuIntermediation  { type:service, services:[IntermediationAllViu]  }
+container One2FinFront  {   type:container, containers:[O2FFCore,O2FFProfile, O2FFBank, O2FFContract, O2FFOrder, O2FFOrganization, O2FFReport]}
+container One2FinBack   {   type:container, containers:[O2FBBank, O2FBContract, O2FBOrder, O2FBOrganization, O2FBProfile, O2FBReport]}
+container One2FinService{   type:container, containers:[O2FSContract, O2FSCore, O2FSDesign, O2FSMail, O2FSNiuViu, O2FSOrganization, O2FSPDF, O2FSParameters, O2FSProfile]}
+container FactureFournisseurFront { type:service, services:[FactureFournisseurFront] }
+
+container ICPCBack      { type:service, services:[ICPCBack, RefogBack, RefogBatch] }
+
+
+#=========================================== CONTAINER APPLICATIONS ==================
+customContainerProperty businessOwner { type: String }
+customContainerProperty ITOwner { type: String }
+customContainerProperty direction { type: String }
+customContainerProperty targetOwner { type: String values:["Internal","Customer","Fournisseur de l'acheteur","Public","Customer Factor","Prescripteur externe"]}
+customContainerProperty typeClientApplicatif { type: String values:["Web","Client lourd","Fournisseur de l'acheteur","Public","Customer Factor","Prescripteur externe"]}
+
+container APPLI_MDM { type: application, containers:[EBXOrchestra]
+    businessOwner:"DMC"
+    targetOwner: "Internal"
+}
+
+
+
+
+
+

@@ -1,0 +1,303 @@
+# TODO - Reprendre les computed en commentaires (Address, mail...)
+
+facade GetLoginKeyboardDTO on GacCustomer {
+    with(keyboard) {
+        keyboardImage:image
+        keyboardToken:token
+    }
+}
+
+facade CheckLoginKeyboardDTO on GacCustomer {
+    keyboardToken:keyboard.token
+    login
+    password
+}
+
+facade GacCustomerUpdateDTO on GacCustomer {
+    with (customer) {
+        with identificationInformations{
+            with identification{
+                lastName
+                firstNames ## plusieurs prénoms dans le MDM
+            }
+        }
+        #computed.emailAddress
+
+    }
+}
+
+facade GacCustomerCreateDTO on GacCustomer {
+    customer {
+        with identificationInformations{
+            with identification{
+                lastName
+                firstNames ## plusieurs prénoms dans le MDM
+            }
+        }
+        #computed.emailAddress
+        status
+        applicationId:application.technicalBase.id
+    }
+    creator::(BNPPCollaboratorIdDTO) # lot 1 seulement un interne
+    gacContractGroupId:gacContractGroup.technicalBase.id
+}
+facade NaturalPersonIdDTO with NaturalPerson {
+    technicalBase.id
+    type
+}
+facade BNPPCollaboratorIdDTO with BNPPCollaborator {
+    technicalBase.id
+    type
+}
+
+facade GacCustomerLightDTO on GacCustomer {
+    customer {
+         with identificationInformations{
+            with identification{
+                lastName
+                firstNames ## plusieurs prénoms dans le MDM
+            }
+        }
+        id:technicalBase.id
+        status
+        application {
+            technicalBase.id
+            name
+        }
+        #with (computed) {
+            #emailAddress
+            #cellPhoneNumber
+            #phoneNumber
+        #}
+    }
+    creator::(BNPPCollaboratorId) # lot 1 collaborator only
+    gacContractGroupId:gacContractGroup.technicalBase.id
+    login
+    currentContractId:currentContract.number # contractId est le terme de l'API Factor
+}
+
+
+facade GacCustomerUpdatePasswordDTO on GacCustomer {
+    keyboardToken:keyboard.token
+    password
+}
+
+facade GacCustomerUpdateStatusDTO on NaturalPerson {
+    status
+}
+
+
+
+target GOP
+
+facade LegalPerson.GOP on LegalPerson {
+    with(identificationInformation){
+        with(identification){
+            corporateName
+        }
+        idents:identifiers ::IdentifierIdDTO ## une liste ?
+    }
+
+    roles::(Customer,Buyer,Contact)
+
+    agreement
+}
+
+facade LegalPersonActivity.GOP on LegalPersonActivity {
+    naf2008.nafNiv2
+}
+
+facade Establishment.GOP on Establishment {
+    parentCompany
+    idents
+    establishmentType
+    activityInformations
+}
+
+facade Contract.GOP on Contract {
+    #acheteurs
+    notifications
+}
+
+facade Customer.GOP on Customer {
+    contracts
+    commercialStatus
+    
+}
+
+
+facade Buyer.GOP on Buyer {
+    technicalBase::TechnicalBaseDTO
+    targetRole::LegalPersonID
+    contracts::Contract
+    typeRole
+    payments
+    remisesFacture
+    encours
+}
+
+facade Contact.GOP on Contact {
+    technicalBase
+    businessFunction
+    status
+    mainContact
+    originRole::(NaturalPerson)
+    typeRole
+    #contracts
+    targetRole
+    roleCategory
+
+}
+
+facade Invoice.GOP on Invoice {  
+    
+} 
+
+facade CreditNote.GOP on CreditNote {
+
+}
+
+facade FundingRequest.GOP on FundingRequest {
+
+}
+
+facade Funding.GOP on Funding {
+
+}
+
+facade Allocation.GOP on Allocation {
+
+}
+
+facade BuyerApproval.GOP on BuyerApproval {
+        
+}
+
+facade Payment.GOP on Payment {
+
+}
+
+facade Litigation.GOP on Litigation {
+
+}
+
+facade Dunning.GOP on Dunning {
+   
+
+}
+
+facade Outstanding.GOP on Outstanding {
+
+}
+
+facade AccountingEntry.GOP on AccountingEntry {
+
+}
+
+facade AccountType.GOP on AccountType {
+
+}
+
+facade FactoringAccount.GOP on FactoringAccount {
+
+}
+
+facade OnlineReport.GOP on OnlineReport {
+    
+}
+
+facade SupportingDocument.GOP on SupportingCustomerDocument {
+    name
+    uploadDate
+    data
+    uploadUserId:uploadUser.technicalBase.id  # Customer id
+    typeCode:type.code
+}
+
+
+facade Agreement.GOP on Agreement {
+    debtor
+    etudesAgrements
+
+}
+
+
+facade Remittance.GOP on Remittance {
+
+}
+
+
+facade Classification.GOP on Classification {
+    technicalBase.id
+    date
+    type
+    guaranteedAmount
+    notGuaranteedAmount
+    fundingAmount
+    collectionAmount
+    currencyCode:currency.code
+}
+
+
+facade TariffCondition.GOP on TariffCondition {
+
+}
+
+facade PurchaseCondition.GOP on PurchaseCondition {
+
+}
+
+facade OtherCondition.GOP on OtherCondition {
+
+}
+
+facade Country.GOP on Country {
+    countryISO
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+facade BNPPCollaboratorId with BNPPCollaborator {
+    collaboratorId:technicalBase.id
+}
+
+
+
+
+
+
+
+
+
+

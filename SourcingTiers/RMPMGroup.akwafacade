@@ -1,0 +1,691 @@
+facade RMPMFeedBack{
+    additionalFields {
+        _1_heading::HeadingRecordRMPM
+        _2_counterPart::LegalPersonFromRMPM
+        _3_BG::BusinessGroupRMPM
+        _4_economicLinks:: [EconomicDependencyRMPM]
+        _9_endOfFile::EndOfFileRecordRMPM
+        
+    }
+}
+
+#facade ParentCompanyRMPMId on LegalPerson {
+#    additionalFields {
+#        idRMPM: Identifier {
+#            basedOn:idents
+#        }
+#    }
+#    idRMPM.identifier
+#}
+
+facade BusinessGroupRMPM on BusinessGroup{
+    additionalFields {
+        _001_recordType:String
+        _002_originCode:String
+        _035_filler:String
+        #idRMPM::Identifier
+        _009_idOfParentCompany:String
+        industryCode1: IndustryCodeDistribution{basedOn: industryCodes}
+        industryCode2: IndustryCodeDistribution{basedOn: industryCodes}
+        industryCode3: IndustryCodeDistribution{basedOn: industryCodes}
+        industryCode4: IndustryCodeDistribution{basedOn: industryCodes}
+        industryCode5: IndustryCodeDistribution{basedOn: industryCodes}
+        industryCode6: IndustryCodeDistribution{basedOn: industryCodes}
+        responsibleEntityMonitoring1: Monitoring{basedOn: monitoring}
+        responsibleEntityMonitoring2: Monitoring{basedOn: monitoring}
+        secondaryEntityMonitoring: Monitoring{basedOn: monitoring}
+    }
+
+    #dispatch (parentCompany.identificationInformation.identifiers.identifier.code("1":toto))
+
+    _001_recordType
+    _002_originCode
+    _003_businessGroupCode:code
+    _004_shortName:shortName
+    _005_name:name
+    _006_responsibleEntity:responsibleEntity.code
+    _007_secondarEntityInCharge:secondaryResponsibleEntity.code
+    _008_businessGroupeCountry:country.countryISO.code
+    #with(_009_idOfParentCompany:idRMPM::ParentCompanyRMPMId)
+    _009_idOfParentCompany
+    _010_mainActivity:mainActivity.code
+    #with(compute){
+        with (industryCode1){
+            _011_industryCode1:industryCode.code
+            _012_percentageOfTurnoverIndustryCode1:percentage
+        }
+        with (industryCode2){
+            _013_industryCode2:industryCode.code
+            _014_percentageOfTurnoverIndustryCode2:percentage
+        }
+        with (industryCode3){
+            _015_industryCode3:industryCode.code
+            _016_percentageOfTurnoverIndustryCode3:percentage
+        }
+        with (industryCode4){
+            _017_industryCode4:industryCode.code
+            _018_percentageOfTurnoverIndustryCode4:percentage
+        }
+        with (industryCode5){
+            _019_industryCode5:industryCode.code
+            _020_percentageOfTurnoverIndustryCode5:percentage
+        }
+        with (industryCode6){
+            _021_industryCode6:industryCode.code
+            _022_percentageOfTurnoverIndustryCode6:percentage
+        }
+        with (responsibleEntityMonitoring1){
+            _023_typeOfResponsibleEntityMonitoring1:monitoringType.code
+            _024_directoryIDOfresponsableEntityMonitoring1:monitoringBy.refogCode
+        }
+        with (responsibleEntityMonitoring2){
+            _025_typeOfResponsibleEntityMonitoring2:monitoringType.code
+            _026_directoryIDOfresponsableEntityMonitoring2:monitoringBy.refogCode
+        }
+         with (secondaryEntityMonitoring){
+            _027_typeOfSecondaryEntityMonitoring:monitoringType.code
+            _028_directoryIDOfresponsableEntityMonitoring:monitoringBy.refogCode
+        }   
+    #}
+    with (parentCompany){
+        with(riskInformation){
+            with (lpCounterPartyRating){
+                with(counterpartyRating){
+                    _029_rating:rating.code
+                    _030_ratingDate:startDate
+                }
+            }
+        }
+    }
+    # localCreationDate
+    # revisionDate
+    # nextRevisionDate 
+    # countrySubdivision
+    _031_clientCoverage:clientCoverage.code
+    _032_creationDate:RMPMCreationDate
+    # 
+    # 
+    # negociatedtermsResponsibleEntity
+    # seniorCreditOfficer
+    # 
+    # 
+    # industryCodes
+    # sensitiveBusinessGroup
+    # bankingIndicator
+    # subGroup
+    # attachmentNature
+    # _035_filler
+
+}
+
+facade EconomicDependencyRMPM on EconomicDependency{
+    additionalFields {
+        _001_recordType:String
+        _002_originCode:String
+        _006_filler:String
+    }
+    _001_recordType
+    _002_originCode
+    with (businessGroup){
+        # !!! vérifier qu'il ne s'agit pas du RMPM ID de la source
+        _003_RMPMId: parentCompany.technicalBase.id
+        _004_businessGroup:code
+    }
+    _005_economicLinkType:economicLinkType.code
+    _006_filler
+}
+
+
+facade HeadingRecordRMPM{
+    additionalFields {
+        _001_recordType:String
+        _002_originCode:String
+        _003_fileCreationDate:Date
+        _004_ReferenceFlag:Integer
+        _005_dataUploadDate:Date
+        _006_filler:String
+    }
+}
+
+facade EndOfFileRecordRMPM{
+    additionalFields {
+        _001_recordType:String
+        _002_originCode:String
+        _003_numberOfRecords2:Integer{
+            label:"Number of record Legal Entity"
+        }
+        _004_numberOfRecords3:Integer{
+            label:"Number of record 3 - Business Group"
+        }
+        _005_numberOfRecords4:Integer{
+            label:"Number of record 4 - Economic links"
+        }
+        _001_numberOfRecords5:Integer{
+            label:"Number of record 5 - Branches"
+        }
+        _006_numberOfRecords6:Integer{
+            label:"Number of record 6 External Indentfier"
+        }
+        _007_numberOfRecords7:Integer{
+            label:"Number of record - Collection classes"
+        }
+        _008_filler:String{
+            comment:"Should be empty"
+        }
+    }
+}
+
+facade IdentificationInformationRMPM on LPIdentificationInformations{
+
+    additionalFields {
+        _029_SIREN:String {basedOn: identifiers}
+        _008_identifierRMPM:String {basedOn: identifiers}
+    }
+    
+    with(identification){
+            _009_shortName:shortName
+            _010_corporateName:corporateName 
+            _025_legalStatus:legalForm.code  
+            _051_typology:typology.code
+        }
+    
+    with (immatriculation){
+            _024_incorporationYear:creationYear
+            _012_countryOfIncorporation:incorporationCountry.countryISO.code 
+            _013_incorporationCountrySubdivision:incorporationCountrySubdivision.code 
+        }
+    
+    dispatch (identifiers.base.code("72":_029_SIREN,"1000":_008_identifierRMPM).identifier) 
+
+}
+
+
+
+
+facade LegalPersonActivityInformationsFromRMPM on LegalPersonActivityInformations{
+    additionalFields {
+        industryCode1: IndustryCodeDistribution{basedOn: industryCodes}
+        industryCode2: IndustryCodeDistribution{basedOn: industryCodes}
+        industryCode3: IndustryCodeDistribution{basedOn: industryCodes}
+        industryCode4: IndustryCodeDistribution{basedOn: industryCodes}
+    }
+
+     with(industryCode1){
+        _031_industyCode1:industryCode.code 
+        _032_percentageTurnoverCode1:percentage 
+        }
+        with(industryCode2){
+        _033_industyCode2:industryCode.code 
+        _034_percentageTurnoverCode2:percentage 
+        }
+        with(industryCode3){
+        _035_industyCode3:industryCode.code 
+        _036_percentageTurnoverCode3:percentage 
+        }
+        with(industryCode4){
+        _037_industyCode4:industryCode.code 
+        _038_percentageTurnoverCode4:percentage 
+        }
+
+}
+
+facade LegalPersonFromRMPM on LegalPerson{
+
+    additionalFields {
+        _001_recordType:String
+        _002_originCode:String
+        _007_idRMPMInLocalDatabase:String{maxLength: 1}
+        incorporationAddress: Address{basedOn: meansOfContacts}
+        fiscalAddress: Address{basedOn: meansOfContacts}
+        currentFinancialInformation: FinancialInformation {basedOn:financialInformation}
+        #businessGroups::BusinessGroupRMPM
+    }
+
+    
+    _001_recordType 
+    _002_originCode 
+    _007_idRMPMInLocalDatabase
+    with identificationInformation::IdentificationInformationRMPM
+     
+     with(groupRelation){
+        _011_rmpmManagingEntity:rmpmManagingEntity.code
+        with (miscellaneous){
+            _026_conterpartyStatus:shareHoldersType.code
+            _027_typeOfClient:typeOfClient.code
+            _137_bankingSecracyIndicator:bankingSecrecy
+            with (monitoring){
+                _039_typeOfMonitoringLE:monitoringType.code 
+                _040_DircetoryIdMonitoringLE:monitoringBy.refogCode 
+            }                  
+        }
+        _028_clientCoverage:clientCoverage.code
+        _111_openingDateBDDF:openingDateBDDF 
+        with(consolidationScope){
+            with (acountingConsolidation){
+                _085_intragroupAccountingFlag:topAccountingIntragroup 
+                _046_accountingConsolidationFlag:topAccountingConsolidation
+                _048_consolidationMethod:accountingMethod.code
+                _049_accountingPercentage:accountingPercentage 
+            }
+            with (accountingPrudential){
+                _086_intragroupPrudentialFlag:topPrudentialIntragroup
+                _084_prudentialConsolidationFlag:topPrudentialConsolidation 
+                _082_prudentialConsolidationMethodCode:prudentialMethod.code
+                _083_prudentialConsolidationPercentage:prudentialPercentage
+            }
+            
+            _047_consolidationMode: consolidationMode.code         
+            _087_isBNPPGroupFlag:topBNPPLegalEntity
+            _088_consolidatingLegalEntity:consolidatingLegalEntity.technicalBase.id
+        }
+    }
+
+
+    dispatch( meansOfContacts.meanOfContactRelationtype.code
+           ( "3":fiscalAddress,"6":incorporationAddress))
+
+    with (fiscalAddress){
+        _020_fiscalAddressAddressDistribution:addressComplement 
+        _021_fiscalAddressStreet:street 
+        _023_fiscalAddressCity:city 
+        _018_fiscalAddressCountry:country.countryISO.code 
+    }   
+    with(incorporationAddress){
+        _014_incorporationAddressDistribution:addressComplement 
+        _015_incorporationAddressStreet:street 
+        _017_incorporationAddressCity:city      
+    }  
+
+    with(currentFinancialInformation::LPFinancialInformationRMPM)
+
+    with(computed){        
+         
+        _004_clientLocalID:clientLocalID
+
+        _053_countryOfBusiness:mainBusinessCountry.countryISO.code
+        
+    } 
+
+    with(activityInformations::LegalPersonActivityRMPM)
+    
+    
+    #_050_businessGroup:businessgroupInformations.businessGroup.code
+    
+     
+    
+    # PMB mainEstablishment.compute.idRMPM.identifier#52
+    
+    
+    
+    
+    #Indicateur exception cap devise
+    with(riskInformation) {
+        with(lpCounterPartyRating){
+            with(intrinsicRating){
+                _055_intrinsicRating:rating.code 
+                _056_intrinsicRatingDate:startDate   
+            }
+            with (supportStrength){
+                _057_supportEntityCorporateRMPMID:supportEntityCorporateRMPMID 
+                _058_supportStrength:supportStrength.code 
+                with(supportConterpartyRating){
+                    _059_counterPartyRating:rating.code 
+                    _060_counterPartyDate:startDate 
+                    
+                }
+            }
+
+            with(specificConterpartyRating){
+                    _070_SpecificRatingScaleCode:specificConterpartyRatingScale.code
+                with(specificConterpartyRating){               
+                    _071_specificConterpartyRating:rating.code
+                    _072_specificConterpartyRaitingStartDate:startDate
+                    _073_specificConterpartyRaitingEndDate:endDate                        
+                }
+                
+            }         
+            _061_GlobalRecoveryRateSeniorUnsecured:grrSenoirUnsecured 
+        
+            _074_conterpartyProbabilityOfDefault:defaultPropability
+            _075_ratingModelID:ratingModel.code
+
+        }
+        
+        with(npe){
+                _065_npeEventCode:code 
+                _104_npeFlag:Indicator 
+                _105_npeEntryDate:entryDate 
+                _106_npeExitDate:exitDate 
+                _066_eventCodeDate:eventCodeDate
+            }
+    
+        with (lpAnnualRevue){
+            _078_nextAnnualRevueDate:nextAnnualRevueDateBNPP
+            _062_lastAnnualRevueDate:lastAnnualRevueDateBNPP
+        }
+        with (lpWatchList){
+            with (watchListBDDF){
+                _063_creditWatchIndicator:indicator
+                _064_dateStakeUnderMonitoring:entryDate
+            }
+            with(watchListBNPPF){
+                _063_creditWatchListIndicator:indicator
+                _064_DateStakeUnderMonitoring:entryDate
+            }
+        }
+        _107_LastForbearanceDate:lastFBEDate
+
+        #====================== other records
+
+        #_1002_BusinessGroups:businessGroups
+        #businessGroups::BusinessGroupRMPM
+               
+    }
+    with (businessgroupInformations){
+        _3_BG:businessGroup::BusinessGroupRMPM
+        _4_economicLinks:economicDependencies::EconomicDependencyRMPM
+    }
+    
+    #Taux de récupération global senior unsecured
+   
+    
+    #rmpmIdMainEstablishement:parentCompany.identifierRMPM
+    #_127_immediateParentCompany:im.computed.identifierRMPM
+     
+
+} 
+
+facade LPFinancialInformationRMPM on FinancialInformation{
+     with(socialInfos){
+            with(turnover){
+                _042_annualUnconsolidatedTurnover:amount             
+                _043_annualUnconsolidatedTurnoverCurrency:currency.code 
+                _044_annualUnconsolidatedTurnoverDate:date 
+                _045_annualUnconsolidatedTurnoverUnit:unit 
+            }
+            with(assetSize){
+                _095_socialAssetSizeAmount:amount 
+                _096_socialAssetSizeCurrency:currency.code 
+                _097_socialAssetSizeDate:date 
+                _098_socialAssetSizeUnit: unit 
+
+            }
+        }
+        with (consolidatedInfos){
+            with(turnover){
+                _091_consolidateTurnoverAmount:amount 
+                _092_consolidatTurnoverCurrency:currency.code 
+                _093_consolidateTurnoverDate:date 
+                _094_consolidatTurnoverUnit:unit 
+            }
+            with(assetSize){
+                _099_consolidateAssetSizeAmount:amount              
+                _100_consolidateAssetSizeCurrency:currency.code 
+                _101_consolidateAssetSizeDate:date 
+                _102_consolidateAssetSizeUnit:unit 
+            }
+        }
+        _125_numberOfEmployees:employeeNbr   
+        _041_mifidClassificationCode:mifidClassification.code   
+
+}
+
+facade LegalPersonActivityRMPM on LegalPersonActivityInformations{
+
+    additionalFields {
+        industryCode1: IndustryCodeDistribution{basedOn: industryCodes}
+        industryCode2: IndustryCodeDistribution{basedOn: industryCodes}
+        industryCode3: IndustryCodeDistribution{basedOn: industryCodes}
+        industryCode4: IndustryCodeDistribution{basedOn: industryCodes}
+        #industryCode5: IndustryCodeDistribution{basedOn: industryCodes}
+        #industryCode6: IndustryCodeDistribution{basedOn: industryCodes}
+    }
+        
+    with(activity){
+        _030_mainActivityCode:naf2003.code
+        _089_nace:nace.code 
+        _068_Naf2008Code:naf2008.nafNiv2.code
+    }
+    with(industryCode1){
+        _031_industyCode1:industryCode.code 
+        _032_percentageTurnoverCode1:percentage 
+    }
+    with(industryCode2){
+        _033_industyCode2:industryCode.code 
+        _034_percentageTurnoverCode2:percentage 
+    }
+    with(industryCode3){
+        _035_industyCode3:industryCode.code 
+        _036_percentageTurnoverCode3:percentage 
+    }
+    with(industryCode4){
+        _037_industyCode4:industryCode.code 
+        _038_percentageTurnoverCode4:percentage 
+    }
+}
+
+
+#
+# /!\ bug si cette facade est appliquée dans 
+# facade BusinessGroupRMPM on BusinessGroup{
+# le champ ne s'affiche pas
+#
+#        industryCode1: IndustryCodeDistribution::IndustryCodeDistributionRMPM{
+#            basedOn: industryCodes
+#        }
+#
+
+facade IndustryCodeDistributionRMPM with IndustryCodeDistribution{
+    industryCode.code
+}
+
+
+
+    
+
+#facade RMPM_LP on LegalPerson{
+#
+#    additionalFields {
+#        _001_recordType:String
+#        _002_originCode:String
+#        _003_siteCodeInRelation:GroupEntity
+#        _007_idRMPMInLocalDatabase:String
+#    }
+#    _001_recordType 
+#    _002_originCode 
+#    _003_siteCodeInRelation:_003_siteCodeInRelation.code
+#    _007_idRMPMInLocalDatabase
+#    _009_shortName:shortName  
+#    _011_rmpmManagingEntity:rmpmManagingEntity{code} 
+#    _010_corporateName:corporateName 
+#    _025_legalStatus:legalForm.code 
+#    _026_conterpartyStatus:shareHoldersType.code
+#    _024_incorporationYear:creationYear 
+#    _012_countryOfIncorporation:incorporationCountry.countryISO.code
+#    _013_incorporationCountrySubdivision:incorporationCountrySubdivision.code 
+#    _027_typeOfClient:typeOfClient.code 
+#    _028_lientCoverage:clientCoverage.code 
+#
+#    computed{        
+#        _029_SIREN:SIREN 
+#        _008_identifierRMPM:identifierRMPM 
+#        _004_clientLocalID:clientLocalID
+#         incorporationAddress{
+#            _014_incorporationAddressDistribution:addressComplement 
+#            _015_incorporationAddressStreet:street 
+#            _017_incorporationAddressCity:city      
+#        }
+#        fiscalAddress{
+#            _020_fiscalAddressAddressDistribution:addressComplement 
+#            _021_fiscalAddressStreet:street 
+#            _023_fiscalAddressCity:city 
+#            _018_fiscalAddressCountry:country.countryISO.code  
+#        }
+#        _053_countryOfBusiness:mainBusinessCountry.countryISO.code 
+#            financialInformation{
+#        socialInfos{
+#            turnover{
+#                _042_annualUnconsolidatedTurnover:amount             
+#                _043_annualUnconsolidatedTurnoverCurrency:currency.code 
+#                _044_annualUnconsolidatedTurnoverDate:date 
+#                _045_annualUnconsolidatedTurnoverUnit:unit 
+#            }
+#            assetSize{
+#                _095_socialAssetSizeAmount:amount 
+#                _096_socialAssetSizeCurrency:currency.code 
+#                _097_socialAssetSizeDate:date 
+#                _098_socialAssetSizeUnit: unit 
+#
+#            }
+#        }
+#        consolidatedInfos{
+#            turnover{
+#                _091_consolidateTurnoverAmount:amount 
+#                _092_consolidatTurnoverCurrency:currency.code 
+#                _093_consolidateTurnoverDate:date 
+#                _094_consolidatTurnoverUnit:unit 
+#            }
+#            assetSize{
+#                _099_consolidateAssetSizeAmount:amount              
+#                _100_consolidateAssetSizeCurrency:currency.code 
+#                _101_consolidateAssetSizeDate:date 
+#                _102_consolidateAssetSizeUnit:unit 
+#            }
+#        }
+#        _125_numberOfEmployees:employeeNbr 
+#        
+#        
+#    }
+#        
+#        
+#    } 
+#
+#    legalPersonActivity::LegalPersonActivityRMPM
+#    _041_mifidClassificationCode:mifidClassification.code 
+#    monitoring{
+#        _039_typeOfMonitoringLE:monitoringType.code 
+#        _040_DircetoryIdMonitoringLE:monitoringBy.refogCode 
+#    }
+#    consolidationScope{
+#        _046_accountingConsolidationFlag:topAccountingConsolidation
+#        _047_consolidationMode: consolidationMode.code
+#        _048_consolidationMethod:accountingMethod.code 
+#        _049_accountingPercentage:accountingPercentage 
+#        _082_prudentialConsolidationMethodCode:prudentialMethod.code
+#        _083_prudentialConsolidationPercentage:prudentialPercentage 
+#        _084_prudentialConsolidationFlag:topPrudentialConsolidation 
+#        _085_intragroupAccountingFlag:topAccountingIntragroup 
+#        _086_intragroupPrudentialFlag:topPrudentialIntragroup
+#        _087_isBNPPGroupFlag:topBNPPLegalEntity
+#        _088_consolidatingLegalEntity:consolidatingLegalEntity.computed.identifierRMPM
+#
+#    }
+#    _050_businessGroup:businessGroup.code
+#    _051_typology:typology.code 
+#    
+#    # PMB mainEstablishment.compute.idRMPM.identifier#52
+#    
+#    _111_openingDateBDDF:openingDateBDDF 
+#    
+#    
+#    #Indicateur exception cap devise
+#    riskInformation {
+#        notation{
+#            intrinsicRating{
+#                _055_intrinsicRating:rating.code 
+#                _056_intrinsicRatingDate:startDate   
+#            }
+#        
+#            _057_supportEntityCorporateRMPMID:supportEntityCorporateRMPMID 
+#            _058_supportStrength:supportStrength.code 
+#            counterpartyRating{
+#                _059_counterPartyRating:rating.code 
+#                _060_counterPartyDate:startDate 
+#                
+#            }
+#            specificConterpartyRating{
+#                rating{
+#                    _070_SpecificRatingScaleCode:SpecifiqueConterpartyRatingScale.code
+#                    _071_specificConterpartyRating:code       
+#                   
+#                }
+#                _072_specificConterpartyRaitingStartDate:startDate
+#                _073_specificConterpartyRaitingEndDate:endDate
+#            }         
+#            _061_GlobalRecoveryRateSeniorUnsecured:grrSenoirUnsecured 
+#        
+#            _074_conterpartyProbabilityOfDefault:defaultPropability
+#            _075_ratingModelID:ratingModel.code
+#
+#        }
+#        watchListBNPPF::RMPMWatchList
+#        npe{
+#                _065_npeEventCode:code 
+#                _104_npeFlag:Indicator 
+#                _105_npeEntryDate:entryDate 
+#                _106_npeExitDate:exitDate 
+#                _066_eventCodeDate:eventCodeDate
+#            }
+#    
+#        _078_nextAnnualRevueDate:nextAnnualRevueDateBDDF
+#        _062_lastAnnualRevueDate:lastAnnualRevueDateBDDF
+#        watchListBDDF::RMPMWatchList
+#        _107_LastForbearanceDate:lastFBEDate
+#               
+#    }
+#    
+#    
+#    #Taux de récupération global senior unsecured
+#   
+#
+#    #rmpmIdMainEstablishement:parentCompany.identifierRMPM
+#    _127_immediateParentCompany:superiorLegalEntity{computed.identifierRMPM}
+#    _137_bankingSecracyIndicator:bankingSecrecy
+#
+#} 
+#
+#
+#facade RMPM_BG on BusinessGroup{
+#        additionalFields {
+#        _001_recordType:String
+#        _002_originCode:String
+#    }
+#    _003_Code:code
+#    _004_shortName:shortName
+#    _005_name:name
+#    _006_responsibleEntity:responsibleEntity
+#    _007_secondaryResponsibleEntity:secondaryResponsibleEntity
+#    _008_country:country.countryISO.code
+#
+#
+#}
+
+
+facade RMPMWatchList on WatchList{
+   _063_creditWatchListIndicator:indicator
+   _064_DateStakeUnderMonitoring:entryDate 
+}
+
+
+    
+    
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

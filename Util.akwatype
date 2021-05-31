@@ -1,0 +1,72 @@
+scalar Base64 as String
+
+scalar Percent as Decimal {
+    min: 0
+    max: 100
+}
+
+scalar LocalID as String{
+    example: "227e7963-e78a"
+}
+
+type Identifier{ 
+     properties {
+       stopx: true
+    }
+    technicalBase: TechnicalBase
+    base:IdentifierBase
+    identifier:String {
+        example: "775675069"
+        label:"Valeur de l'identifiants"
+    } 
+} 
+
+type IdentifierBase{ 
+    properties {nomenclature: F003}
+    technicalBase: TechnicalBase
+    code:String {
+        example: "72"
+        label:"Code de l'identifiant"
+    }
+    clientNationalType:ClientNationalType
+    label:String {
+        example: "SIREN"
+    }
+    UKLabel:String
+    localLabel:String{
+        comment: "Label spécifique au pays emetteur de l'identifiant"
+    }
+    country: Country
+    typeIdentifier:TypeIdentifier
+    issuer:Issuer{label: "Emetteur"}
+    format:String{label: "Format"}
+    message:String{label: "message"}
+    principal:Boolean {label: "Identifiant principal"}
+    rank:Integer {label:"Rang"}
+}
+
+type TypeIdentifier{
+    properties {nomenclature: F037}
+    technicalBase: TechnicalBase
+    code: String
+    label:String {
+        example: "Legal"
+    }
+}
+
+type Issuer{
+    properties {nomenclature: F020}
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    code: String
+    label:String
+}
+
+type TODO {
+    todo: String
+}
+
+
+
+
+

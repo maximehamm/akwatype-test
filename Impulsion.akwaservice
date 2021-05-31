@@ -1,0 +1,140 @@
+service EligibilityImpulsion{
+    dexUrl: "oui, url à préciser"
+    indus_normalisation_weblogic: "oui"
+    indus_normalisation_postgresql: "oui"
+    indus_monitoring_apm: "oui"
+    indus_monitoring_foglight: "oui"
+    indus_supervision_weblogic: "oui"
+    indus_supervision_postgresql: "non"
+    war: "eligibilite-backoffice.war"
+
+    expose Eligibility{
+        route getEligibility{
+            consume Tiers.Tiers.getTiers
+            consume IntermediationAllViu.AllViu.createContact
+            consume IntermediationAllViu.AllViu.createLead
+            consume IntermediationAllViu.AllViu.createOpportunity
+            consume IntermediationAllViu.AllViu.createPropect
+        }
+    }
+}
+
+service ContractImpulsion{
+    dexUrl: "oui, url à préciser"
+    indus_normalisation_weblogic: "oui"
+    indus_normalisation_postgresql: "oui"
+    indus_monitoring_apm: "oui"
+    indus_monitoring_foglight: "oui"
+    indus_supervision_weblogic: "oui"
+    indus_supervision_postgresql: "non"
+    war: "contract-backoffice.war"
+
+    expose Contract{
+        route expectedDocuments{
+            consume NiuViu.Contract.getExpectedKYCDocument
+        }
+        route eSignatureEligibilty{
+            consume NiuViu.Contract.getEligibilityESignature
+        }
+        route createContractEdition{
+            consume NiuViu.Contract.bookContractNumber
+            consume NiuViu.Contract.createContract
+            consume GenerationPDFAllViu.Document.createContractEdition
+            
+        }
+    }
+}
+
+service backEndWebImpulsion{
+    dexUrl: "oui, url à préciser"
+    indus_normalisation_weblogic: "encours"
+    indus_normalisation_postgresql: "oui"
+    indus_monitoring_apm: "oui"
+    indus_monitoring_foglight: "oui"
+    indus_supervision_weblogic: "oui"
+    indus_supervision_postgresql: "non"
+    war: "impulsion-back.war"
+    
+    expose UserAccount{
+        route create
+    }    
+
+    expose Parcours{
+        route open
+    }
+
+    expose Eligibility{
+        route eligibility{
+             consume EligibilityImpulsion.Eligibility.getEligibility
+        }
+    }
+
+    expose Notification{
+        route setConformity
+        route clotureOK
+        route setSignatureAbandon
+        route setDossierAbandon
+        route updateScoring
+    }
+
+    consume Mail.mail{
+        route send
+    }
+
+    consume backEndWebImpulsion.UserAccount {
+        route create
+    }
+
+    consume UploadDocument.Document{
+        route documents
+        route upload
+        route file
+    }
+
+    consume ContractImpulsion.Contract{
+        route eSignatureEligibilty
+        route createContractEdition
+        route expectedDocuments #,bookContractNumber}
+    }
+
+    consume Tiers.BufferTiers{
+        route getFunctionalBuffer
+        route setFunctionalBuffer
+    }
+
+    consume UploadDocument.Dossier{
+        route finalize
+    }
+
+}
+
+service FrontImpulsionEligibilite {
+    war: "impulsion-diagnostic.war"
+    indus_normalisation_weblogic: "non"
+    
+    comment: "à vérifier"
+    consume backEndWebImpulsion.Notification {
+        route updateScoring
+    }
+    consume backEndWebImpulsion.Parcours {
+        route open
+    }
+    consume backEndWebImpulsion.UserAccount {
+        route create
+    }
+
+    consume backEndWebImpulsion.Eligibility {
+        route eligibility
+    }
+}
+
+service FrontImpulsionSouscription {
+    comment: "à vérifier"
+    consume backEndWebImpulsion.Notification {
+        route clotureOK
+        route setConformity
+        route setDossierAbandon
+        route setSignatureAbandon
+    }
+}
+

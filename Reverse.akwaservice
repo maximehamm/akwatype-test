@@ -1,0 +1,51 @@
+#container OrangeBE_Root            { containers:[ICPCFrontOffice, ICPCBackOffice] }
+#container Reverve_Root             { containers:[ICPCFrontOffice, ICPCBackOffice, PostgreSQL], isRoot: true }
+
+service BackEndReverseSouscription{
+
+    expose NotificationDocapost{
+        route setAbandonDossier{
+            consume NiuViu.Contract.abandon
+        }
+        route setClotureDossier{
+            consume NiuViu.Contract.clotureOK
+        }
+    }
+
+    expose Dossier{
+        route Initialize{
+            consume Docapost.DossierDocapost.Initialyze
+            consume Docapost.Services.redirect
+        }
+    }
+
+    consume NiuViu.Contract{
+        route bookContractNumber
+        route getEligibilityESignature
+        route getExpectedKYCDocument
+    }
+
+    consume IntermediationAllViu.AllViu{
+        route createContact
+        route createLead
+        route createOpportunity
+        route createPropect
+    }
+
+    consume GenerationPDFAllViu.Document{
+        route createContractEdition
+    }
+
+
+
+    consume NiuViu.Brouillard{
+        route getBrouillard
+    }
+
+    consume NiuViu.Tiers{
+        route getCodeTiers
+    }
+
+}
+
+ 

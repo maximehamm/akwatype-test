@@ -1,0 +1,89 @@
+facade GaiaApplicationDTO {
+    additionalFields {
+        url: Url
+        name: String
+        title: String
+        description: String
+        image: String
+        displayInPortal: Boolean
+    }
+}
+
+facade GaiaNotificationDTO {
+    additionalFields {
+        msg: String
+        type: String
+        isViewed: Boolean
+        date: Date
+        title: String
+        emitter: String
+        receiver: String
+    }
+} 
+
+facade GaiaApplicationPreferenceDTO {
+    additionalFields {
+        name: String
+        data: String
+    }
+}
+
+facade GaiaPreferenceDTO {
+    additionalFields {
+        font: String
+        fontSize: Integer
+        showTutorial: Boolean
+        elementPerPage: Integer
+        favoriteApplication: [EmptyType]::GaiaApplicationDTO
+    }
+}
+
+facade GaiaUserInfoDTO {
+    additionalFields {
+        loginAD: String
+        loginRefog: String
+        loginSSO: String
+        preference: EmptyType::GaiaPreferenceDTO
+        applicationPreferences: [EmptyType]::GaiaApplicationPreferenceDTO
+    }
+}
+
+facade GaiaFeedbackDTO {
+    additionalFields {
+        loginSSO: String
+        rate: Integer
+        answers: [EmptyType]::GaiaFeedbackAnswersDTO
+    }
+}
+
+facade GaiaFeedbackAnswersDTO {
+    additionalFields {
+        feedback: EmptyType::GaiaFeedbackDTO
+        code: Integer
+        answer: String
+    }
+}
+
+facade GaiaNewsDTO {
+    additionalFields {
+        id: ID
+        date: Date
+        title: String
+        details: Text
+        likeNews: Integer
+        images: Binary
+    }
+}
+
+facade GaiaReminderDTO {
+    additionalFields {
+        date: Date
+        details: String
+        user: String
+    }
+}
+ 
+facade test2{}
+
+
+

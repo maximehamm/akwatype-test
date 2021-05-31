@@ -1,0 +1,52 @@
+
+type DocumentEsign{
+        technicalBase: TechnicalBase
+        msg:String
+        code:String
+        bloked:Boolean
+        documentType:DocumentTypeESign
+        libelle: String
+        msgWarn:String
+        file_type:String
+        count_block:Boolean
+        file_key_name:String
+        invalid_file:Boolean
+        file_uploaded:Boolean
+}
+
+type DossierStatutEsign {
+    technicalBase: TechnicalBase
+    code:String
+    label:String
+	
+}
+
+type DossierEsign{
+    id_ent_SF_BNPP:String
+    reference: String
+    id_oppco_SF_BNPP: String,
+    date_statut: Date,
+    lien: String
+    date_echeance:Date 
+    email_contact: String,
+    statut: DossierStatutEsign
+}
+
+type DocumentTypeESign{   
+    technicalBase: TechnicalBase
+    code:String
+    label:String
+}
+
+type BNPPFESign{
+    legalPerson:LegalPerson 
+    client:NaturalPerson
+    dossier:DossierEsign
+    contract: Contract
+    documents:[DocumentEsign]
+    documentsASigner:[DocumentEsign]
+    cloisonnement:BNPPFSite
+    langue:Country
+    interlocuteurBNPPF:BNPPCollaborator
+}
+

@@ -1,0 +1,133 @@
+type TransactionalProfileQuestionType{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    transactionalProfileQuestionGroup: TransactionalProfileQuestionGroup
+    code: String
+    label: String
+    mandatory: Boolean
+}
+
+type TransactionalProfileQuestionGroup{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+} 
+
+type N1ControlStatus{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+}
+
+type WorkFlowStatus{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+}
+
+
+type KYCFinalDecision{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+}
+
+type KYCFileStatus{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+}
+
+type TriggerProcessType{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+}
+
+type TriggerEvent{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+}
+
+type N1ControlType{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+    theme: N1ControlThemType
+}
+
+type N1ControlThemType {
+    @NOMENCLATURE
+        technicalBase: TechnicalBase
+    code: String
+    label: String
+}
+
+type RMAssessmentCheckType{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    customerType: [CustomerType]
+    code: String
+    label: String
+    label2: String
+}
+
+type TypeMSCQQuestion{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+}
+
+
+type PEPStatus{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+}
+
+type BNPPCollaboratorRole{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    Code: String
+    label: String
+}
+
+type RiskLevel{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    Code: String
+    label: String
+    color: String
+}
+
+type RiskFactor{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    Code: String
+    label: String
+}
+
+type KYCCommitteeMemberRoleType{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+}
+
+type OpinionDecisionType{
+    @NOMENCLATURE
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+}

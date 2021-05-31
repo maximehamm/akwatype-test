@@ -1,0 +1,153 @@
+
+service NiuViu{
+    expose Contract{
+        route bookContractNumber
+        route createContract
+        route getExpectedKYCDocument
+        route getEligibilityESignature
+        route clotureOK
+        route abandon
+        route updateScoring
+    }
+
+    expose Brouillard{
+        route getBrouillard
+    }
+
+    expose Tiers{
+        route getWithExternalSourcing
+        route getTiers
+        route getCodeTiers
+    }
+
+    expose NiuViu {
+        isGuess: "Route générique pour permettre d'établir le lien vers NiuViu"
+        route niuviu
+    }
+}
+
+#--------------------------- Risque
+service NiuViuContrat{
+    description: """Gestion des clients (cédants) et contrats associés
+    + Base de donnée Dicobase 
+    """
+    comment: "Voir détail avec Michel Assante +  Christophe Serra"
+}
+
+service NiuViuTarification{
+    description: """Gestion des tarifications des services liés des contrats, des commissions, 
+    + Base de donnée Dicobase 
+    """
+    comment: "Voir détail Oliver Beltrand" 
+}
+
+service NiuViuRisque{
+    description: """Gestion des risque débiteurs (ceux qui règlent les factures, clients de nos clients), acheteurs ...
+    + Base de donnée Dicobase 
+    """
+    comment: "Voir détail Christophe Serra" 
+}
+
+service NiuViuAgrement{
+    description: """Gestion des agréments ...
+    + Base de donnée Dicobase 
+    """
+    comment: "Voir détail Christophe Serra" 
+}
+
+service NiuViuTiers{
+   description: """Gestion des Tiers <==> MDM (Debiteur, Customer, Acheteur + les fournisseurs non liés à l'affacturage ???)
+    + Base de donnée Dicobase 
+    """
+    comment: "Voir détail avec Michel Assante" 
+    receive Q_NIUVIU_LEGAL_PERSON_F1.LegalPerson_F1
+    send Q_MDM_LEGAL_PERSON_F1.LegalPerson_F1
+    consume MdmControler.LegalPersons{
+        route legalperson
+    }
+
+}
+
+#--------------------------- Achat / Imputation / Recouvrement 
+
+service NiuViuAchat{
+     description: """Prise en charge des factures (achats de factures)
+    + Base de donnée Dicobase 
+    """
+    expose facture{
+
+    }
+    comment: "Voir détail avec Xavier Cassagne"
+}
+
+service NiuViuImputation{
+    description: """Gestion des règlements de facture et rapprochement avec les factures
+    + Base de donnée Dicobase 
+    """
+    comment: "Voir détail avec Pascal Clément, Pascal Roos, Ahmed Anane"
+    expose Reglement {
+        
+    }
+}
+
+service NiuViuRecouvrement{
+    description:"""Recouvrement des factures non payées à échéance
+    applicatif NiuViu + Batch
+     + Base de donnée Dicobase
+    """
+    comment: "Voir avec Jean-Michel Bensa"
+}
+
+#--------------------------- Compta et moyens de paiement
+
+service NiuViuCashManagement{
+    description: """Gestion des moyens de paiement et flux entrants sortants de cash
+    + Base de donnée Dicobase
+    """
+    comment:"Ahmed Anane + Marcello"
+}
+
+service NiuViuRRE{
+    description: """Remontée règlementaire au groupe, à la banque de France ...
+    applicatif NiuViu (déclaration des risques + Provisionnement) + batch
+    + Base de donnée Dicobase
+    """
+    comment: "Dominique Rouyer"
+}
+
+service NiuViuCompta{
+    description:""" Gestion des schémas comptables, des rapprochements banquaires, comptabilisation de tous les mouvements,
+    La compta NiuViu prend en charge la comptabilité de l'affacturage et la comptabilité globale BNPPF.
+    Applicatif Eurosoft + NiuCompta (redéveloppement Eurosoft en Dynasty) + batch
+    + Base de donnée EuroSoft
+    + Base de donnée Dicobase
+    """
+    comment: "Linda Temporel"
+}
+
+#--------------------------- Services transverses
+
+service Editique{
+    description:"""Composition, envoie et archivage des éditions (courriers, relevés de compte, factures...)
+    Utilisation de StreamServe + Applicatif visu archivage
+    """
+    comment: "Voir avec Antoine Chauve"
+    expose edition{
+        route send{
+
+        }
+    }
+}
+
+
+service Eurosoft {
+    expose Sybase {
+        route db
+    }
+}
+
+service Sybase14 {
+    expose Dicobase { route read, route read_write }
+}
+
+ 

@@ -1,0 +1,476 @@
+# Info_contrat
+facade ContractLightDTO on Contract { 
+    technicalBase.id
+    currency::CurrencyCode
+    customer:computed.customer.targetRole ::LegalPersonLightDTO ## thirdParty n'est pas précis, est-ce bien le client ?
+} 
+
+facade CurrencyCode with Currency { 
+    currencyCode:code
+} 
+ 
+facade LegalPersonLightDTO on LegalPerson {
+    technicalBase.id
+    identificationInformation{ 
+        identification{
+            corporateName
+        }
+        identifiers ::IdentifierIdDTO ## une liste ?
+    }
+}
+
+facade IdentifierIdDTO on Identifier {
+    additionalFields {
+        
+    }
+    properties {
+        
+    } 
+    base.code 
+    identifier
+} 
+
+# Info_utilisateur_connecté
+# Modif_info_utilisateur_connecté 
+# Encours contrat
+
+facade ContractWithOutstandingDTO on Contract {
+    ## Pourquoi dupliquer les champs déjà accessibles via Info_contrat ?
+    technicalBase.id
+    currency::CurrencyCode
+    customer:computed.customer.targetRole ::LegalPersonLightDTO ## thirdParty n'est pas précis, est-ce bien le client ?
+    oustandings::OustandingDTO
+}
+facade OustandingDTO on Outstanding {
+    invoicesIncludingUBB::CountOutstandingDTO ## c'est quoi UBB ?
+    creditNotes::CountOutstandingDTO
+    invoiceAndCreditNotes::ClassificationOutstandingDTO
+    UBB::ClassificationOutstandingDTO
+    global::ClassificationOutstandingDTO
+    globalFundingStatus::FundingStatusDTO
+}
+facade CountOutstandingDTO on CountOutstanding {
+    amount
+    count
+}
+facade ClassificationOutstandingDTO on ClassificationOutstanding {
+    guaranteedUnavailable ## guaranteedCollectionAmount ?
+    guaranteedFundable ## guaranteedFundableAmount ?
+    notGuaranteedUnavailable ## notGuaranteedCollectionAmount ?
+    notGuaranteedFundable ## notGuaranteedFundableAmount ?
+}
+
+# Encours agrement
+facade AgreementWithOutstandingDTO on Agreement {
+    technicalBase.id
+    currency::CurrencyCode
+    constraints::AgreementConstraintDTO
+
+    oustanding::AgreementOutstandingDTO
+    debtor::LegalPersonAddressDTO
+    contract::ContractLightDTO
+}
+
+facade AgreementOutstandingDTO on AgreementOutstanding {
+    guaranty
+    notGuaranteedFundable
+    oustandings::OustandingDTO
+}
+facade AgreementConstraintDTO on AgreementConstraint {
+    requestLimit
+    purchaseLimit
+    guarantyLimit
+    notGuaranteedFundableLimit
+}
+facade LegalPersonAddressDTO on LegalPerson {
+    technicalBase.id
+    with(identificationInformation){
+        with(identification){
+            corporateName
+        }
+        idents:identifiers ::IdentifierIdDTO ## une liste ?
+    }
+    
+    computed.mailingAddress::AddressDTO
+}
+facade AddressDTO on Address {
+    addressComplement
+    street
+    zipCode
+    city
+    countryCode:country.countryISO.code
+}
+
+# Infos_financement
+facade FundingDTO on Funding {
+    technicalBase.id
+    status::FundingStatusDTO
+    amount
+    waitingValidationAmount
+    availableAmount
+    unavailableAmount 
+    currency::CurrencyCode
+}
+
+facade FundingStatusDTO on FundingStatus {
+    funded
+    unfunded
+}
+
+# Remise_en_cours
+facade RemittanceStatusDTO on RemittanceOutstanding {
+    technicalBase.id
+    purchaseCount
+    purchaseWaitingCount
+    list {
+        currency::CurrencyCode
+        purchaseCount
+        purchaseWaitingCount
+        purchaseAmount
+        purchaseWaitingAmount
+    }
+}
+
+# FENR
+facade OutstandingDueNotPaidDTO on Outstanding {
+    technicalBase.id
+    contract.currency::CurrencyCode
+    globalFundingStatus::FundingStatusDTO
+    dueNotPaid {
+        invoices::CountOutstandingDTO
+        paidAmount
+        unpaidAmout
+        pastDue::ClassificationOutstandingDTO
+    } 
+}
+
+# Reglt_non_affecté
+
+# Fonds_de_garantie
+facade ProvisionOutstandingDTO on ProvisionOutstanding {
+    technicalBase.id
+    oustanding.contract.currency::CurrencyCode
+    type
+    maximumAmout
+    minimumAmout
+    provisionnedAmout
+    toBeReturnedAmout
+    provisionNeedEstimationAmout
+    oustandingType
+    oustandingAmout
+    retentionPercent
+}
+
+# Liste_factures /factures non soldées
+# Liste_factures /factures soldées
+# Liste_factures /factures en litige
+# Liste_factures /factures pré-contentieux
+# Liste_factures /factures contentieux
+# Liste_factures /dernière relance
+# Liste_factures /factures FENR
+# Liste_factures /factures FENR garanties
+# Liste_factures /factures FENR non garanties
+# Liste_factures /factures à l’encaissement
+# Liste_factures /factures garanties
+# Liste_factures /factures non garanties
+# Liste_factures /factures d’une remise
+# Liste_factures /factures imputées
+# Liste_factures /factures d’un règlement
+# Liste_factures_imputées
+facade InvoiceDTO on Invoice {
+    technicalBase.id
+    currency::CurrencyCode
+    type
+    amount
+    date
+    dueDate
+    ## debtorIdOfTheClient ?
+    ## invoiceIfOfTheClient ?
+    expectedPaymentMethod
+    purchaseDate
+    ## balance ?
+    ## disputeId ?
+    ## orderId ?
+    ## situationId ?
+    classificationOutstandings:classifications {
+        with (oustanding::ClassificationOutstandingDTO)
+    }
+    fundingStatus::FundingStatusDTO
+    customer:customer.targetRole::LegalPersonLightDTO
+    buyer:buyer.targetRole::LegalPersonLightDTO ## au lieu de debtor ?
+    agreement::AgreementWithOutstandingDTO
+    remittance::RemittanceDTO
+}
+facade RemittanceDTO on Remittance {
+    technicalBase.id
+    customerId:customer.technicalBase.id
+    invoices::CountOutstandingDTO
+    invoiceType
+    integrationDate
+    status
+    purchase::CountOutstandingDTO
+    currency::CurrencyCode
+}
+
+# Liste_factures /factures partiellement réglées
+
+# Detail_facture : historique de classement
+facade InvoiceClassificationDTO on Invoice { ## c'est une réduction de InvoiceDTO ?
+    technicalBase.id
+    date 
+    remittance.status ## code "PR" ?
+    # description ?
+    classificationOutstandings:classifications {
+        with(oustanding::ClassificationOutstandingDTO)
+    }
+    fundingStatus::FundingStatusDTO
+}
+
+# Liste_facture_brouillard
+
+# Liste_Agrement /tout
+facade AgreementDTO on Agreement {
+    technicalBase.id
+    status
+    currency::CurrencyCode
+    constraints::AgreementConstraintDTO
+    debtor::LegalPersonAddressDTO ## est-ce le buyer ?
+}
+
+# Liste_Agrement /actif
+# Liste_Agrement /inactif 
+
+# Liste_Devise
+facade CurrencyDTO on Currency {
+    technicalBase.id
+    code
+    label
+    shortLabel
+    defaultFractionDigits
+}
+
+# Facture_brouillard
+
+# Detail_facture /Imputation
+facade AllocationDTO on Allocation {
+    technicalBase.id
+    type
+    description
+    currency::CurrencyCode
+    date
+    paymentAmount
+    invoiceAmount
+    ## maturity
+    ## maturityDate
+    ## annulationStatus
+    contract::ContractLightDTO
+    invoice::InvoiceDTO
+    classification.oustanding::ClassificationOutstandingDTO
+    fundingStatus::FundingStatusDTO
+    payment::PaymentDTO
+}
+
+facade PaymentDTO on Payment {
+    technicalBase.id
+    amount
+    balance
+    date
+    dueDate
+}
+
+# Detail_facture /Evenement
+
+# Detail_facture /Relance
+facade DunningDTO on Dunning {
+    technicalBase.id
+    date
+    code
+    description
+}
+
+
+# Telecharger_PJ
+
+# Transferer_remise
+facade RemittanceDeclarationDTO on Remittance {
+    technicalBase.id
+    customerId:customer.technicalBase.id
+    invoices::CountOutstandingDTO ## ou purchase ?
+    invoiceType
+    currency::CurrencyCode
+
+    invoiceList::InvoiceDTO
+}
+facade InvoiceDeclarationDTO on Invoice {
+    technicalBase.id
+    customerId:customer.technicalBase.id
+    type
+    currency::CurrencyCode
+    amount
+    ## balance ?
+    date
+    dueDate
+    ## referenceId ?
+    ## situationId ?
+    buyer:buyer.targetRole::LegalPersonLightDTO ## au lieu de debtor ?
+}
+
+# Nettoyer_Brouillard
+
+# Liste_Banque
+facade BankDTO on Bank {
+    technicalBase
+    role
+    details::(BanckDetailIBANDTO, BanckDetailSwiftDTO)
+}
+
+facade BanckDetailIBANDTO on BanckDetailIBAN {
+    technicalBase.id
+    bankName
+    iban
+    bicCode
+    type
+}
+
+facade BanckDetailSwiftDTO on BanckDetailSwift {
+    technicalBase.id
+    swift
+}
+
+
+# Creation_demande_financement
+# Modif_demande_financement
+facade FundingRequestWriteDTO on FundingRequest {
+    technicalBase.id
+    bankDetail::(BanckDetailIBANId, BanckDetailSwiftIdDTO)
+    amount
+    percent
+    date
+}
+
+facade BanckDetailIBANId on BanckDetailIBAN {
+    technicalBase.id
+    type
+}
+
+facade BanckDetailSwiftIdDTO on BanckDetailSwift {
+    technicalBase.id
+    type
+}
+
+# Liste_demande_financement
+facade FundingRequestLightDTO on FundingRequest {
+    technicalBase.id
+    status
+    date
+    amount
+    bankDetail::(BanckDetailIBANDTO, BanckDetailSwiftDTO)
+}
+
+
+# Détail_decaissement
+
+# Liste_remises
+facade RemittanceLightDTO on Remittance {
+    technicalBase.id
+    invoiceType
+    customerId:customer.technicalBase.id
+    currency::CurrencyCode
+    integrationDate
+
+    invoices::CountOutstandingDTO
+    status
+
+    purchase::CountOutstandingDTO
+    lastPurchaseDate
+    factoringCommissionAmount
+    factoringCommissionVAT
+}
+
+# Liste_PJ
+
+# Liste_motif_litige
+facade LitigationReasonDTO on LitigationReason {
+    technicalBase
+    code
+    label
+}
+
+# ouverture_litige
+# Reglements 
+
+# Liste_reglements /imputés
+# Liste_reglements /non imputés
+facade PaymentLightDTO on Payment {
+    technicalBase.id
+    status
+    currency::CurrencyCode
+    method
+    date
+    amount
+    balance
+    recipient::PaymentActorDTO
+    issuer::PaymentActorDTO
+}
+
+facade PaymentActorDTO on PaymentActor {
+    type
+    legalPerson::LegalPersonLightDTO
+}
+
+# Affectation_reglement
+
+# Liste_Factures_Reglement
+facade AllocationLightDTO on Allocation {
+    technicalBase.id
+    type
+    description
+    currency::CurrencyCode
+    date
+    paymentAmount
+    invoiceAmount
+    ## maturity
+    ## maturityDate
+    ## annulationStatus
+    contract::ContractId
+    invoice::InvoiceLightDTO
+    payment::PaymentDTO
+}
+facade ContractId with Contract {
+    contractId:technicalBase.id
+}
+facade InvoiceLightDTO on Invoice {
+    technicalBase.id
+    currency::CurrencyCode
+    customer:customer.targetRole::LegalPersonLightDTO
+    amount
+    date
+    dueDate
+}
+
+# Modif_agrement
+
+# Détail_Débiteur
+facade LegalPersonWithContactDTO on LegalPerson {
+    technicalBase.id
+    with(identificationInformation){
+        with(identification){
+            corporateName
+        }
+        idents:identifiers ::IdentifierIdDTO ## une liste ?
+    }
+    with(computed) {
+        mailingAddress::AddressDTO
+        phoneNumber
+    }
+    # contact ?
+}
+
+# Liste_Mode_règlement
+# Liste_SIREN
+# Creation_Agrement
+# Solde_comptes
+# Detail_comptes
+# Infos_Etiquette
+# Infos_RIBSIT
+# Infos_tarif

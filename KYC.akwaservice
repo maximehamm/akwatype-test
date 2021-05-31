@@ -1,0 +1,28 @@
+service KYCFront {
+    expose KYC {
+        route kyc {
+            consume KYCBack.KYC.kyc
+            consume Tiers.Tiers.getTiers
+        }
+    }
+}
+service KYCBack {
+    
+    expose KYC {
+        route kyc {
+            consume PostgreSQL94.KYC.read_write
+            consume Tiers.Tiers.getTiers
+            consume JuridBack.Jurid.jurid
+        }
+    }
+
+    consume MdmControler.LegalPersons{
+        route legalperson
+    }
+
+    send Q_MDM_LEGAL_PERSON_F1.LegalPerson_F1
+    receive Q_KYC_LEGAL_PERSON_F1.LegalPerson_F1
+    
+}
+
+ 

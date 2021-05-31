@@ -1,0 +1,4 @@
+type GroupeEntityNomenclature{
+    code:String
+    values:[GroupEntity]
+}

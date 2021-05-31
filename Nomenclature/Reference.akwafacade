@@ -1,0 +1,109 @@
+facade NomenclatureGenericItem{
+    additionalFields {
+        code:String
+        label:String
+        UKLabel:String
+    }
+}
+
+facade NomenclatureGeneric{
+    additionalFields {
+        code:String
+        items::[NomenclatureGenericItem]
+    }
+}
+
+
+facade IdentifierBaseF003{
+    additionalFields {
+        code:String
+        items::[IdentifierBaseF003Item]
+    }
+}
+
+facade IdentifierBaseF003Item on Identifier{
+    
+    with(base){
+        code
+        clientNationalTypeCode:clientNationalType.code
+        label
+        UKLabel
+        localLabel
+        countryCode:country.countryISO.code
+        issuerCode:issuer.code
+        typeIdentifierCode:typeIdentifier.code
+        rank
+        principal
+        format
+        message
+    }
+}
+
+facade InternalRatingN013{
+    additionalFields {
+        code:String
+        items::[InternalRatingN013Item]
+    }
+}
+
+facade InternalRatingN013Item on InternalRatingCode{
+    code
+    orderNum
+    investmentProfile
+    label
+    UKLabel
+    dubious
+}
+
+facade externalRatingS087{
+    additionalFields {
+        code:String
+        items::[externalRatingS087Item]
+    }
+}
+
+facade externalRatingS087Item on ExternalRatingCode{
+    code  
+    termTypeCode:termType.code
+    OrderNum
+    validityStartDate
+    validityEndDate
+    existanceEndDate
+    issueurCode:issuer.code
+}
+
+
+facade DocumentTypeF015{
+    additionalFields {
+        code:String
+        items::[DocumentTypeF015Item]
+    }
+}
+
+facade DocumentTypeF015Item on DocumentType{
+    code
+    label
+    UKLabel
+    documentCategoryCode:documentCategory.code
+}
+
+facade CountryF032{
+    additionalFields {
+        code:String
+        items::[CountryF032Item]
+    }
+}
+
+facade CountryF032Item on Country{
+    with countryISO{
+        codeISO2:code
+        codeISO3
+        label
+        UKLabel
+        CountrySubdivision{
+            code
+        }
+    }
+    sensitivityCode:sensitivity.code
+    pnClassificationCode:pnClassification.code
+}

@@ -1,0 +1,312 @@
+
+
+service NewGOPFront {
+    isDraft: "Les routes sont déduites des wireframes"
+
+    expose wireframeComponents {
+        route authentication {
+            doc_cs_service: "Identification"
+
+            consume NewGOPBackend.auth.keyboard
+            consume NewGOPBackend.auth.login
+            consume NewGOPBackend.auth.sendPassword
+        }
+        route header {
+            doc_cs_service: "Synthèse générale"
+            comment: "Bandeau Logo + Search + icones messages, notifications, user"
+
+            consume Gac.customers.get
+            consume Gac.customers.update
+            consume Gac.auth.logout
+            consume NewGOPBackend.search.search
+            consume NewGOPBackend.contractMessages.count
+            consume NewGOPBackend.contractNotifications.count
+        }
+        route generalSynthesis {
+            doc_cs_service: "Synthèse générale"
+            comment: "Nom, encours, nb remise, financement, indisponible, FENR, non affectés, fond excédentaire, litiges à cloturer"
+
+            consume Gac.customers.get
+            consume NewGOPBackend.contractOutstandings.contract
+            consume NewGOPBackend.contractOutstandings.remittances
+            consume NewGOPBackend.contractOutstandings.fundingRequests
+            consume NewGOPBackend.contractOutstandings.litigations
+            consume NewGOPBackend.contractOutstandings.payments
+        }
+        route myInvoicesStatus {
+            doc_cs_service: "Mes factures > Onglet « Ma situation »"
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Encours »"
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Factures échues non réglées »"
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Litiges »"
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Règlements »"
+
+            comment: "Date, encours, encours FENR, encours litiges, encours règlements"
+
+            consume NewGOPBackend.contractOutstandings.contract
+            consume NewGOPBackend.contractOutstandings.remittances
+            consume NewGOPBackend.contractOutstandings.litigations
+            consume NewGOPBackend.contractOutstandings.payments
+        }
+        route myInvoicesStatusNotAvailable {
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Encours » > Bouton « Indisponible » "
+            comment: "Date, factures indisponibles : total, nb, liste"
+
+            consume NewGOPBackend.contractOutstandings.remittances
+            consume NewGOPBackend.contractRemittances.unavailables
+            # export ?
+        }
+        route myInvoicesStatusNotAvailableInvoiceDetail {
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Encours » > Bouton « Indisponible » > Bouton « + » : Infos facture + Infos classement"
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Encours » > Bouton « Indisponible » > Bouton « + » : Infos facture + Infos litiges "
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Encours » > Bouton « Indisponible » > Bouton « + » : Infos facture + Infos règlements"
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Encours » > Bouton « Indisponible » > Bouton « + » : Infos facture + Infos événements"
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Encours » > Bouton « Indisponible » > Bouton « + » : Infos facture + Infos relance "
+            comment: "facture: classement, litiges, règlements, événements, relance"
+
+            consume NewGOPBackend.contractRemittances.get
+            consume NewGOPBackend.contractRemittances.remittanceClassifications
+            consume NewGOPBackend.contractRemittances.remittanceLitigations
+            consume NewGOPBackend.contractRemittances.remittancePayments
+            consume NewGOPBackend.contractRemittances.remittanceEvents
+            consume NewGOPBackend.contractRemittances.remittanceDunnings
+            ## export ? 
+            ## delete ?
+        }
+        route myInvoicesStatusNotAvailableInvoicesNotGuaranteed {
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Encours » > Bouton « Non garanti »"
+            comment: "encours facture non garanties, liste facture "
+
+            consume NewGOPBackend.contractOutstandings.remittances
+            ## export ? 
+        }
+        route myInvoicesStatusInvoicesDueNotPaidList {
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Factures échues non réglées » > lien « Non réglées garantie »"
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Factures échues non réglées » > lien « Partiellement réglées »"
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Factures échues non réglées » > lien « Non réglées partiellement garantie »"
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Factures échues non réglées » > lien « Non réglées non garantie »"
+            comment: "encours factures, FENR"
+
+            consume NewGOPBackend.contractOutstandings.remittances
+            consume NewGOPBackend.contractRemittances.dueNotPaidGuaranteed
+            consume NewGOPBackend.contractRemittances.duePartiallyPaid
+            consume NewGOPBackend.contractRemittances.dueNotPaidPartiallyGuaranteed
+            consume NewGOPBackend.contractRemittances.dueNotPaidNotGuaranteed
+            ## export ? 
+        }
+        route myInvoicesStatusPayments {
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Règlements » > Bouton « Règlements non imputés » "
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Règlements » > Bouton « Règlements imputés » "
+            comment: "encours reglements, reglement"
+
+            consume NewGOPBackend.contractOutstandings.payments
+            consume NewGOPBackend.contractPayments.list
+            ## export ? 
+        }
+        route myInvoicesStatusPaymentsDetail {
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Règlements » > Bouton « Règlements non imputés » "
+            comment: "reglement"
+
+            consume NewGOPBackend.contractPayments.get
+            ## export ? 
+        }
+        route myInvoicesStatusRemittances {
+            doc_cs_service: "Mes factures > Onglet « Ma situation » > Panel « Règlements » > Bouton « Factures imputées » "
+            comment: "encours factures, factures"
+
+            consume NewGOPBackend.contractRemittances.allocated
+            ## export ? 
+        }
+        route myInvoicesNewRemittance {
+            doc_cs_service: "Mes factures » > Onglet « Saisie de factures » "
+            comment: "facture"
+
+            consume NewGOPBackend.contractRemittancesDayBookInvoices.list
+            ## export ? 
+            ## delete ?
+        }
+        route myInvoicesNewInvoice {
+            doc_cs_service: "Mes factures > Onglet « Saisie de factures » > Option « Modification de la facture du brouillard » "
+            comment: "facture"
+
+            consume NewGOPBackend.contractRemittancesDayBookInvoices.get
+            consume NewGOPBackend.contractRemittancesDayBookInvoices.create
+            consume NewGOPBackend.contractRemittancesDayBookInvoices.modify
+            consume NewGOPBackend.contractRemittancesDayBookInvoices.delete
+            ## export ? 
+        }
+        
+    }
+}
+
+service NewGOPBackend {
+    isDraft: """Les routes sont déduites des wireframes, les datas sont simplement les types existant les plus proches
+                consommation de route todo lorsque la route cible n'existe pas..."""
+    comment: """Use proxy to inherint as soon as available in order to have perfect method signature"""
+
+    expose search {
+        route search proxy NewGolden.todo.todo
+    }
+    
+    expose auth {
+        route keyboard proxy Gac.auth.getKeyboard
+        route login proxy Gac.auth.login
+        route logout proxy Gac.auth.logout
+        route sendPassword proxy Gac.auth.sendPassword
+    }
+
+    expose contracts {
+        url: "/contracts" 
+        route list proxy NewGolden.contracts.list
+    }
+    expose contract {
+        parent: contracts
+        url: "/contractId:ID" 
+        route get proxy NewGolden.contract.get
+    }
+
+    expose contractOutstandings {
+        parent: contract
+        url: "/outstandings" 
+        route contract proxy NewGolden.contract.outstandings
+
+        route remittances proxy NewGolden.contract.remittanceOutstandings
+        route litigations proxy NewGolden.todo.todo
+        route payments proxy NewGolden.todo.todo
+        route fundingRequests proxy NewGolden.todo.todo
+    }
+    expose contractMessages {
+        parent: contract
+        url: "/messages" 
+        route count proxy NewGolden.todo.todo
+        route list proxy NewGolden.todo.todo
+        route get proxy NewGolden.todo.todo { url: "/id:ID"}
+    }
+    expose contractNotifications {
+        parent: contract
+        url: "/notifications" 
+        route count proxy NewGolden.todo.todo
+        route list proxy NewGolden.todo.todo
+        route get proxy NewGolden.todo.todo { url: "/id:ID"}
+    }
+    expose contractLitigations {
+        parent: contract
+        url: "/litigations" 
+        route list proxy NewGolden.todo.todo
+        route get proxy NewGolden.todo.todo { url: "/id:ID"}
+    }
+    expose contractRemittances {
+        parent: contract
+        url: "/remittances" 
+        route list proxy NewGolden.todo.todo
+        route unavailables proxy NewGolden.todo.todo # indisponibles
+        route get proxy NewGolden.todo.todo { url: "/id:ID"}
+
+        route notGuaranteed proxy NewGolden.todo.todo
+        route dueNotPaidGuaranteed proxy NewGolden.todo.todo
+        route duePartiallyPaid proxy NewGolden.todo.todo
+        route dueNotPaidPartiallyGuaranteed proxy NewGolden.todo.todo
+        route dueNotPaidNotGuaranteed proxy NewGolden.todo.todo
+        route allocated proxy NewGolden.todo.todo
+        route invoicesWaitingRemittance proxy NewGolden.todo.todo
+
+        route remittanceClassifications proxy NewGolden.todo.todo { url: "remittanceId:ID/classifications" }
+        route remittanceLitigations proxy NewGolden.todo.todo { url: "remittanceId:ID/litigations" }
+        route remittancePayments proxy NewGolden.todo.todo { url: "remittanceId:ID/payments" }
+        route remittanceEvents proxy NewGolden.todo.todo { url: "remittanceId:ID/events" }
+        route remittanceDunnings proxy NewGolden.todo.todo { url: "remittanceId:ID/dunnings" }
+    }
+    expose contractRemittancesDayBookInvoices {
+        parent: contractRemittances
+        url: "/day-book" 
+        route list proxy NewGolden.todo.todo
+        route get proxy NewGolden.todo.todo { url: "/id:ID"}
+        route create proxy NewGolden.todo.todo
+        route modify proxy NewGolden.todo.todo { url: "/id:ID"}
+        route delete proxy NewGolden.todo.todo { url: "/id:ID"}
+    }
+    expose contractDunnings {
+        parent: contract
+        url: "/dunnings" 
+        route list proxy NewGolden.todo.todo
+        route get proxy NewGolden.todo.todo { url: "/id:ID"}
+    }
+    expose contractPayments {
+        parent: contract
+        url: "/payments" 
+        route list proxy NewGolden.todo.todo
+        route get proxy NewGolden.todo.todo { url: "/id:ID"}
+    }
+}
+
+
+service OldGOPBackend {
+    urlExternalDescription: "B:\DSI\Domaine DIG\1 - Projets\03 - Refonte GOP\Nouvelle architecture\DC_RDU_Liste_services_GOP.xlsx"
+    isDraft: "à définir selon le doc si besoin"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

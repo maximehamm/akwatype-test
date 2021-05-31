@@ -1,0 +1,230 @@
+#facade FeedBackCounterpartRMPM on LegalPerson{
+#    
+#    shortName #OK
+#    corporateName #OK
+#
+#    rmpmManagingEntity:rmpmManagingEntity.code #OK   
+#    with(incorporationCountry){ #OK
+#        with(countryISO){
+#            incorporationCountry:code
+#        }
+#    } 
+#
+#
+#    with (incorporationCountrySubdivision){ #OK
+#        incorporationCountrySubdivision:code
+#    }
+#   
+#    #with(){ #=========================== KO ?
+#    #    with(countryISO){
+#    #        fiscalCountry:code
+#    #    }
+#    #}
+#    #with (fiscalCountrySubdivision){ #OK 
+#    #    fiscalCountrySubdivision:code
+#    #}
+#
+#    
+#    creationYear #OK
+#    legalForm:legalForm.code
+#    conterpartyStatus:shareHoldersType.code
+#    typeOfClient:typeOfClient.code
+#    clientCoverage:clientCoverage.code
+#    with(legalPersonActivity){
+#        naf93:naf93.code
+#        nace:nace.code
+#        economicCode:economicCode.code
+#        with(naf2008){
+#            ActivitycodeApe:nafNiv2.code
+#        }
+#        with(computed){
+#            with(industryCode1){
+#                with (industryCode){
+#                    industryCode1:code
+#                }
+#            percentageIndustryCode1:percentage
+#            }
+#            with(industryCode2){
+#                with (industryCode){
+#                    industryCode2:code
+#                }
+#            percentageIndustryCode2:percentage
+#            } 
+#            with(industryCode3){
+#                with (industryCode){
+#                    industryCode3:code
+#                }
+#            percentageIndustryCode3:percentage
+#            }   
+#            with(industryCode4){
+#                with (industryCode){
+#                    industryCode4:code
+#                }
+#            percentageIndustryCode4:percentage
+#            }
+#        }
+#    }
+#    with(computed){
+#        identifierRMPM #OK
+#        SIREN
+#        clientNationalID
+#        clientLocalID
+#        lei:legalEntityIdentifier
+#       
+#         with(incorporationAddress){ #OK
+#            incorporationAddressStreet:street
+#            incorporationAddressCity:city
+#            with(country){
+#                with(countryISO){incorporationAddressCountry:code}
+#            }
+#        }
+#        with(fiscalAddress){ #OK
+#            fiscalAddressStreet:street
+#            fiscalAddressCity:city
+#            with(country){
+#                with(countryISO){fiscalAddressCountry:code}
+#            }
+#        }
+#        with(mainBusinessCountry){
+#            with(countryISO){
+#                countryOfBusiness:code 
+#            }
+#        }
+#        with(mainBusinessCountrySubdivision){
+#            countryOfBusinessSubdivision:code   
+#        }
+#        with (financialInformation){
+#            with(socialInfos){
+#                with(turnover){ #OK
+#                    annualTurnover:amount
+#                    unitAnnualTurnover:unit
+#                    turnoverCurrency:currency.code
+#                    DateOfAnnualTurnover:date
+#                }
+#                with(assetSize){ #OK
+#                    socialAssetSizeAmount:amount
+#                    socialAssetSizeUnit: unit
+#                    with(currency){
+#                        socialAssetSizeCurrency:code
+#                    }
+#                    socialAssetSizeClosingDate:date
+#
+#                }
+#            }
+#            with (consolidatedInfos){
+#                with(turnover){ #OK
+#                    consolidateTurnoverAmount:amount
+#                    consolidatTurnoverUnit:unit
+#                    with(currency){
+#                        consolidatTurnoverCurrency:code
+#                    }
+#                    consolidateTurnoverDate:date    
+#                }
+#                with(assetSize){ #OK
+#                    consolidateAssetSizeAmount:amount
+#                    consolidateAssetSizeUnit:unit
+#                    with(currency){
+#                        consolidateAssetSizeCurrency:code
+#                    }
+#                    consolidateAssetSizeDate:date
+#                }
+#            }
+#        }
+#    }
+#    
+#    #MONOTORING 2 champs à faire
+#    
+#    mifidClassificationCode:mifidClassification.code
+#
+#    with(consolidationScope){
+#        topAccountingConsolidation
+#        topAccountingIntragroup
+#        consolidationMode:consolidationMode.code
+#        accountingMethod:accountingMethod.code
+#        accountingPercentage
+#    }
+#    with(businessGroup){
+#        with (parentCompany){
+#            with (computed){
+#            parentCompanyID:identifierRMPM
+#            }
+#        }
+#    }
+#    typology:typology.code
+#    #with(parentCompany){
+#    #    with (computed){
+#    #    rmpmIdMainEstablishement:identifierRMPM
+#    #    }
+#    #}
+#    with(riskInformation) {
+#        with(notation){
+#            with(intrinsicRating){
+#                intrinsicRating:rating
+#                intrinsicRatingDate:startDate
+#            }
+#            
+#            grrSenoirUnsecured
+#            supportEntityCorporateRMPMID
+#            supportStrength:supportStrength.code
+#            with(counterpartyRating){
+#                counterPartyRating:rating
+#                counterPartyDate:startDate
+#            }
+#            with(specificConterpartyRating){
+#                specificConterpartyRating:rating          
+#                specificConterpartyRaitingStartDate:startDate
+#            }
+#            defaultPropability
+#            ratingModelID:ratingModel.code
+#        }
+#        lastAnnualRevueDateBNPPF
+#        with(watchListBNPPF){
+#            creditWatchListIndicator:indicator
+#            DateStakeUnderMonitoring:entryDate
+#        }
+#        npe{
+#            eventOfdefault:code
+#            dateOfEventOfDefault:eventCodeDate
+#            flag:Indicator
+#
+#        }
+#        
+#        nextAnnualRevueDateBDDF
+#        lastFBEDate
+#        
+#         
+#    }
+#
+#   
+#    #----------------------------------------------------------------------    
+#    #industryCodes {
+#    #    with (industryCodes){
+#    #        code
+#    #    }
+#    #    percentage
+#    #}
+#    
+#    openingDateBDDF
+#    businessClosureDate
+#    
+#    #Indicateur exception cap devise
+#    #Taux de récupération global senior unsecured
+#    
+#   
+#
+#
+#}
+#
+#
+
+
+
+
+
+
+
+
+
+
+
+

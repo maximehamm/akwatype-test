@@ -1,0 +1,10 @@
+facade FinancialInformationDTO on FinancialInformation{
+    socialInfos{
+        with(turnover){ 
+            amount 
+        } 
+    } 
+}
+
+
+ 

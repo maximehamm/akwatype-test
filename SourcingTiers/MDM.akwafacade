@@ -1,0 +1,1105 @@
+
+target mdm
+target mdmRole
+
+
+facade LPDispatchedIdentifiers on LPIdentificationInformations{
+    additionalFields {
+        idRMPM:Identifier
+    }
+    dispatch (identifiers.base.code(
+        "1000":idRMPM
+        #,"72":SIREN
+        ).identifier
+    )
+}
+
+facade ExistLegalPersonDTO on LegalPerson{
+    with identificationInformation::LPDispatchedIDMdmIdentifiers
+    lifeCycleStatusCode:lifeCycleStatus.lifeCycleStatus.code
+}
+
+facade ExistNaturalPersonDTO on NaturalPerson{
+    with identificationInformations{
+        with identification::NPDispatchedIDMdmIdentifiers
+    }
+    lifeCycleStatusCode:lifeCycleStatus.lifeCycleStatus.code
+}
+
+facade NPDispatchedIDMdmIdentifiers on NPIdentification{
+    additionalFields {
+        idMdm:Identifier
+    }
+    dispatch (identifiers.base.code(
+        "0":idMdm
+        ).identifier
+    )
+    idMdm.base.code
+}
+
+facade LPDispatchedIDMdmIdentifiers on LPIdentificationInformations{
+    additionalFields {
+        idMdm:Identifier
+    }
+    dispatch (
+        identifiers.base.code(
+        "0":idMdm 
+        ).identifier
+    )
+    #idMdm.base.code
+}
+
+facade LegalPersonAssociateNaturalPersons.mdm on LegalPerson{
+    additionalFields {
+        idMdm:String #En attente analyse bug LPDispatchedIDMdmIdentifiers
+    }
+    #identificationInformation::LPDispatchedIDMdmIdentifiers
+    idMdm
+    #identificationInformation.identification.corporateName
+    associateNaturalPersons:associatedThirdParties::(NaturalPerson)
+}
+
+facade LegalPerson.mdm on LegalPerson{
+    additionalFields {
+        segmentation:LegalPersonActivityInformations{basedOn: activityInformations}
+        associatedLegalPersons::[AssociatedLegalPerson]
+        associatedNaturalPersons::[AssociatedNaturalPerson]
+    }
+  
+    technicalBase
+    #computed
+    legalPersonActivity:activityInformations
+    #legalPersonActivity:activityInformations.activity
+    
+    #otherCodification
+    #percentTurnoverRevenue à supprimer
+    with (identificationInformation){
+        with (identification){        
+            corporateName
+            localCorporateName
+            shortName
+            tradeName
+            legalForm
+            typology          
+        }
+        idents:identifiers
+        with (immatriculation){
+            creationDate
+            creationYear
+            terminationDate
+            incorporationDate
+            incorporationCity
+            incorporationCountry
+            incorporationCountrySubdivision
+        }
+    }
+    
+    #parentCompany !! A vérifier
+    with(businessgroupInformations){
+        businessGroup
+        economicDependencies
+        economicDependencyType
+    }
+    
+    establishments
+    with (groupRelation){
+        consolidationScope
+        openingDateBNPPF
+        openingDateBDDF
+        businessClosureDate
+        clientCoverage
+        rmpmManagingEntity
+        BNPPFOwner
+        BNPPOwner
+        
+        with(mutualizedThirdPartyClass){
+            finRepExposureClass
+            ctm
+            iceClass
+            celCounterParty
+        }
+        
+        with (miscellaneous){
+            typeOfClient
+            shareHoldersType
+            bankingSecrecy
+            groupBankingSecrecy
+            levelOfPowerOfManagingEntity
+            monitoring
+        }
+        groupEntityRelations
+    }
+    
+    
+    with segmentation{
+        segmentation:commercialSegmentation
+    }
+    superiorLegalEntity
+    lastAddressUpdateDate
+    #bnppBusinessRelationInRegistrationCountryOnly
+    #regulatedFinancialInstitution
+
+    groupCommonCustomer
+    
+    
+    
+    #monitoring
+    financialInformation
+    #financialInformation2.mifidClassification
+    #contractualBenefitScope
+    #sensitiveProducts
+    #typeOfClient
+    #counterPartyStatus
+    riskInformation
+    #roleLegalPerson
+    legalPersonKYCInfos
+
+
+    #businessGroupeInformations.economicDependency
+
+    ForeignTaxCompliances
+    #--------------------- extension ThirdParty
+    thirdPartyType 
+    #documents
+    with (unfavorableInformations) {
+        unfavorableInformation:unfavorableInformations
+        unfavorableInformationsearchDate
+    }
+    pepStatus:compliance.pep.code
+    #thirdPartyBuffer
+    meansOfContacts
+
+    roles::(
+        LegalRepresentative,
+        Administrator, 
+        Guarantor,
+        Shareholder,
+        Agent,       
+        Buyer,
+        CoFactor,
+        CreditInsurer,
+        Customer,
+        BusinessProvider,
+        Participant,
+        #Prescriber,
+        ReverseBuyer,
+        Generic
+        )
+
+    #reverseTargetRoles
+    arbitrations
+    rolesArbitration
+    #compliance
+    lifeCycleStatus
+    #associatedLegalPersons::AssociatedLegalPerson
+    #associatedNaturalPersons::AssociatedNaturalPerson
+    associatedLegalPersons
+    associatedNaturalPersons
+
+    dispatch (associatedThirdParties.thirdPartyType.code(
+        "1":associatedLegalPersons,"2":associatedNaturalPersons))
+}
+
+facade AssociatedLegalPerson on LegalPerson{  
+    technicalBase
+    with (identificationInformation){
+        with (identification){        
+            corporateName
+            localCorporateName
+            shortName
+            tradeName
+            legalForm
+            typology
+            
+        }
+        idents:identifiers
+        with (immatriculation){
+            creationDate
+            creationYear
+            terminationDate
+            incorporationDate
+            incorporationCity
+            incorporationCountry
+            incorporationCountrySubdivision
+        }
+    }
+    meansOfContacts
+    roles::(
+        LegalRepresentative ,
+        Administrator,
+        Guarantor,
+        Shareholder,
+        Agent,       
+        Buyer,
+        CoFactor,
+        CreditInsurer,
+        Customer,
+        BusinessProvider,
+        Participant,
+        #Prescriber,
+        ReverseBuyer, 
+        Generic
+        )
+}
+
+facade AssociatedNaturalPerson on NaturalPerson{
+    id:technicalBase.id
+    with (identificationInformations){
+        with identification{
+            identifiers
+            civility
+            lastName
+            birthName
+            usageName
+            firstNames
+            birthDate 
+            birthCity
+            birthCountry 
+            residenceCountry
+            nationalities
+        }
+        businessFunctions#.name
+    }
+
+    documents::MdmNPDocumentDTO
+    meansOfContacts
+   
+    roles::(MdmRoleContactDTO,
+            MdmRoleLegalRepresentativDTO,
+            MdmRoleBeneficialOwnerDTO,
+            MdmRoleEffectiveSignatoryDTO,
+            MdmRoleExecutiveOfficerDTO,
+            MdmRoleAgentOfInsolvencyProceedingDTO,
+            MdmRoleAuthorizedSignatoryDTO,
+            MdmRoleAdministratorDTO,
+            MdmRoleGuarantorDTO,
+            MdmRoleShareholderDTO)
+}
+
+facade TargetLegalPerson on LegalPerson{  
+    technicalBase
+    with (identificationInformation){
+        with (identification){        
+            corporateName
+            localCorporateName
+            shortName
+            tradeName
+            legalForm
+            typology
+            
+        }
+        idents:identifiers
+        with (immatriculation){
+            creationDate
+            creationYear
+            terminationDate
+            incorporationDate
+            incorporationCity
+            incorporationCountry
+            incorporationCountrySubdivision
+        }
+    }
+}
+
+facade LegalPersonBNPPConsolidationScope.mdm on LegalPersonBNPPConsolidationScope{
+    technicalBase
+    consolidationMode
+    consolidatingLegalEntityId:consolidatingLegalEntity.technicalBase.id
+    with accountingPrudential
+    with acountingConsolidation
+    topBNPPLegalEntity  
+}
+
+facade BusinessGroupInformations.mdm on BusinessGroupInformations{
+    additionalFields {
+        
+        #idRMPM: Identifier {basedOn:in}
+    }
+    businessGroup
+}
+
+facade BusinessGroup.mdm on BusinessGroup{
+    #----------------------
+    # Voir si nécessaire (API avec facades fermées)
+    #----------------------
+
+    technicalBase
+    localCreationDate
+    revisionDate
+    nextRevisionDate
+    code
+    name
+    shortName
+    #parentCompany.computed.identifierRMPM
+    parentCompanyIdentifier:parentCompany.identificationInformation.identifiers::IdentifierIdDTO
+    country:country.countryISO
+    countrySubdivision
+    clientCoverage
+    responsibleEntity::GroupEntityCode
+    secondaryResponsibleEntity:secondaryResponsibleEntity::GroupEntityCode
+    negociatedtermsResponsibleEntity:negociatedtermsResponsibleEntity::MdmGroupEntityDTO
+    seniorCreditOfficer::BNPPCollaboratorCode
+    monitoring::monitoringDTO
+    mainActivity:mainActivity.code
+    industryCodes
+    sensitiveBusinessGroup
+    bankingIndicator
+    attachmentNature
+}
+
+facade monitoringDTO on Monitoring{
+    monitoringBy:monitoringBy.refogCode
+    monitoringType:monitoringType.code
+}
+
+facade IndustryCodeDistribution.mdm on IndustryCodeDistribution{
+    technicalBase
+    industryCode
+    percentage
+}
+
+facade Compliance.mdm on Compliance{
+    kyc
+    KMV
+    complianceRating
+}
+
+facade KYC.mdm on KYC{
+    nextRecertificationDate
+    validatedFinalRiskLevel
+    sharingResult 
+    #primarySite
+    site
+}
+
+facade LegalPersonRolesDTO on LegalPerson{
+    roles
+}
+
+
+facade LegalPersonKYCInfos.mdm on LegalPersonKYCInfos{
+    listedCompany
+}
+
+facade UnfavorableInformation.mdm on UnfavorableInformation{
+    technicalBase
+    informationNatures
+    subjects
+}
+
+facade Address.mdm on Address{
+    technicalBase
+    addressComplement
+    street
+    zipCode
+    city
+    region
+    #INSEECode
+    country
+    #timeZone
+    #location
+    used
+    meanOfContactType
+    meanOfContactRelationtype
+}
+
+facade FinancialInformation.mdm on FinancialInformation{
+    technicalBase
+    fiscalYearEndDate
+    consolidatedInfos
+    socialInfos
+    mifidClassification
+    #incomeAfterTaxes
+    #financialInformationDocumentType
+    #totalExportSalesRevenue
+    #euroZoneExportSalesRevenue
+    #exportSalesRevenue
+    #totalPreTaxSalesRevenue
+    #financialSecurityIncidents
+    #details
+    employeeNbr
+    #stockMarkets
+}
+
+facade NotationForMdm on RiskInformation{
+    additionalFields {
+        quotationBdf:ExternalRating
+    }
+    technicalBase
+    quotationBdf
+
+    externalRatings:lpExternalRatings
+    with(lpCounterPartyRating){
+        intrinsicRating
+        counterpartyRating
+        with(supportStrength){
+            supportEntityCorporateName
+            supportEntityCorporateRMPMID
+            supportStrength
+            supportConterpartyRating
+        }
+        specificConterpartyRating
+        ratingModel
+        defaultPropability
+        grrSenoirUnsecured
+        igr
+    } 
+}
+
+facade RiskInformation.mdm on RiskInformation{
+    additionalFields {
+        notation::NotationForMdm
+    }
+
+    technicalBase
+    #legalStatus
+    #defaultRisk
+    #defaultRiskUpdatedDate
+    # notation
+    with (lpAnnualRevue){
+        lastAnnualRevueDateBNPPF
+        nextAnnualRevueDateBNPPF
+        lastAnnualRevueDateBDDF:lastAnnualRevueDateBNPP
+        nextAnnualRevueDateBDDF:nextAnnualRevueDateBNPP
+    }
+    with (lpWatchList){
+        watchListBNPPF
+        watchListBDDF
+        externalWatchListIndicator
+    }
+    
+    lastFBEDate
+    npe
+    riskDataUpdatedBy
+    ratingInitiatedBy
+    #executiveRating
+    #unpaid
+    #bankingProhibition
+    #executiveBankingSuspensions
+    #privileges
+    #shareCapital
+}
+
+facade NaturalPerson.mdm on NaturalPerson{
+    technicalBase
+    with identificationInformations{
+        with identification{
+            identifiers
+            civility
+            lastName
+            birthName
+            usageName
+            firstNames
+            birthDate 
+            birthCity
+            birthCountry 
+            residenceCountry
+            nationalities
+        }
+        businessFunctions
+    }
+    lifeCycleStatus
+    pepStatus:compliance.pep.code
+    with (riskInformations){
+        quotationBdF{
+            date
+            rating.code
+        }
+    }
+    taxResidenceCountry
+    ForeignTaxCompliances
+    thirdPartyType
+    #documents
+    with(unfavorableInformations){
+        unfavorableInformations
+        unfavorableInformationsearchDate
+    }
+    sanction
+    #thirdPartyBuffer
+    meansOfContacts
+    roles::(
+        Contact,
+        LegalRepresentative,
+        AgentOfInsolvencyProceeding,
+        AuthorizedSignatory,
+        EffectiveSignatory,
+        Administrator,
+        Guarantor,
+        Shareholder,
+        BeneficialOwner,
+        ExecutiveOfficer,
+        Generic
+        )
+    arbitrations
+    rolesArbitration   
+    #businessFunctions
+    documents
+}
+
+facade BusinessFunction.mdm on BusinessFunction{
+    technicalBase
+    name
+    #naturalPerson
+    legalPerson::TargetLegalPerson
+}
+
+facade LegalPersonActivityInformations.mdm on LegalPersonActivityInformations{
+    technicalBase
+    industryCodes
+    with (activity)
+}
+
+facade LegalPersonActivity.mdm on LegalPersonActivity{
+    #technicalBase
+    description
+    naf93
+    naf2003
+    naf2008
+    nace
+    #industryCodes
+    economicCode
+    SectorOfActivitiesKYC
+    #activityCountries
+    countryOfBusiness
+}
+
+facade Naf2008.mdm on NAF2008{
+    technicalBase
+    nafNiv2    
+}
+
+facade Document.mdm on Document{
+    technicalBase
+    name
+    type
+    issueDate
+    validityDate
+    originDocumentCountry
+    number
+    reference
+}
+
+facade Indentifier.mdm on Identifier
+
+facade Establishment.mdm on Establishment{
+    technicalBase
+    establishmentType
+    tradeName
+    fancyName
+    idents
+    thirdPartyType
+    roles
+    meansOfContacts
+    activity:activityInformations
+    incorporationDate
+    incorporationCountry
+    terminationDate
+    arbitrations
+    rolesArbitration
+}
+
+facade BNPPCollaborator.mdm on BNPPCollaborator {
+    technicalBase
+    refogCode
+    name
+    firstName
+    telephone
+    mail
+    position
+}
+
+facade Contract.mdm on Contract{
+    technicalBase
+    number
+
+    signingDate 
+    expiryDate
+    metier
+    bnppfSite
+    market
+    #contractors
+}
+
+
+facade TechnicalBase.mdm with TechnicalBase {
+    id
+    Origin
+    updatedDate
+    updatedBy
+    createdDate
+}
+
+#-----------------------------------
+facade LegalPersonID with LegalPerson{
+    legalPersonId:technicalBase.id
+}
+
+facade NaturalPersonID on NaturalPerson{
+    naturalPerson:technicalBase.id
+}
+
+#----------------------------------
+
+facade Contact.mdm on Contact{
+    with(technicalBase)
+    #businessFunction
+    mainContact
+    typeRole
+
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+    terminationReason
+}
+
+facade LegalRepresentative.mdm on LegalRepresentative{
+    with(technicalBase)
+    typeRole
+
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+}
+
+facade BeneficialOwner.mdm on BeneficialOwner{
+    percentageHolding
+    with(technicalBase)
+    typeRole
+
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+}
+
+facade ExecutiveOfficer.mdm on ExecutiveOfficer{
+    with(technicalBase)
+    typeRole  
+
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+    terminationReason
+}
+
+facade AgentOfInsolvencyProceeding.mdm on AgentOfInsolvencyProceeding{
+    with(technicalBase)
+    typeRole
+
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+    terminationReason
+}
+
+facade AuthorizedSignatory.mdm on AuthorizedSignatory{
+    with(technicalBase)
+    typeRole
+
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+    arbitration
+    terminationReason
+}
+
+facade EffectiveSignatory.mdm on EffectiveSignatory{
+    with(technicalBase)
+    typeRole
+    contracts 
+
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+}
+
+facade Administrator.mdm on Administrator{
+    with(technicalBase)
+    typeRole 
+
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+    terminationReason
+}
+
+#----
+
+facade Guarantor.mdm on Guarantor{
+    with(technicalBase)
+    contracts
+    typeRole
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+    arbitration
+    terminationReason
+}
+
+facade Shareholder.mdm on Shareholder{
+    percentageHolding
+    with(technicalBase)
+    typeRole
+
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+    terminationReason
+}
+
+#----
+
+facade Agent.mdm on Agent{
+    with(technicalBase)
+    contracts
+    typeRole
+
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+    arbitration
+    terminationReason
+}
+
+facade Participant.mdm on Participant{
+    with(technicalBase)
+    contracts
+    typeRole
+
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+    arbitration
+    terminationReason
+}
+
+facade CoFactor.mdm on CoFactor{
+    contracts
+    typeRole
+    with(technicalBase)
+
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+    arbitration
+    terminationReason
+}
+
+facade CreditInsurer.mdm on CreditInsurer{
+    with(technicalBase)
+    contracts
+    leads
+    typeRole
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+    arbitration
+    terminationReason
+}
+
+facade ReverseBuyer.mdm on ReverseBuyer{
+    with(technicalBase)
+    contracts
+    leads
+    typeRole
+    commercialStatus
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+    arbitration
+    terminationReason
+}
+
+facade ReverseProvider.mdm on ReverseProvider{
+    with(technicalBase)
+    contracts
+    leads
+    typeRole
+    commercialStatus
+    statusDate
+    #compliance
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    roleCategory
+    startDate
+    endDate
+    arbitration
+    terminationReason
+}
+
+# facade Prescriber.mdm on Prescriber{
+#     with(technicalBase)
+#     contracts
+#     typeRole
+# 
+#     originRole
+#     targetRole
+# }
+
+facade BusinessProvider.mdm on BusinessProvider{
+    with(technicalBase)
+    #contracts à retirer
+    type
+    typeRole
+    #originRole::(AssociatedLegalPerson)
+    groupBNPPOriginRole
+    canal
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+    arbitration
+    terminationReason
+}
+
+facade Customer.mdm on Customer{
+    with(technicalBase)
+    commercialStatus
+    #commercialstatus #:commercialStatus.code
+    contracts
+    leads
+    typeRole
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+    arbitration
+    terminationReason
+}
+
+facade Buyer.mdm on Buyer{
+    with(technicalBase)
+    contracts
+    typeRole
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+    arbitration
+    terminationReason
+}
+
+#------------------
+facade Generic.mdm on Generic{
+    with(technicalBase)
+    OriginRoleName
+    contracts
+    typeRole
+    #originRole::(AssociatedLegalPerson)
+    targetRole::TargetLegalPerson
+    startDate
+    endDate
+    terminationReason 
+}
+
+facade TechnicalBaseDTO on TechnicalBase{
+    id
+    #updatedDate
+    #updatedBy
+    #createdDate
+}
+
+
+#===============================================================================
+# Nomenclature redefinition
+#===============================================================================
+
+facade RegistrationType.mdm  on  RegistrationType { code }
+facade Currency.mdm on Currency { code } 
+facade Country.mdm on Country { 
+   countryISO{
+       code
+   }  
+}
+facade CountryISO.mdm on CountryISO { code }
+facade CountrySubdivision.mdm on CountrySubdivision { code } 
+facade PnClassification.mdm on PnClassification { code } 
+facade Sensitivity.mdm on Sensitivity { code } 
+facade MeanOfContactType.mdm on MeanOfContactType { code }
+facade MeanOfContactRelationtype.mdm on MeanOfContactRelationtype { code }
+facade NAF93.mdm on NAF93 { code }
+facade NAF2003.mdm on NAF2003 { code }
+facade NAF2008.mdm on NAF2008 {
+   nafNiv2{
+       code
+   }
+}  
+facade Nace.mdm on Nace { code }
+facade EconomicCode.mdm on EconomicCode { code }
+facade LegalForm.mdm on LegalForm { code }
+facade Typology.mdm on Typology { code }
+facade IdentifierBase.mdm on IdentifierBase { code }
+facade Coverage.mdm on Coverage { code }
+facade EconomicLinkType.mdm on EconomicLinkType { code }
+facade EstablishmentType.mdm on EstablishmentType { code }
+facade ThirdPartyType.mdm on ThirdPartyType { code }
+facade ConsolidationMode.mdm on ConsolidationMode { code }
+facade PrudentialMethod.mdm on PrudentialMethod { code }
+facade AccountingMethod.mdm on AccountingMethod { code }
+facade FinRepExposureClass.mdm on FinRepExposureClass { code }
+facade Ctm.mdm on Ctm { code }
+facade InternationnalCommitmentExposureClass.mdm on InternationnalCommitmentExposureClass { code }
+facade CelCounterparty.mdm on CelCounterparty { code }
+facade ShareOlderType.mdm on ShareOlderType { code }
+facade LevelOfPower.mdm on LevelOfPower { code }
+facade CustomerType.mdm on CustomerType { code }
+facade SegmentationBDDF.mdm on SegmentationBDDF { code }
+facade SegmentationNAC.mdm on SegmentationNAC { code }
+facade SegmentationBNPPF.mdm on SegmentationBNPPF { code }
+facade MonitoringType.mdm on MonitoringType { code }
+facade MifidClassification.mdm on MifidClassification { code }
+facade TypeOfClient.mdm on TypeOfClient { code }
+facade economicDependencyType.mdm on economicDependencyType { code }
+facade InformationNature.mdm on InformationNature { code }
+facade Subject.mdm on Subject { code }
+facade SalesStatus.mdm on SalesStatus { code }
+facade BusinessProviderType.mdm on BusinessProviderType { code }
+facade BusinessProviderCanal.mdm on BusinessProviderCanal { code }
+facade ThirdPartyRoleCategory.mdm on ThirdPartyRoleCategory { code }
+facade ThirdPartyArbitrationType.mdm on ThirdPartyArbitrationType { code }
+facade ThirdpartyTypeRole.mdm on ThirdpartyTypeRole { 
+    roleType
+}
+facade ThirdPartyLifeStatusCode.mdm on ThirdPartyLifeStatusCode { code }
+facade ClientNationalType.mdm on ClientNationalType { code }
+facade TypeIdentifier.mdm on TypeIdentifier { code }
+facade Issuer.mdm on Issuer { code }
+facade Civility.mdm on Civility { code }
+facade PEPStatus.mdm on PEPStatus { code }
+facade BNPPFMetier.mdm on BNPPFMetier { code }
+facade BNPPFSite.mdm on BNPPFSite { code }
+facade BNPPFMarket.mdm on BNPPFMarket { code }
+facade DocumentType.mdm on DocumentType { code }
+facade DocumentCategory.mdm on DocumentCategory { code }
+facade IndustryCode.mdm on IndustryCode { code }
+facade NAF2008Niv2.mdm on NAF2008Niv2 { code }
+facade NAF2008Niv1.mdm on NAF2008Niv1 { code }
+facade SectorOfActivityKYCNiv2.mdm on SectorOfActivityKYCNiv2 { code }
+facade RiskLevel.mdm on RiskLevel { Code }
+facade SectorOfActivityKYCNiv1.mdm on SectorOfActivityKYCNiv1 { code }
+facade BNPPCollaboratorRole.mdm on BNPPCollaboratorRole { Code }
+facade SegmentationBNPPFType.mdm on SegmentationBNPPFType { code }
+facade SegmentationBNPPFSegment.mdm on SegmentationBNPPFSegment { code }
+facade SupportStrength.mdm on SupportStrength { code }
+facade RatingModel.mdm on RatingModel { code }
+facade BNPPFEstablishment.mdm on BNPPFEstablishment { code }
+facade ExternalRatingCode.mdm on ExternalRatingCode { code }
+#facade InternalRatingCode.mdm on InternalRatingCode { code }
+facade SpecifiqueConterpartyRatingScale.mdm on SpecifiqueConterpartyRatingScale { code }
+#facade TermType.mdm on TermType { code }
+facade GroupEntityCode on GroupEntity{
+    code
+}
+facade BNPPCollaboratorCode on BNPPCollaborator{
+    refogCode
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

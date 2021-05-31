@@ -1,0 +1,609 @@
+customTypeProperty RMPMTableNomenclature { 
+    type:String
+    propagateToFields:true
+}
+
+customTypeProperty FactorTableNomenclature { 
+    type:String
+    propagateToFields:true
+}
+
+customTypeProperty NomenclatureIndicator { 
+    type:Boolean
+    propagateToFields:true
+}
+
+customFieldProperty RMPMFieldNomenclature { type:String}
+customFieldProperty englishFieldLabel { type:String}
+customTypeProperty englishTypeLabel { type:String}
+
+type BusinessProviderCanal{
+    properties {nomenclature: F025}
+    technicalBase: TechnicalBase 
+    code:String{example:"1"}
+    label:String{example:"Direct"}
+}
+
+type BusinessProviderType{
+    properties {nomenclature: F026}
+    technicalBase:TechnicalBase
+    code: String{example:"1"}
+    label: String{example:"Face à face"}
+}
+
+type BNPPFMetier{
+    properties {nomenclature: F021}
+    technicalBase: TechnicalBase
+    code: String{example:["0001"]}
+    label:String{example:"Affacturage"}
+}
+
+type BNPPFSite{
+    properties {nomenclature: F023}
+    technicalBase:TechnicalBase
+    code: String {example:"S027"}
+    label:String {example: "Factor France"}
+    factorEntity:LegalPerson
+    establishment:BNPPFEstablishment
+}
+
+type BNPPFEstablishment{
+    properties {nomenclature: T001}
+    technicalBase:TechnicalBase
+    code: String {example:"E001"}
+    label:String
+}
+
+
+type ThirdPartyLifeStatus{
+    properties {
+       label: "Statut du cycle de vie du Tiers"
+    }
+    properties {nomenclature: F036}
+    technicalBase: TechnicalBase
+    date:Date
+    lifeCycleStatus: ThirdPartyLifeStatusCode
+}
+
+
+type ThirdPartyLifeStatusCode{
+    properties {nomenclature: F036}
+    technicalBase: TechnicalBase
+    date:Date
+    code:String{example:"1"}
+    label:String{example:"Non immatriculé"}
+}
+
+type ExternalRatingCode{
+    properties {nomenclature: S087}
+    technicalBase:TechnicalBase 
+    issuer:Issuer
+    code:String{example: "A0"}
+    termType:TermType
+    OrderNum:Integer
+    validityStartDate: Date
+    validityEndDate:Date
+    existanceEndDate: Date
+    validityStatus:Integer
+}
+
+type TermType {
+    properties {nomenclature: T001}
+    technicalBase:TechnicalBase
+    code:String
+    label:String 
+}
+
+type InternalRatingCode{
+    properties {nomenclature: N013}
+    technicalBase:TechnicalBase
+    code:String {@RMPM example: "4+"}
+    label:String {example: "Satisfaisant"}
+    UKLabel:String
+    orderNum:Integer
+    investmentProfile:Integer
+    dubious : Boolean
+}
+
+type SpecifiqueConterpartyRatingCode{
+    properties {nomenclature: S274}
+    technicalBase:TechnicalBase 
+    code:String {@RMPM example: "03.10"}
+    label:String {example: "satisfaisant"}
+    SpecifiqueConterpartyRatingScale:SpecifiqueConterpartyRatingScale
+    # ... à compléter
+}
+
+type SpecifiqueConterpartyRatingScale{
+    properties {nomenclature: N193}
+    technicalBase:TechnicalBase
+    code:String{example: "00"}
+    label:String{example: "BNP PARIBAS"}
+}
+
+type EstablishmentStatus{
+    properties {nomenclature: F007}
+    technicalBase: TechnicalBase
+    code:String{example: "1"}
+    label:String{example: "Actif"}
+}
+
+type EstablishmentType{
+    properties {
+        nomenclature: F030
+        label:"Type d'établissement"
+        comment:"Siège, Siège/principal, principal, secondaire"
+    }
+    technicalBase: TechnicalBase
+    code:String{example: "1"}
+    label:String{example: "Siège social"}
+}
+
+
+type EconomicLinkType {
+    properties {nomenclature: N206}
+    technicalBase:TechnicalBase
+    code:String{example: "1"}
+    label:String{example: "Joint ventures (50:50)"}
+}
+
+type ThirdpartyTypeRole{
+    properties {nomenclature: F017}
+    technicalBase: TechnicalBase
+    roleType:Integer{ nomenclatureCode: true, 
+        example: 1}
+    label:String{example: "Agent"}
+}
+
+type ThirdPartyArbitrationType {
+    properties {nomenclature: F035}
+    technicalBase: TechnicalBase
+    code:String{example: "1"}
+    label:String{example: "Positivement"}
+}
+
+type TypeOfClient{
+    properties {nomenclature: N019}
+    technicalBase: TechnicalBase
+    code:String {@RADAR,@RMPM,example: "CENTR"}
+    description:String{example: "Entreprise"}
+}
+
+type ThirdPartyType{
+    properties {nomenclature: T001}
+    technicalBase: TechnicalBase
+    code: String 
+    label: String
+}
+
+
+type BenefitType{
+    properties {nomenclature: T001}
+    code: String {RMPMFieldNomenclature:""}
+    label: String
+}
+
+type SensitiveProductCategory{
+    properties {nomenclature: T001}
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+}
+
+type RegistrationType{
+    properties {
+        nomenclature: T001
+       comment: """SIREN ou Codification internationale
+        doit être un champ calculer à partir de Identifier
+       """
+    }
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+}
+
+
+type DistributionChannelType{
+    properties {nomenclature: T001}
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+}
+
+type Civility {
+    properties {nomenclature: F031}
+    technicalBase: TechnicalBase
+    code: String {@GDPR,example: "1"}
+    label: String {@GDPR, example: "Monsieur"}
+}
+
+type DocumentType{
+    properties {nomenclature: F015}
+    technicalBase: TechnicalBase
+    code: String{example: "1"}
+    label: String{example: "Carte nationale d'identité valide"}
+    UKLabel: String
+    documentCategory: DocumentCategory
+}
+
+type DocumentSubType {
+    properties {nomenclature: T001}
+    technicalBase: TechnicalBase
+    type: DocumentType
+    code: String
+    label: String
+}
+
+type LegalForm{
+    properties {nomenclature: N011}
+    @NOMENCLATURE 
+    technicalBase: TechnicalBase
+    code: String {@RMPM, label:"Forme juridique - code (SA,GIE...)"
+        example: "SAS"}
+    label: String {@RMPM,  example: "Société par actions simplifiée"
+    label:"Forme juridique - label (Société anonyme, Groupement d'intérêt économique...)"}
+}
+
+type DocumentCategory{
+    properties {nomenclature: F016}
+    technicalBase: TechnicalBase
+    code: String{example: "0"}
+    label: String{example: "Identité"}
+}
+
+type SegmentationBNPPF{
+    properties {nomenclature: F001}
+    technicalBase: TechnicalBase
+    code: String{example: "1"}
+    label: String{example: "ER - Entrepreneur (BDDF)"}
+    type:SegmentationBNPPFType
+    segment:SegmentationBNPPFSegment
+}
+
+type SegmentationBNPPFType{ 
+    properties {nomenclature: F002}
+    technicalBase: TechnicalBase
+    code: String{example: "1"}
+    label: String{example: "Corporate"}
+}
+
+type SegmentationBNPPFSegment{
+    properties {nomenclature: F003}
+    @NOMENCLATURE 
+    technicalBase: TechnicalBase
+    code: String{example: "1"}
+    label: String{example: "Corporate"}
+}
+
+type SegmentationBDDF{
+    properties {nomenclature: F008}
+    technicalBase: TechnicalBase
+    code: String{example: "1"}
+    label: String{example: "ER - Entrepreneur"}
+}
+
+type InformationNature{
+    properties {nomenclature: F028}
+    technicalBase: TechnicalBase
+    code: String{example: "1"}
+    label: String{example: "Rumeur"}
+}
+
+type Subject{
+    properties {nomenclature: F029}
+    technicalBase: TechnicalBase
+    code: String{example: "1"}
+    label: String{example: "Blanchiment d'argent"}
+}
+
+type CustomerType{
+    properties {
+       nomenclature:T001
+       label: "Type de client (Entreprise commerciale, Institution financière...)"
+    }
+    technicalBase: TechnicalBase
+    code: String
+    label: String
+}
+
+type PnClassification{
+    properties {nomenclature: F004}
+    technicalBase: TechnicalBase
+    code: String{example: "P0"}
+    label: String{example: "Sanctionné"}
+}
+
+type LevelOfPower{
+    properties {nomenclature: N012 }
+    technicalBase: TechnicalBase
+    code : String {@RMPM, RMPMFieldNomenclature:"N012",
+        example: "DC"}
+    label : String {@RMPM, RMPMFieldNomenclature:"N012"
+        example: "Direction Central Management"
+    }
+}
+
+
+type ConsolidationMode{
+    properties {nomenclature: N165}
+    technicalBase: TechnicalBase
+    code : String {@RMPM, example: "01"}
+    label : String {@RMPM example: "CONSOLIDE"}
+}
+
+type AccountingMethod{
+    properties {nomenclature: F013}
+    technicalBase: TechnicalBase
+    code: String {@RMPM, example: "1"}
+    label: String {@RMPM, example: "Intégration Globale"}
+}
+
+type PrudentialMethod{
+    properties {nomenclature: F014}
+    technicalBase: TechnicalBase
+    code: String {@RMPM, example: "1"}
+    label: String {@RMPM, example: "Intégration Globale"}
+}
+
+type Currency{
+    properties {nomenclature: N021}
+    technicalBase: TechnicalBase
+    code:String {@RMPM?, @RADAR?, RMPMFieldNomenclature:"", example: "EUR" }
+    label: String { example: "EURO" }
+    shortLabel:String { example: "EURO" }
+    defaultFractionDigits: Integer
+}
+
+type AmountUnit{
+    properties {nomenclature: F012}
+    technicalBase: TechnicalBase
+    code: String { example: "2" }
+    label: String { example: "MILLIER" }
+}
+
+type CountryISO {
+    properties {nomenclature: F032}
+    technicalBase: TechnicalBase
+    code: String {@RADAR?,@RMPM?, example: "FR",
+    label:"Code pays", comment:"Code ISO2, nomenclaturegroup : N015"}
+    codeISO3:String{maxLength: 3}
+    label: String   {@RADAR?,@RMPM? label:"Label pays",
+    example: "FRANCE"}
+    UKLabel:String
+    CountrySubdivision: [CountrySubdivision] {@RMPM?}
+}
+
+type Coverage{
+    properties {nomenclature: N009}
+    technicalBase: TechnicalBase
+    code:String {@RMPM,@RADAR, example: "BDDF"}
+    label:String {@RMPM,@RADAR,example:"BANQUE DE DETAIL EN France"}
+}
+
+type Sensitivity {
+    properties {nomenclature: F033}
+    technicalBase: TechnicalBase
+    code:String{example: "LS"}
+    label: String{example: "Peu sensible"}
+}
+
+type Country {
+    properties {nomenclature: F032}
+    technicalBase: TechnicalBase
+    countryISO:CountryISO {@RADAR?,@RMPM?,@GDPR?}
+    retailBankingActivityBNP: Boolean
+    riskLevel: RiskLevel
+    pnClassification: PnClassification {label: "Sensibilité du pays"}
+    sanctionned: Boolean
+    groupLegalId:GroupLegalID
+    sensitivity:Sensitivity
+}
+
+type GroupLegalID{
+    properties {nomenclature: T001}
+    technicalBase: TechnicalBase
+    code: String
+    label:String
+    validityStartDate:Date
+}
+
+type CountrySubdivision{
+    properties {nomenclature: N031}
+    technicalBase: TechnicalBase
+    code:String {@RADAR?,@RMPM?
+        label:"Suddivison pays",
+        example: "DU"}
+    label:String {@RADAR?,@RMPM?,
+        example: "Dubai"}
+    parentCountry:Country
+}
+
+type RatingModel{
+    properties {nomenclature: N194}
+    technicalBase: TechnicalBase
+    code:ID {@RMPM,@RADAR,example: "PBNKWW01"}
+    label:String {@RMPM,@RADAR, example: "Bank Rating"}
+}
+
+type SupportStrength{
+    properties {nomenclature: N008}
+    code: String {@RMPM,example: "3"}
+    label: String {@RMPM,example: "Fort"}
+}
+
+type MonitoringType{ 
+    properties {nomenclature: N020}
+    code:String {@RMPM?,example: "CAE"}
+    label:String {@RMPM?,example:"Chargé d'affaire entreprises"}
+}
+
+type EconomicCode{ 
+    properties{label: "Code économique"}
+    properties {nomenclature: N004}
+    technicalBase: TechnicalBase
+    code:String {@RMPM,example: "505"}
+    label:String {@RMPM,example: "SOCIETES DE SERVICES"}
+}
+
+type ClientNationalType{
+    properties {nomenclature: N239}
+    technicalBase: TechnicalBase  
+    code:String {@RMPM,example:"ATFN"}
+    label:String {@RMPM,example: "Numéro Registre Entreprise (FN)"}
+}
+
+type MifidClassification{
+    properties {nomenclature: N166}   
+    technicalBase: TechnicalBase  
+    code:String {@RMPM,example: "1"}
+    label:String {@RMPM,example: "Contrepartie Eligible"}
+}
+
+type Typology{
+    properties {nomenclature: N006}
+    technicalBase: TechnicalBase
+    code:String {@RADAR,@RMPM,example:"03"}
+    label:String {@RADAR,@RMPM,example: "Succursale"}
+} 
+
+type ShareOlderType{
+    properties {nomenclature: N018}
+    technicalBase: TechnicalBase
+    code:String {@RMPM,@RADAR,example: "3"}
+    label:String {@RMPM,@RADAR,example:"Privé"}
+}
+
+type SegmentationNAC{
+    properties {nomenclature: N017}
+    technicalBase: TechnicalBase
+    code:String {@RMPM,example: "GE"}
+    label:String {@RMPM,example: "Grandes Entreprises"}
+}
+ 
+type economicDependencyType{
+    properties {nomenclature: N206}
+    technicalBase: TechnicalBase
+    code:String {@RADAR,@RMPM,example: "2"}
+    label:String {@RADAR,@RMPM,example: "Participations minoritaires (<50%)"}
+}
+
+type CelCounterparty{
+    properties {nomenclature: N232}
+    technicalBase: TechnicalBase
+    code:String {@RADAR,@RMPM,example: "CEL020"}
+    label:String {@RADAR,@RMPM,example: "Personnes physiques - Corporate"}
+}
+
+type InternationnalCommitmentExposureClass{
+    properties {nomenclature: N238}
+    technicalBase: TechnicalBase
+    code:String {@RADAR,@RMPM,example: "CEI015"}
+    label:String {@RADAR,@RMPM,example: "Banques Centrales"}
+}
+
+type Ctm{
+    properties {nomenclature: N239}
+    technicalBase: TechnicalBase
+    code:String {@RADAR,@RMPM,example:"ATFN"}
+    label:String {@RADAR,@RMPM,example: "Numéro Registre Entreprise (FN)"}
+}
+
+type FinRepExposureClass{
+    properties {nomenclature: N231}
+    technicalBase: TechnicalBase
+    code:String {@RADAR,@RMPM,example: "CEF400"}
+    label:String {@RADAR,@RMPM,example: "Autres sociétés financières"}
+}
+
+type SalesStatus{
+    properties {nomenclature: F024}
+    technicalBase: TechnicalBase
+    code:String{ example:"2"}
+    label:String{ example: "Client"}
+}
+
+type ThirdPartyTypeRole{
+    properties {nomenclature: F017}
+    technicalBase: TechnicalBase
+    code:String{ example: "6"}
+    label:String{ example: "Client"}
+}
+
+type 
+MeanOfContactType{
+    properties {nomenclature: F005}
+    technicalBase: TechnicalBase
+    code:String
+    label:String
+    relationType:[MeanOfContactRelationtype]
+}
+
+type MeanOfContactRelationtype{
+    properties {nomenclature: F006}
+    @NOMENCLATURE 
+    technicalBase: TechnicalBase
+    code:String{example:"3"}
+    label:String{example:"Fiscal"}
+    contacttype:MeanOfContactType
+}
+
+type TechnicalBase{
+    properties {
+        label:"Données technique de traçabilité"
+        isHidden: true
+        isHiddenPropagatedToField: true
+    }
+    id:ID{
+        example: "d5d29def-8d40-428d-8fe2-27e65af26ce7"
+    }
+    Origin:String {example:"0001"}
+    updatedDate:DateTime{example:"2021-05-12"}
+    updatedBy:String {example:"User1"}
+    createdDate:DateTime{example:"2021-05-12"}
+    version: Integer{example:2}
+}
+
+scalar ID as String{
+    isHidden:true
+}
+
+type EndPoint{
+    properties {nomenclature: T001}
+    technicalBase: TechnicalBase
+    code: String
+    label:String
+}
+
+type BNPPFMarket {
+    properties {nomenclature: F022}
+    technicalBase: TechnicalBase
+	code: String { example:"3"}
+    label: String{ example: "Export"}
+}
+
+type ContactStatus {
+    properties {nomenclature: F018}
+    technicalBase: TechnicalBase
+	code: String{example: "2"}
+    label: String{example: "Déterminé"}
+}
+
+type ThirdPartyRoleCategory{
+     properties {
+        nomenclature: T001 
+        comment: """Catégorie du rôle, à utiliser sur les NaturalPerson) """
+    }
+    technicalBase: TechnicalBase
+    code : String
+    label:String
+}
+
+type KYCfinalRiskLevel{
+    properties {nomenclature: F027}
+    code:String{example: "HR"}
+    label:String{example: "Risque élevé"}
+}
+
+
+
+

@@ -1,0 +1,200 @@
+facade MdmLPAssociatedNaturalPersonDTO on NaturalPerson{
+    id:technicalBase.id
+    with (identificationInformations){
+        with (identification){
+            lastName
+            birthName
+            #birthCountryCode:birthCountry.countryISO.code
+            usageName
+            firstNames
+            civility:civility.code
+        }
+    }
+
+    documents::MdmNPDocumentDTO
+   
+    #roles::(Contact,
+    #        LegalRepresentative,
+    #        BeneficialOwner,
+    #        EffectiveSignatory,
+    #        ExecutiveOfficer,
+    #        AgentOfInsolvencyProceeding,
+    #        AuthorizedSignatory,
+    #        Administrator,
+    #        Guarantor,
+    #        Shareholder)
+
+    roles::(MdmRoleContactDTO,
+            MdmRoleLegalRepresentativDTO,
+            MdmRoleBeneficialOwnerDTO,
+            MdmRoleEffectiveSignatoryDTO,
+            MdmRoleExecutiveOfficerDTO,
+            MdmRoleAgentOfInsolvencyProceedingDTO,
+            MdmRoleAuthorizedSignatoryDTO,
+            MdmRoleAdministratorDTO,
+            MdmRoleGuarantorDTO,
+            MdmRoleShareholderDTO)
+}
+
+facade CountryCodeDTO on Country{
+    code:countryISO.code
+}
+
+facade MdmNPBusinessFunctionDTO on BusinessFunction{
+    name
+    with (legalPerson){
+        legalPersonID:technicalBase.id
+        identificationInformation.identification.localCorporateName
+    }
+}
+
+facade MdmNaturalPersonDTO on NaturalPerson{
+    id:technicalBase.id
+    lifeCycleStatus::MdmTPLifeCycleStatusDTO
+    additionalFields {
+        identificationInformations2::MdmNPIdentificationInformationsDTO
+        complianceInformations::MdmNPComplianceDTO
+        #managementInformations::MdmNPManagementInformationsDTO
+    }
+    #------------------------------Identification
+    identificationInformations:identificationInformations2
+    #------------------------------MeansOfContact
+    meansOfContacts::(MdmAddressDTO,
+            MdmPhoneDTO,
+            MdmEMailDTO,
+            MdmWebSiteDTO)
+
+    #------------------------------ Fin Identification 
+    documents::MdmNPDocumentDTO  
+    riskInformations::MdmNPRiskInformationsDTO
+    #------------------------------Compliance informations
+    complianceInformations
+    #------------------------------Managment Informations 
+    managementInformations::MdmNPManagementInformationsDTO
+}
+
+facade MdmNPRiskInformationsDTO on NPRiskInformations{
+     quotationBdF::MdmExternalRaitingDTO
+}
+
+facade MdmNPComplianceDTO on Compliance{
+    additionalFields {
+        #unfavorableInformations::MdmNPUnfavorableInformationDTO
+    }
+    pepStatusCode:pep.code
+    conformityAlerte
+    unfavorableInformations::MdmNPUnfavorableInformationsDTO
+}
+
+facade MdmNPUnfavorableInformationsDTO on UnfavorableInformations{
+    unfavorableInformationsearchDate
+    unfavorableInformations::MdmNPUnfavorableInformationDTO
+}
+
+facade MdmNPUnfavorableInformationDTO on UnfavorableInformation{
+    informationNatureCode:informationNatures.code
+    informationSubjectCode:subjects.code
+}
+
+facade MdmNPIdentificationInformationsDTO on NaturalPerson{
+    with (identificationInformations){
+        identification::MdmNPIdentificationDTO    
+        businessFunctions::MdmNPBusinessFunctionDTO
+    }
+}
+
+facade MdmNPIdentificationDTO on NPIdentification{
+    civilityCode:civility.code
+    lastName
+    birthName
+    usageName
+    firstNames
+    birthDate
+    birthCity
+    birthCountryCode:birthCountry.countryISO.code
+    nationalities::CountryCodeDTO
+    residenceCountryCode:residenceCountry.countryISO.code
+}
+
+facade MdmExternalRaitingDTO on ExternalRating{
+    rating.code
+    date
+}
+
+facade MdmRoleContactDTO on Contact{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate   
+    #----------------- specific
+    statusCode:status.code
+    businessFunction    
+    mainContact
+    targetEstablishements::MdmEstablishmentIdDTO
+}
+
+facade MdmEstablishmentIdDTO on Establishment{
+    technicalBase.id
+}
+
+facade MdmRoleLegalRepresentativDTO on LegalRepresentative{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate   
+} 
+
+facade MdmRoleAdministratorDTO on Administrator{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate   
+}
+
+facade MdmRoleBeneficialOwnerDTO on BeneficialOwner{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate   
+    #----------------- specific
+    percentageHolding
+} 
+
+facade MdmRoleEffectiveSignatoryDTO on EffectiveSignatory{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate   
+
+}
+
+facade MdmRoleExecutiveOfficerDTO on ExecutiveOfficer{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate   
+
+}
+
+facade MdmRoleAgentOfInsolvencyProceedingDTO on AgentOfInsolvencyProceeding{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate   
+}
+
+facade MdmRoleAuthorizedSignatoryDTO on AuthorizedSignatory{
+    #----------------- Common
+    typeRoleCode:typeRole
+    targetRoleId:targetRole.technicalBase.id
+    startDate
+    endDate   
+}
+
