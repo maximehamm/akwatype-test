@@ -1,0 +1,44 @@
+#
+# Akwatype _Person service example
+#
+# Rigth click on service name or  
+# resource names (expose) or route names
+# select "export" menu option to 
+# export OpenAPI description or Excel
+# report
+
+# This example deals basic service, 
+# resource and route definition.
+# label, url, response, request 
+# and facade association 
+
+service _Person{
+    label: "This service ensures the management of people"
+    url:"person"
+    expose persons{
+        url:"persons"
+        route getPerson{
+            label: "returns the person whose id is passed in parameter"
+            url:"person/id:ID/town:String"
+            header: _SimpleAddress
+            response:_AdvancedPersonToMapDTO 
+        }
+        route getListpersons{
+            label: "returns the list of persons whose id list is passed in parameter"
+            url:"persons/?ids:[String]"
+            response:[_SimplePersonDTO]
+        }
+        route postPersons{
+            label: "Updates the person whose id is passed in parameter"
+            method: POST
+            url:"person/id:ID"
+            request:_SimplePersonDTO
+        }
+        route getSkills{
+            url:"skills"
+            label:"returns a map (skill/level) of all the skills of a person"
+            response: _PersonSkillsDTO
+
+        }
+    }
+}

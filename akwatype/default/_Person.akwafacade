@@ -1,0 +1,101 @@
+facade _VerySimplePersonDTO on _Person{
+    name
+    firstname
+} 
+
+# Use of aliases to rename fields
+
+facade _VerySimplePersonwithAliasDTO on _Person{
+    lastName:name
+    givenName:firstname
+} 
+
+# Select fields in the _Person type
+# tree with inline facades
+
+facade _SimplePersonDTO on _Person{
+    name
+    firstname
+    address{
+        street
+        city
+        country{
+            label
+        }
+    }
+} 
+
+# move up fields distributed in the 
+# tree of _Person type (use of "with" 
+# statement)
+
+facade _SimplePersonFieldWithDTO on _Person{
+    name
+    firstname
+    with(address){
+        street
+        city
+        with(country){
+            country:label
+        }
+    }
+}
+
+# reuse of a facade on _Address
+# use fieldname::facadeName
+
+facade _SimplePersonFacadeReuseDTO on _Person{
+    name
+    firstname
+    with(address::_SimpleAddress)
+}
+
+facade _SimpleAddress on _Address{
+    street
+    town:city
+    with (country){
+        countrycode:codeISO
+    }
+}
+
+# Using the toMap function on the 
+# list of skills, by retaining the 
+# name of the skill as a key and in
+# reusing a defined facade on the
+# type _AssessedSkill 
+
+facade _AdvancedPersonToMapDTO on _Person{
+    name
+    firstname
+    with address::_SimpleAddress
+    skills::_AssessedSkillDTO toMap(name, -)
+}
+
+# tip : if you retain only one  
+# field in an inline facade, 
+# you can skip the keyword 
+# "with" and  direct access to the 
+# field by its path
+# eg. with skill{name} -> skill.name  
+
+facade _AssessedSkillDTO on _AssessedSkill{
+    skill.name
+    evaluationDate:lastEvaluation
+    observedLevel:masteryLevel.level
+}
+
+# if you want to build a map with scalar values, 
+# you must define a facade with two scalars 
+# fields that you will use to define the keys 
+# and values of your map
+
+facade _PersonSkillsDTO on _Person{
+    name
+    firstname
+    skills::_SkillLevel toMap(skillName, skillLevel)
+}
+
+facade _SkillLevel on _AssessedSkill{
+   skillName:skill.name
+   skillLevel:masteryLevel.level
+}

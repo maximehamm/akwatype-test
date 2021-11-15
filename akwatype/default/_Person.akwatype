@@ -1,0 +1,43 @@
+
+type _Person{
+    name:String {
+        label:"Person's last name"
+        maxLength:30,
+        example:"Durand"
+    } 
+    firstname:String {
+        label:"Person's first name"
+        maxLength:30,example:"Lea"
+    } 
+    address:_Address
+    skills:[_AssessedSkill]   
+}
+
+type _Address {
+    street:String{example:"Rue Auguste compte"}
+    city:String {example:"Paris"}
+    zipcode:String {example:"75006"}
+    state:String {example:""}
+    country:_Country
+}
+
+type _Country{
+    codeISO:String {example:"FRA"}
+    label:String {example:"France"}
+}
+
+type _MasteryLevel {
+   level:Integer{min:0, max:5,example:4}
+   description: String {example:"complex know-how (competence in new situation)"}
+}
+
+type _AssessedSkill{
+    skill:_Skill
+    lastEvaluation:Date {example:"2021-02-19"}
+    masteryLevel:_MasteryLevel
+}
+
+type _Skill{
+    name:String {example:"Problem solving"}
+    description:String{ example :"Ability to take an analytical approach to solving problems"}
+}
